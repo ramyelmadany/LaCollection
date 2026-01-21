@@ -13,9 +13,22 @@ const GOOGLE_SHEETS_CONFIG = {
 // Google Auth State (will be set by OAuth)
 let googleAccessToken = null;
 
-// Parse date from various formats
+// Parse date from various formats including "Month Year" (e.g., "May 2025")
 const parseDate = (dateStr) => {
   if (!dateStr) return '';
+  
+  // Try parsing "Month Year" format (e.g., "May 2025", "January 2025")
+  const monthYearMatch = dateStr.match(/^([A-Za-z]+)\s+(\d{4})$/);
+  if (monthYearMatch) {
+    const monthNames = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+    const monthIndex = monthNames.indexOf(monthYearMatch[1].toLowerCase());
+    if (monthIndex !== -1) {
+      // Use the 1st of the month
+      return `${monthYearMatch[2]}-${String(monthIndex + 1).padStart(2, '0')}-01`;
+    }
+  }
+  
+  // Try standard date parsing
   const parsed = new Date(dateStr);
   if (!isNaN(parsed)) {
     return parsed.toISOString().split('T')[0];
