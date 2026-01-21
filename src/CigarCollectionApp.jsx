@@ -564,7 +564,7 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency }) => {
               <div><div className="text-xs text-gray-500">Purchased</div><div className="text-gray-300">{fmt.date(box.datePurchased)}</div></div>
               <div><div className="text-xs text-gray-500">Status</div><div style={{ color: box.status === 'Ageing' ? '#ff9999' : box.status === 'Immediate' ? '#99ff99' : '#ffff99' }}>{box.status}</div></div>
               {box.code && <div><div className="text-xs text-gray-500">Factory Code</div><div className="text-gray-300 font-mono">{box.code}</div></div>}
-              {box.dateOfBox && <div><div className="text-xs text-gray-500">Box Date</div><div className="text-gray-300">{fmt.date(box.dateOfBox)}</div></div>}
+              <div><div className="text-xs text-gray-500">Release Date</div><div className="text-gray-300">{box.dateOfBox ? fmt.date(box.dateOfBox) : 'Unknown'}</div></div>
             </div>
           </div>
           
@@ -576,13 +576,13 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency }) => {
                 {boxAge && (
                   <div className="text-center">
                     <div className="text-2xl font-light" style={{ color: '#d4af37' }}>{boxAge}</div>
-                    <div className="text-xs text-gray-500">Box Age</div>
+                    <div className="text-xs text-gray-500">Cigar Age (from release)</div>
                   </div>
                 )}
                 {purchaseAge && (
                   <div className="text-center">
                     <div className="text-2xl font-light text-blue-400">{purchaseAge}</div>
-                    <div className="text-xs text-gray-500">Owned</div>
+                    <div className="text-xs text-gray-500">Time Owned</div>
                   </div>
                 )}
               </div>
