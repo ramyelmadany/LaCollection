@@ -5,7 +5,7 @@ const GOOGLE_SHEETS_CONFIG = {
   apiKey: 'AIzaSyCGwQ71BGsiWWWJjX10_teVe3zQAmu9ZDk',
   clientId: '', // You'll need to add this from Google Cloud Console
   sheetId: '10A_FMj8eotx-xlzAlCNFxjOr3xEOuO4p5GxAZjHC86A',
-  collectionRange: 'A3:O27', // Personal Collection data (rows 3-27 only)
+  collectionRange: 'A3:O30', // Personal Collection data (expanded range)
   onwardsRange: 'A34:L50', // Onwards table data
   scopes: 'https://www.googleapis.com/auth/spreadsheets',
 };
