@@ -1151,6 +1151,57 @@ export default function CigarCollectionApp() {
       // Valid Cuban cigar brands
       const validBrands = ['Cohiba', 'Trinidad', 'Montecristo', 'Partagas', 'Bolivar', 'Hoyo de Monterrey', 'H. Upmann', 'Ramon Allones', 'Romeo y Julieta', 'Punch', 'Cuaba', 'Diplomaticos', 'El Rey del Mundo', 'Fonseca', 'Jose L. Piedra', 'Juan Lopez', 'La Flor de Cano', 'La Gloria Cubana', 'Por Larranaga', 'Quai d\'Orsay', 'Quintero', 'Rafael Gonzalez', 'Saint Luis Rey', 'San Cristobal de la Habana', 'Sancho Panza', 'Vegas Robaina', 'Vegueros'];
       
+      // Function to expand a row into multiple boxes based on quantity
+      const expandRowToBoxes = (row, rowIndex) => {
+        const qty = parseInt(row[5]) || 1;
+        const boxNumStr = row[1] || '';
+        const boxNums = boxNumStr.split(',').map(s => s.trim()).filter(s => s);
+        const perBox = parseInt(row[6]) || 0;
+        const totalRemaining = parseInt(row[14]) || 0;
+        const totalConsumed = parseInt(row[13]) || 0;
+        
+        // If only one box, return single box object
+        if (qty <= 1) {
+          return [rowToBox(row, rowIndex * 100)];
+        }
+        
+        // Split into multiple boxes
+        const boxes = [];
+        const remainingPerBox = Math.floor(totalRemaining / qty);
+        const consumedPerBox = Math.floor(totalConsumed / qty);
+        let remainingRemainder = totalRemaining % qty;
+        let consumedRemainder = totalConsumed % qty;
+        
+        for (let i = 0; i < qty; i++) {
+          const boxNum = boxNums[i] || `${boxNumStr}.${i + 1}`;
+          // Distribute remainder to first boxes
+          const thisRemaining = remainingPerBox + (remainingRemainder > 0 ? 1 : 0);
+          const thisConsumed = consumedPerBox + (consumedRemainder > 0 ? 1 : 0);
+          if (remainingRemainder > 0) remainingRemainder--;
+          if (consumedRemainder > 0) consumedRemainder--;
+          
+          boxes.push({
+            id: rowIndex * 100 + i + 1,
+            datePurchased: parseDate(row[0]),
+            boxNum: boxNum,
+            received: row[2] === 'TRUE',
+            brand: row[3] || '',
+            name: row[4] || '',
+            qty: 1,
+            perBox: perBox,
+            priceUSD: parseCurrency(row[7]), // Price per box (not multiplied)
+            pricePerCigar: parseCurrency(row[8]),
+            status: row[9] || 'Ageing',
+            dateOfBox: parseDate(row[10]),
+            code: row[11] || '',
+            location: row[12] || 'Cayman',
+            consumed: thisConsumed,
+            remaining: thisRemaining,
+          });
+        }
+        return boxes;
+      };
+      
       try {
         // Fetch collection data
         const collectionRows = await fetchSheetData();
@@ -1163,7 +1214,7 @@ export default function CigarCollectionApp() {
               // Must have valid brand, name, and perBox > 0
               return brand && name && validBrands.some(vb => brand.includes(vb) || vb.includes(brand)) && perBox > 0;
             })
-            .map((row, idx) => rowToBox(row, idx));
+            .flatMap((row, idx) => expandRowToBoxes(row, idx));
           setBoxes(boxData);
         }
         
@@ -1195,6 +1246,54 @@ export default function CigarCollectionApp() {
   // Valid Cuban cigar brands (for filtering)
   const validBrands = ['Cohiba', 'Trinidad', 'Montecristo', 'Partagas', 'Bolivar', 'Hoyo de Monterrey', 'H. Upmann', 'Ramon Allones', 'Romeo y Julieta', 'Punch', 'Cuaba', 'Diplomaticos', 'El Rey del Mundo', 'Fonseca', 'Jose L. Piedra', 'Juan Lopez', 'La Flor de Cano', 'La Gloria Cubana', 'Por Larranaga', 'Quai d\'Orsay', 'Quintero', 'Rafael Gonzalez', 'Saint Luis Rey', 'San Cristobal de la Habana', 'Sancho Panza', 'Vegas Robaina', 'Vegueros'];
   
+  // Function to expand a row into multiple boxes based on quantity (for refresh)
+  const expandRowToBoxesRefresh = (row, rowIndex) => {
+    const qty = parseInt(row[5]) || 1;
+    const boxNumStr = row[1] || '';
+    const boxNums = boxNumStr.split(',').map(s => s.trim()).filter(s => s);
+    const perBox = parseInt(row[6]) || 0;
+    const totalRemaining = parseInt(row[14]) || 0;
+    const totalConsumed = parseInt(row[13]) || 0;
+    
+    if (qty <= 1) {
+      return [rowToBox(row, rowIndex * 100)];
+    }
+    
+    const boxes = [];
+    const remainingPerBox = Math.floor(totalRemaining / qty);
+    const consumedPerBox = Math.floor(totalConsumed / qty);
+    let remainingRemainder = totalRemaining % qty;
+    let consumedRemainder = totalConsumed % qty;
+    
+    for (let i = 0; i < qty; i++) {
+      const boxNum = boxNums[i] || `${boxNumStr}.${i + 1}`;
+      const thisRemaining = remainingPerBox + (remainingRemainder > 0 ? 1 : 0);
+      const thisConsumed = consumedPerBox + (consumedRemainder > 0 ? 1 : 0);
+      if (remainingRemainder > 0) remainingRemainder--;
+      if (consumedRemainder > 0) consumedRemainder--;
+      
+      boxes.push({
+        id: rowIndex * 100 + i + 1,
+        datePurchased: parseDate(row[0]),
+        boxNum: boxNum,
+        received: row[2] === 'TRUE',
+        brand: row[3] || '',
+        name: row[4] || '',
+        qty: 1,
+        perBox: perBox,
+        priceUSD: parseCurrency(row[7]),
+        pricePerCigar: parseCurrency(row[8]),
+        status: row[9] || 'Ageing',
+        dateOfBox: parseDate(row[10]),
+        code: row[11] || '',
+        location: row[12] || 'Cayman',
+        consumed: thisConsumed,
+        remaining: thisRemaining,
+      });
+    }
+    return boxes;
+  };
+  
   // Refresh data from Google Sheets
   const refreshData = async () => {
     setSyncStatus('syncing');
@@ -1208,7 +1307,7 @@ export default function CigarCollectionApp() {
             const perBox = parseInt(row[6]);
             return brand && name && validBrands.some(vb => brand.includes(vb) || vb.includes(brand)) && perBox > 0;
           })
-          .map((row, idx) => rowToBox(row, idx));
+          .flatMap((row, idx) => expandRowToBoxesRefresh(row, idx));
         setBoxes(boxData);
       }
       
@@ -1353,25 +1452,22 @@ export default function CigarCollectionApp() {
   
   const stats = useMemo(() => {
     const totalCigars = boxes.reduce((s, b) => s + b.remaining, 0);
-    const totalBoxes = boxes.reduce((s, b) => s + (b.qty || 1), 0); // Count by quantity
+    const totalBoxes = boxes.length;
     const consumed = boxes.reduce((s, b) => s + b.consumed, 0);
-    // Multiply price by quantity for total cost
-    const totalCostUSD = boxes.reduce((s, b) => s + (b.priceUSD * (b.qty || 1)), 0);
+    const totalCostUSD = boxes.reduce((s, b) => s + b.priceUSD, 0);
     const remainingCostUSD = boxes.reduce((s, b) => {
-      const totalCigarsInEntry = b.perBox * (b.qty || 1);
-      if (totalCigarsInEntry === 0) return s;
-      return s + (b.priceUSD * (b.qty || 1) * (b.remaining / totalCigarsInEntry));
+      if (b.perBox === 0) return s;
+      return s + (b.priceUSD * (b.remaining / b.perBox));
     }, 0);
     
     let totalMarketUSD = 0, remainingMarketUSD = 0;
     boxes.forEach(b => {
       const m = getMarket(b.brand, b.name, b.perBox);
       const marketGBP = m ? m.gbp : FX.toGBP(b.priceUSD) * 1.15;
-      const marketUSD = FX.toUSD(marketGBP) * (b.qty || 1); // Multiply by quantity
-      const totalCigarsInEntry = b.perBox * (b.qty || 1);
+      const marketUSD = FX.toUSD(marketGBP);
       totalMarketUSD += marketUSD;
-      if (totalCigarsInEntry > 0) {
-        remainingMarketUSD += marketUSD * (b.remaining / totalCigarsInEntry);
+      if (b.perBox > 0) {
+        remainingMarketUSD += marketUSD * (b.remaining / b.perBox);
       }
     });
     
