@@ -1353,18 +1353,26 @@ export default function CigarCollectionApp() {
   
   const stats = useMemo(() => {
     const totalCigars = boxes.reduce((s, b) => s + b.remaining, 0);
-    const totalBoxes = boxes.length;
+    const totalBoxes = boxes.reduce((s, b) => s + (b.qty || 1), 0); // Count by quantity
     const consumed = boxes.reduce((s, b) => s + b.consumed, 0);
-    const totalCostUSD = boxes.reduce((s, b) => s + b.priceUSD, 0);
-    const remainingCostUSD = boxes.reduce((s, b) => s + (b.priceUSD * (b.remaining / b.perBox)), 0);
+    // Multiply price by quantity for total cost
+    const totalCostUSD = boxes.reduce((s, b) => s + (b.priceUSD * (b.qty || 1)), 0);
+    const remainingCostUSD = boxes.reduce((s, b) => {
+      const totalCigarsInEntry = b.perBox * (b.qty || 1);
+      if (totalCigarsInEntry === 0) return s;
+      return s + (b.priceUSD * (b.qty || 1) * (b.remaining / totalCigarsInEntry));
+    }, 0);
     
     let totalMarketUSD = 0, remainingMarketUSD = 0;
     boxes.forEach(b => {
       const m = getMarket(b.brand, b.name, b.perBox);
       const marketGBP = m ? m.gbp : FX.toGBP(b.priceUSD) * 1.15;
-      const marketUSD = FX.toUSD(marketGBP);
+      const marketUSD = FX.toUSD(marketGBP) * (b.qty || 1); // Multiply by quantity
+      const totalCigarsInEntry = b.perBox * (b.qty || 1);
       totalMarketUSD += marketUSD;
-      remainingMarketUSD += marketUSD * (b.remaining / b.perBox);
+      if (totalCigarsInEntry > 0) {
+        remainingMarketUSD += marketUSD * (b.remaining / totalCigarsInEntry);
+      }
     });
     
     const totalSavingsUSD = totalMarketUSD - totalCostUSD;
