@@ -45,10 +45,11 @@
         ]
       },
       "Cohiba|Siglo VI|25": {
-        "box_price_gbp": 1598.0,
+        "box_price_gbp": 2949.5,
         "box_size": 25,
         "sources_used": [
-          "cgars_pdf"
+          "cgars_pdf",
+          "jjfox"
         ]
       },
       "Cohiba|Maduro 5 Genios|25": {
@@ -87,7 +88,7 @@
         ]
       },
       "Cohiba|Siglo I|25": {
-        "box_price_gbp": 1598.0,
+        "box_price_gbp": 813.0,
         "box_size": 25,
         "sources_used": [
           "cgars_pdf"
@@ -101,10 +102,10 @@
         ]
       },
       "Cohiba|Behike 56|10": {
-        "box_price_gbp": 3399.0,
+        "box_price_gbp": 1110.0,
         "box_size": 10,
         "sources_used": [
-          "cgars_pdf"
+          "jjfox"
         ]
       },
       "Trinidad|Esmerelda|12": {

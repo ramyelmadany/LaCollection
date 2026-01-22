@@ -1,5 +1,5 @@
 // UK Market Prices - Auto-generated
-// Last updated: 2026-01-22 18:39
+// Last updated: 2026-01-22 19:46
 // Sources: CGars PDF + JJ Fox (averaged if within 30%)
 // NOTE: These are BOX prices
 
@@ -98,13 +98,14 @@ export const ukMarketPrices = {
       "method": "jjfox_only"
     },
     "Siglo VI (Box of 25)": {
-      "boxPrice": 1598.0,
+      "boxPrice": 2949.5,
       "boxSize": 25,
-      "perCigar": 63.92,
+      "perCigar": 117.98,
       "sources": [
-        "cgars_pdf"
+        "cgars_pdf",
+        "jjfox"
       ],
-      "method": "cgars_high_discrepancy"
+      "method": "averaged"
     },
     "Maduro 5 Genios (Box of 25)": {
       "boxPrice": 930.0,
@@ -134,9 +135,9 @@ export const ukMarketPrices = {
       "method": "cgars_high_discrepancy"
     },
     "Siglo I (Box of 25)": {
-      "boxPrice": 1598.0,
+      "boxPrice": 813.0,
       "boxSize": 25,
-      "perCigar": 63.92,
+      "perCigar": 32.52,
       "sources": [
         "cgars_pdf"
       ],
@@ -152,13 +153,13 @@ export const ukMarketPrices = {
       "method": "cgars_high_discrepancy"
     },
     "Behike 56 (Box of 10)": {
-      "boxPrice": 3399.0,
+      "boxPrice": 1110.0,
       "boxSize": 10,
-      "perCigar": 339.9,
+      "perCigar": 111.0,
       "sources": [
-        "cgars_pdf"
+        "jjfox"
       ],
-      "method": "cgars_high_discrepancy"
+      "method": "jjfox_only"
     },
     "Lanceros (Box of 25)": {
       "boxPrice": 2700.0,
