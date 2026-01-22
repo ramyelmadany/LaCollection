@@ -158,20 +158,40 @@ def load_inventory():
         if not csv_data:
             raise Exception("Failed to fetch sheet")
         
-        reader = csv.DictReader(io.StringIO(csv_data))
+        lines = csv_data.strip().split('\n')
+        
+        # Skip the first row if it's a title row (not actual headers)
+        # Look for a row that contains "Brand" and "Name" to find the header row
+        header_row_idx = 0
+        for i, line in enumerate(lines):
+            if 'Brand' in line and 'Name' in line:
+                header_row_idx = i
+                break
+        
+        # Parse from the header row
+        csv_content = '\n'.join(lines[header_row_idx:])
+        reader = csv.DictReader(io.StringIO(csv_content))
+        
+        # Print available columns for debugging
+        print(f"  Available columns: {reader.fieldnames}")
+        
         cigars = []
         seen = set()
         
         for row in reader:
-            brand = row.get("Brand", "").strip()
-            name = row.get("Name", "").strip()
-            box_size_raw = row.get("Box", "").strip()
+            # Try different possible column names
+            brand = (row.get("Brand") or row.get("brand") or "").strip()
+            name = (row.get("Name") or row.get("name") or "").strip()
+            
+            # Box size could be in different columns
+            box_size_raw = (row.get("Number / Box") or row.get("Box") or 
+                          row.get("Number/Box") or row.get("box") or "").strip()
             
             if not brand or not name or not box_size_raw:
                 continue
             
             try:
-                box_size = int(re.search(r'\d+', box_size_raw).group())
+                box_size = int(re.search(r'\d+', str(box_size_raw)).group())
             except:
                 continue
             
@@ -186,9 +206,18 @@ def load_inventory():
                 })
         
         print(f"  Found {len(cigars)} unique cigar/box combinations")
+        
+        # Print first few for debugging
+        if cigars:
+            print(f"  Sample entries:")
+            for c in cigars[:3]:
+                print(f"    - {c['brand']} {c['name']} (Box of {c['box_size']})")
+        
         return cigars
     except Exception as e:
         print(f"  Error: {e}")
+        import traceback
+        traceback.print_exc()
         return []
 
 
