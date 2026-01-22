@@ -3,193 +3,204 @@
     "date": "2026-01-22",
     "prices": {
       "Montecristo|Brilllantes": {
-        "avg_box_price_gbp": 367.0,
+        "box_price_gbp": 3500.0,
         "box_size": 18,
-        "sources": [
+        "sources_used": [
           "jjfox"
-        ]
+        ],
+        "method": "jjfox_only"
       },
       "Trinidad|Robusto Extra": {
-        "avg_box_price_gbp": 352.5,
+        "box_price_gbp": 2700.0,
         "box_size": 12,
-        "sources": [
-          "jjfox",
-          "cgars"
-        ]
+        "sources_used": [
+          "jjfox"
+        ],
+        "method": "jjfox_only"
       },
       "Montecristo|Leyendas": {
-        "avg_box_price_gbp": 225.0,
+        "box_price_gbp": 3500.0,
         "box_size": 20,
-        "sources": [
+        "sources_used": [
           "jjfox"
-        ]
+        ],
+        "method": "jjfox_only"
       },
       "Hoyo de Monterrey|Destinos": {
-        "avg_box_price_gbp": 225.0,
+        "box_price_gbp": 1770.0,
         "box_size": 20,
-        "sources": [
+        "sources_used": [
           "jjfox"
-        ]
+        ],
+        "method": "jjfox_only"
       },
       "Ramon Allones|Absolutos": {
-        "avg_box_price_gbp": 225.0,
+        "box_price_gbp": 1610.0,
         "box_size": 20,
-        "sources": [
+        "sources_used": [
           "jjfox"
-        ]
+        ],
+        "method": "jjfox_only"
       },
       "Hoyo de Monterrey|Double Corona": {
-        "avg_box_price_gbp": 1109.5,
+        "box_price_gbp": 1370.0,
         "box_size": 50,
-        "sources": [
-          "jjfox",
-          "cgars"
-        ]
+        "sources_used": [
+          "jjfox"
+        ],
+        "method": "jjfox_only"
       },
       "Bolivar|New Gold Medal": {
-        "avg_box_price_gbp": 641.0,
+        "box_price_gbp": 1435.0,
         "box_size": 10,
-        "sources": [
-          "jjfox",
-          "cgars"
-        ]
+        "sources_used": [
+          "jjfox"
+        ],
+        "method": "jjfox_only"
       },
       "Partagas|Lusitinas": {
-        "avg_box_price_gbp": 382.0,
+        "box_price_gbp": 1690.0,
         "box_size": 10,
-        "sources": [
+        "sources_used": [
           "jjfox"
-        ]
+        ],
+        "method": "jjfox_only"
       },
       "Cohiba|Vistosos": {
-        "avg_box_price_gbp": 382.0,
+        "box_price_gbp": 5000.0,
         "box_size": 10,
-        "sources": [
+        "sources_used": [
           "jjfox"
-        ]
+        ],
+        "method": "jjfox_only"
       },
       "Cohiba|Siglo VI": {
-        "avg_box_price_gbp": 868.5,
+        "box_price_gbp": 5600.0,
         "box_size": 10,
-        "sources": [
-          "jjfox",
-          "cgars"
-        ]
+        "sources_used": [
+          "jjfox"
+        ],
+        "method": "jjfox_only"
       },
       "Cohiba|Maduro 5 Genios": {
-        "avg_box_price_gbp": 220.0,
+        "box_price_gbp": 2700.0,
         "box_size": 25,
-        "sources": [
+        "sources_used": [
           "jjfox"
-        ]
+        ],
+        "method": "jjfox_only"
       },
       "Cohiba|Maduro 5 Magicos": {
-        "avg_box_price_gbp": 1424.5,
+        "box_price_gbp": 2700.0,
         "box_size": 25,
-        "sources": [
-          "jjfox",
-          "cgars"
-        ]
+        "sources_used": [
+          "jjfox"
+        ],
+        "method": "jjfox_only"
       },
       "Cohiba|Behike 52": {
-        "avg_box_price_gbp": 358.0,
+        "box_price_gbp": 2700.0,
         "box_size": 10,
-        "sources": [
-          "jjfox",
-          "cgars"
-        ]
+        "sources_used": [
+          "jjfox"
+        ],
+        "method": "jjfox_only"
       },
       "Partagas|Linea Maestra Maestros": {
-        "avg_box_price_gbp": 225.0,
+        "box_price_gbp": 10295.0,
         "box_size": 20,
-        "sources": [
+        "sources_used": [
           "jjfox"
-        ]
+        ],
+        "method": "jjfox_only"
       },
       "Hoyo de Monterrey|Petit Robustos": {
-        "avg_box_price_gbp": 220.0,
+        "box_price_gbp": 2700.0,
         "box_size": 25,
-        "sources": [
+        "sources_used": [
           "jjfox"
-        ]
+        ],
+        "method": "jjfox_only"
       },
       "Cohiba|Siglo I": {
-        "avg_box_price_gbp": 990.0,
+        "box_price_gbp": 7000.0,
         "box_size": 25,
-        "sources": [
-          "jjfox",
-          "cgars"
-        ]
+        "sources_used": [
+          "jjfox"
+        ],
+        "method": "jjfox_only"
       },
       "Cohiba|Medio Siglo": {
-        "avg_box_price_gbp": 1008.5,
+        "box_price_gbp": 7000.0,
         "box_size": 25,
-        "sources": [
-          "jjfox",
-          "cgars"
-        ]
+        "sources_used": [
+          "jjfox"
+        ],
+        "method": "jjfox_only"
       },
       "Cohiba|Behike 56": {
-        "avg_box_price_gbp": 460.5,
+        "box_price_gbp": 2700.0,
         "box_size": 10,
-        "sources": [
-          "jjfox",
-          "cgars"
-        ]
+        "sources_used": [
+          "jjfox"
+        ],
+        "method": "jjfox_only"
       },
       "Trinidad|Esmerelda": {
-        "avg_box_price_gbp": 309.0,
+        "box_price_gbp": 1220.0,
         "box_size": 12,
-        "sources": [
+        "sources_used": [
           "jjfox"
-        ]
+        ],
+        "method": "jjfox_only"
       },
       "Cohiba|Lanceros": {
-        "avg_box_price_gbp": 412.0,
+        "box_price_gbp": 7000.0,
         "box_size": 25,
-        "sources": [
-          "jjfox",
-          "cgars"
-        ]
+        "sources_used": [
+          "jjfox"
+        ],
+        "method": "jjfox_only"
       },
       "Name|Quantity Purchased (Boxes)": {
-        "avg_box_price_gbp": 309.0,
+        "box_price_gbp": 2700.0,
         "box_size": 25,
-        "sources": [
+        "sources_used": [
           "jjfox"
-        ]
+        ],
+        "method": "jjfox_only"
       },
       "Topes|1": {
-        "avg_box_price_gbp": 330.0,
+        "box_price_gbp": 5600.0,
         "box_size": 25,
-        "sources": [
-          "jjfox",
-          "cgars"
-        ]
+        "sources_used": [
+          "jjfox"
+        ],
+        "method": "jjfox_only"
       },
       "Vistosos|1": {
-        "avg_box_price_gbp": 330.0,
+        "box_price_gbp": 5600.0,
         "box_size": 25,
-        "sources": [
-          "jjfox",
-          "cgars"
-        ]
+        "sources_used": [
+          "jjfox"
+        ],
+        "method": "jjfox_only"
       },
       "Robusto Extra|1": {
-        "avg_box_price_gbp": 330.0,
+        "box_price_gbp": 5600.0,
         "box_size": 25,
-        "sources": [
-          "jjfox",
-          "cgars"
-        ]
+        "sources_used": [
+          "jjfox"
+        ],
+        "method": "jjfox_only"
       },
       "Linea Maestra Origen|1": {
-        "avg_box_price_gbp": 330.0,
+        "box_price_gbp": 5600.0,
         "box_size": 25,
-        "sources": [
-          "jjfox",
-          "cgars"
-        ]
+        "sources_used": [
+          "jjfox"
+        ],
+        "method": "jjfox_only"
       }
     }
   }

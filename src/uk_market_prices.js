@@ -1,250 +1,264 @@
 // UK Market Prices - Auto-generated
-// Last updated: 2026-01-22 13:27
-// Sources: JJ Fox (search), CGars Ltd (PDF)
+// Last updated: 2026-01-22 13:59
+// Sources: CGars + JJ Fox (averaged if within 30% discrepancy)
+// NOTE: These are BOX prices, not single cigar prices
 
 export const ukMarketPrices = {
   "Montecristo": {
     "Brilllantes": {
-      "boxPrice": 367.0,
+      "boxPrice": 3500.0,
       "boxSize": 18,
-      "perCigar": 20.39,
+      "perCigar": 194.44,
       "sources": [
         "jjfox"
-      ]
+      ],
+      "method": "jjfox_only"
     },
     "Leyendas": {
-      "boxPrice": 225.0,
+      "boxPrice": 3500.0,
       "boxSize": 20,
-      "perCigar": 11.25,
+      "perCigar": 175.0,
       "sources": [
         "jjfox"
-      ]
+      ],
+      "method": "jjfox_only"
     }
   },
   "Trinidad": {
     "Robusto Extra": {
-      "boxPrice": 352.5,
+      "boxPrice": 2700.0,
       "boxSize": 12,
-      "perCigar": 29.37,
-      "sources": [
-        "jjfox",
-        "cgars"
-      ]
-    },
-    "Esmerelda": {
-      "boxPrice": 309.0,
-      "boxSize": 12,
-      "perCigar": 25.75,
+      "perCigar": 225.0,
       "sources": [
         "jjfox"
-      ]
+      ],
+      "method": "jjfox_only"
+    },
+    "Esmerelda": {
+      "boxPrice": 1220.0,
+      "boxSize": 12,
+      "perCigar": 101.67,
+      "sources": [
+        "jjfox"
+      ],
+      "method": "jjfox_only"
     }
   },
   "Hoyo de Monterrey": {
     "Destinos": {
-      "boxPrice": 225.0,
+      "boxPrice": 1770.0,
       "boxSize": 20,
-      "perCigar": 11.25,
+      "perCigar": 88.5,
       "sources": [
         "jjfox"
-      ]
+      ],
+      "method": "jjfox_only"
     },
     "Double Corona": {
-      "boxPrice": 1109.5,
+      "boxPrice": 1370.0,
       "boxSize": 50,
-      "perCigar": 22.19,
-      "sources": [
-        "jjfox",
-        "cgars"
-      ]
-    },
-    "Petit Robustos": {
-      "boxPrice": 220.0,
-      "boxSize": 25,
-      "perCigar": 8.8,
+      "perCigar": 27.4,
       "sources": [
         "jjfox"
-      ]
+      ],
+      "method": "jjfox_only"
+    },
+    "Petit Robustos": {
+      "boxPrice": 2700.0,
+      "boxSize": 25,
+      "perCigar": 108.0,
+      "sources": [
+        "jjfox"
+      ],
+      "method": "jjfox_only"
     }
   },
   "Ramon Allones": {
     "Absolutos": {
-      "boxPrice": 225.0,
+      "boxPrice": 1610.0,
       "boxSize": 20,
-      "perCigar": 11.25,
+      "perCigar": 80.5,
       "sources": [
         "jjfox"
-      ]
+      ],
+      "method": "jjfox_only"
     }
   },
   "Bolivar": {
     "New Gold Medal": {
-      "boxPrice": 641.0,
+      "boxPrice": 1435.0,
       "boxSize": 10,
-      "perCigar": 64.1,
+      "perCigar": 143.5,
       "sources": [
-        "jjfox",
-        "cgars"
-      ]
+        "jjfox"
+      ],
+      "method": "jjfox_only"
     }
   },
   "Partagas": {
     "Lusitinas": {
-      "boxPrice": 382.0,
+      "boxPrice": 1690.0,
       "boxSize": 10,
-      "perCigar": 38.2,
+      "perCigar": 169.0,
       "sources": [
         "jjfox"
-      ]
+      ],
+      "method": "jjfox_only"
     },
     "Linea Maestra Maestros": {
-      "boxPrice": 225.0,
+      "boxPrice": 10295.0,
       "boxSize": 20,
-      "perCigar": 11.25,
+      "perCigar": 514.75,
       "sources": [
         "jjfox"
-      ]
+      ],
+      "method": "jjfox_only"
     }
   },
   "Cohiba": {
     "Vistosos": {
-      "boxPrice": 382.0,
+      "boxPrice": 5000.0,
       "boxSize": 10,
-      "perCigar": 38.2,
+      "perCigar": 500.0,
       "sources": [
         "jjfox"
-      ]
+      ],
+      "method": "jjfox_only"
     },
     "Siglo VI": {
-      "boxPrice": 868.5,
+      "boxPrice": 5600.0,
       "boxSize": 10,
-      "perCigar": 86.85,
-      "sources": [
-        "jjfox",
-        "cgars"
-      ]
-    },
-    "Maduro 5 Genios": {
-      "boxPrice": 220.0,
-      "boxSize": 25,
-      "perCigar": 8.8,
+      "perCigar": 560.0,
       "sources": [
         "jjfox"
-      ]
+      ],
+      "method": "jjfox_only"
+    },
+    "Maduro 5 Genios": {
+      "boxPrice": 2700.0,
+      "boxSize": 25,
+      "perCigar": 108.0,
+      "sources": [
+        "jjfox"
+      ],
+      "method": "jjfox_only"
     },
     "Maduro 5 Magicos": {
-      "boxPrice": 1424.5,
+      "boxPrice": 2700.0,
       "boxSize": 25,
-      "perCigar": 56.98,
+      "perCigar": 108.0,
       "sources": [
-        "jjfox",
-        "cgars"
-      ]
+        "jjfox"
+      ],
+      "method": "jjfox_only"
     },
     "Behike 52": {
-      "boxPrice": 358.0,
+      "boxPrice": 2700.0,
       "boxSize": 10,
-      "perCigar": 35.8,
+      "perCigar": 270.0,
       "sources": [
-        "jjfox",
-        "cgars"
-      ]
+        "jjfox"
+      ],
+      "method": "jjfox_only"
     },
     "Siglo I": {
-      "boxPrice": 990.0,
+      "boxPrice": 7000.0,
       "boxSize": 25,
-      "perCigar": 39.6,
+      "perCigar": 280.0,
       "sources": [
-        "jjfox",
-        "cgars"
-      ]
+        "jjfox"
+      ],
+      "method": "jjfox_only"
     },
     "Medio Siglo": {
-      "boxPrice": 1008.5,
+      "boxPrice": 7000.0,
       "boxSize": 25,
-      "perCigar": 40.34,
+      "perCigar": 280.0,
       "sources": [
-        "jjfox",
-        "cgars"
-      ]
+        "jjfox"
+      ],
+      "method": "jjfox_only"
     },
     "Behike 56": {
-      "boxPrice": 460.5,
+      "boxPrice": 2700.0,
       "boxSize": 10,
-      "perCigar": 46.05,
+      "perCigar": 270.0,
       "sources": [
-        "jjfox",
-        "cgars"
-      ]
+        "jjfox"
+      ],
+      "method": "jjfox_only"
     },
     "Lanceros": {
-      "boxPrice": 412.0,
+      "boxPrice": 7000.0,
       "boxSize": 25,
-      "perCigar": 16.48,
+      "perCigar": 280.0,
       "sources": [
-        "jjfox",
-        "cgars"
-      ]
+        "jjfox"
+      ],
+      "method": "jjfox_only"
     }
   },
   "Name": {
     "Quantity Purchased (Boxes)": {
-      "boxPrice": 309.0,
+      "boxPrice": 2700.0,
       "boxSize": 25,
-      "perCigar": 12.36,
+      "perCigar": 108.0,
       "sources": [
         "jjfox"
-      ]
+      ],
+      "method": "jjfox_only"
     }
   },
   "Topes": {
     "1": {
-      "boxPrice": 330.0,
+      "boxPrice": 5600.0,
       "boxSize": 25,
-      "perCigar": 13.2,
+      "perCigar": 224.0,
       "sources": [
-        "jjfox",
-        "cgars"
-      ]
+        "jjfox"
+      ],
+      "method": "jjfox_only"
     }
   },
   "Vistosos": {
     "1": {
-      "boxPrice": 330.0,
+      "boxPrice": 5600.0,
       "boxSize": 25,
-      "perCigar": 13.2,
+      "perCigar": 224.0,
       "sources": [
-        "jjfox",
-        "cgars"
-      ]
+        "jjfox"
+      ],
+      "method": "jjfox_only"
     }
   },
   "Robusto Extra": {
     "1": {
-      "boxPrice": 330.0,
+      "boxPrice": 5600.0,
       "boxSize": 25,
-      "perCigar": 13.2,
+      "perCigar": 224.0,
       "sources": [
-        "jjfox",
-        "cgars"
-      ]
+        "jjfox"
+      ],
+      "method": "jjfox_only"
     }
   },
   "Linea Maestra Origen": {
     "1": {
-      "boxPrice": 330.0,
+      "boxPrice": 5600.0,
       "boxSize": 25,
-      "perCigar": 13.2,
+      "perCigar": 224.0,
       "sources": [
-        "jjfox",
-        "cgars"
-      ]
+        "jjfox"
+      ],
+      "method": "jjfox_only"
     }
   }
 };
 
 export const priceMetadata = {
   lastUpdated: "2026-01-22",
-  sources: ["JJ Fox", "CGars Ltd"],
-  currency: "GBP"
+  sources: ["CGars", "JJ Fox"],
+  currency: "GBP",
+  priceType: "box",
+  discrepancyThreshold: 0.3
 };
