@@ -9,13 +9,6 @@
           "jjfox"
         ]
       },
-      "Trinidad|Robusto Extra|12": {
-        "box_price_gbp": 322.99,
-        "box_size": 12,
-        "sources_used": [
-          "cgars_pdf"
-        ]
-      },
       "Montecristo|Leyendas|20": {
         "box_price_gbp": 1360.0,
         "box_size": 20,
@@ -52,18 +45,17 @@
         ]
       },
       "Cohiba|Siglo VI|25": {
-        "box_price_gbp": 2949.5,
-        "box_size": 25,
-        "sources_used": [
-          "cgars_pdf",
-          "jjfox"
-        ]
-      },
-      "Cohiba|Maduro 5 Genios|25": {
-        "box_price_gbp": 1739.0,
+        "box_price_gbp": 1598.0,
         "box_size": 25,
         "sources_used": [
           "cgars_pdf"
+        ]
+      },
+      "Cohiba|Maduro 5 Genios|25": {
+        "box_price_gbp": 930.0,
+        "box_size": 25,
+        "sources_used": [
+          "jjfox"
         ]
       },
       "Cohiba|Maduro 5 Magicos|25": {
@@ -81,17 +73,16 @@
         ]
       },
       "Partagas|Linea Maestra Maestros|20": {
-        "box_price_gbp": 2518.0,
+        "box_price_gbp": 1360.0,
         "box_size": 20,
         "sources_used": [
-          "cgars_pdf"
+          "jjfox"
         ]
       },
       "Hoyo de Monterrey|Petit Robustos|25": {
-        "box_price_gbp": 2349.99,
+        "box_price_gbp": 2700.0,
         "box_size": 25,
         "sources_used": [
-          "cgars_pdf",
           "jjfox"
         ]
       },
@@ -146,31 +137,31 @@
         ]
       },
       "Topes|1|25": {
-        "box_price_gbp": 549.0,
+        "box_price_gbp": 930.0,
         "box_size": 25,
         "sources_used": [
-          "cgars_pdf"
+          "jjfox"
         ]
       },
       "Vistosos|1|25": {
-        "box_price_gbp": 549.0,
+        "box_price_gbp": 930.0,
         "box_size": 25,
         "sources_used": [
-          "cgars_pdf"
+          "jjfox"
         ]
       },
       "Robusto Extra|1|25": {
-        "box_price_gbp": 549.0,
+        "box_price_gbp": 930.0,
         "box_size": 25,
         "sources_used": [
-          "cgars_pdf"
+          "jjfox"
         ]
       },
       "Linea Maestra Origen|1|25": {
-        "box_price_gbp": 549.0,
+        "box_price_gbp": 930.0,
         "box_size": 25,
         "sources_used": [
-          "cgars_pdf"
+          "jjfox"
         ]
       }
     }
