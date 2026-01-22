@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
 UK Cigar Price Scraper v9
-- Dual source: CGars PDF (downloaded weekly) + JJ Fox (web scraping)
+- Dual source: CGars PDF (downloaded weekly) + JJ Fox (web scraping with Playwright)
 - CGars PDF is downloaded by separate workflow to scripts/cgars_pricelist.pdf
 - Averages prices if within 30% discrepancy
 - STRICT matching: Numbers (52, 54, 56) and Roman numerals (I, II, VI) must match exactly
+- Uses Playwright headless browser for JJ Fox to bypass bot protection
 """
 
 import json
@@ -20,13 +21,27 @@ from urllib.error import HTTPError, URLError
 import ssl
 import time
 
-# Install pdfplumber if needed
-try:
-    import pdfplumber
-except ImportError:
-    print("Installing pdfplumber...")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "pdfplumber", "-q"])
-    import pdfplumber
+# Install required packages
+def install_packages():
+    packages = ['pdfplumber', 'playwright']
+    for pkg in packages:
+        try:
+            __import__(pkg)
+        except ImportError:
+            print(f"Installing {pkg}...")
+            subprocess.check_call([sys.executable, "-m", "pip", "install", pkg, "-q"])
+    
+    # Install playwright browsers
+    try:
+        subprocess.check_call([sys.executable, "-m", "playwright", "install", "chromium"], 
+                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except:
+        print("Note: Playwright browser install may require: playwright install chromium")
+
+install_packages()
+
+import pdfplumber
+from playwright.sync_api import sync_playwright
 
 # SSL context
 ssl_context = ssl.create_default_context()
@@ -43,6 +58,30 @@ JJFOX_SEARCH_URL = "https://www.jjfox.co.uk/search/{query}"
 
 # Price discrepancy threshold (30%)
 MAX_DISCREPANCY = 0.30
+
+# Playwright browser instance (reused)
+_playwright = None
+_browser = None
+
+
+def get_browser():
+    """Get or create Playwright browser instance."""
+    global _playwright, _browser
+    if _browser is None:
+        _playwright = sync_playwright().start()
+        _browser = _playwright.chromium.launch(headless=True)
+    return _browser
+
+
+def close_browser():
+    """Close Playwright browser."""
+    global _playwright, _browser
+    if _browser:
+        _browser.close()
+        _browser = None
+    if _playwright:
+        _playwright.stop()
+        _playwright = None
 
 
 def fetch_url(url, retries=3):
@@ -290,101 +329,8 @@ def find_cgars_price(cgars_prices, brand, name, box_size):
     return None
 
 
-def extract_jjfox_box_price(html, box_size, brand, cigar_name):
-    """Extract price from JJ Fox - must verify correct product first.
-    
-    JJ Fox page structure:
-    - Each product is in a .product-item div
-    - Product name is at the start of the text content
-    - Prices are in data-price attributes with "Box of X" text
-    
-    We need to find the product item that matches our cigar name,
-    then extract the price for the correct box size from THAT item only.
-    """
-    
-    # Normalize names for matching
-    search_name = cigar_name.lower().strip()
-    search_brand = brand.lower().strip()
-    
-    # Extract numbers from cigar name for strict matching (e.g., "56" from "Behike 56")
-    cigar_numbers = set(re.findall(r'\b(\d+)\b', search_name))
-    # Remove common box sizes from the numbers we're looking for
-    cigar_numbers = cigar_numbers - {'10', '25', '50', '3', '5', '20'}
-    
-    # Split HTML by product-item divs
-    # Pattern to split on product item boundaries
-    product_pattern = r'<li[^>]*class="[^"]*product-item[^"]*"[^>]*>'
-    parts = re.split(product_pattern, html, flags=re.IGNORECASE)
-    
-    for part in parts[1:]:  # Skip first part (before any product)
-        # Get text content to find product name (it's at the start)
-        # Remove HTML tags to get plain text
-        text_only = re.sub(r'<[^>]+>', ' ', part)
-        text_only = re.sub(r'\s+', ' ', text_only).strip()
-        
-        # Product name is typically in the first ~100 chars
-        first_part = text_only[:150].lower()
-        
-        # Check if this is the right product:
-        # 1. Must contain brand name or key brand word
-        brand_words = search_brand.split()
-        brand_found = any(bw in first_part for bw in brand_words if len(bw) > 3)
-        if not brand_found:
-            continue
-        
-        # 2. Must contain key parts of cigar name
-        name_words = search_name.split()
-        significant_words = [w for w in name_words if len(w) > 3 and not w.isdigit()]
-        if significant_words:
-            word_matches = sum(1 for w in significant_words if w in first_part)
-            if word_matches < len(significant_words) * 0.5:
-                continue
-        
-        # 3. CRITICAL: Numbers must match exactly (Behike 56 ≠ Behike 52)
-        if cigar_numbers:
-            # Extract numbers from product name area
-            product_numbers = set(re.findall(r'\b(\d+)\b', first_part))
-            # Remove common box sizes
-            product_numbers = product_numbers - {'10', '25', '50', '3', '5', '20'}
-            
-            # The identifying number (like 56) must be present
-            if not cigar_numbers.issubset(product_numbers):
-                continue
-            
-            # Also check we don't have DIFFERENT identifying numbers
-            # e.g., if we want 56, reject if we see 52 or 54
-            other_behike_numbers = {'52', '54', '56'} - cigar_numbers
-            if product_numbers & other_behike_numbers:
-                # This product has a different Behike number
-                continue
-        
-        # Found the right product! Now extract price for the correct box size
-        box_pattern = rf'data-price="£([\d,]+(?:\.\d{{2}})?)"[^>]*>[^<]*Box of {box_size}'
-        price_match = re.search(box_pattern, part, re.IGNORECASE)
-        if price_match:
-            try:
-                price = float(price_match.group(1).replace(',', ''))
-                if price > 200:
-                    return price
-            except ValueError:
-                pass
-        
-        # Alternative pattern: price before "Box of X" text
-        alt_pattern = rf'data-price="£([\d,]+(?:\.\d{{2}})?)"[^>]*>\s*Box of {box_size}\s*<'
-        alt_match = re.search(alt_pattern, part, re.IGNORECASE)
-        if alt_match:
-            try:
-                price = float(alt_match.group(1).replace(',', ''))
-                if price > 200:
-                    return price
-            except ValueError:
-                pass
-    
-    return None
-
-
 def scrape_jjfox(cigar):
-    """Scrape JJ Fox for box price."""
+    """Scrape JJ Fox for box price using Playwright headless browser."""
     brand = cigar["brand"]
     name = cigar["name"]
     box_size = cigar["box_size"]
@@ -394,24 +340,85 @@ def scrape_jjfox(cigar):
     query = f"{search_brand} {search_name}".replace(" ", "+")
     url = JJFOX_SEARCH_URL.format(query=query)
     
-    print(f"  JJ Fox: Searching...")
-    html = fetch_url(url)
-    if not html:
-        print(f"    Failed to fetch")
+    print(f"  JJ Fox: Searching with Playwright...")
+    
+    try:
+        browser = get_browser()
+        page = browser.new_page(
+            user_agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        )
+        
+        # Navigate and wait for content
+        page.goto(url, wait_until='networkidle', timeout=30000)
+        time.sleep(2)  # Extra wait for dynamic content
+        
+        # Get all product items
+        products = page.query_selector_all('li.product-item')
+        
+        # Extract identifying number from cigar name (e.g., "56" from "Behike 56")
+        cigar_numbers = set(re.findall(r'\b(\d+)\b', name))
+        cigar_numbers = cigar_numbers - {'10', '25', '50', '3', '5', '20'}  # Remove box sizes
+        
+        for product in products:
+            try:
+                # Get product text
+                product_text = product.inner_text().lower()
+                first_line = product_text.split('\n')[0] if product_text else ''
+                
+                # Check if this is the right product
+                # 1. Brand must be present
+                if search_brand.split()[0] not in first_line:
+                    continue
+                
+                # 2. Key name words must be present
+                name_words = [w for w in search_name.split() if len(w) > 3 and not w.isdigit()]
+                if name_words:
+                    matches = sum(1 for w in name_words if w in first_line)
+                    if matches < len(name_words) * 0.5:
+                        continue
+                
+                # 3. CRITICAL: Numbers must match exactly
+                if cigar_numbers:
+                    product_numbers = set(re.findall(r'\b(\d+)\b', first_line))
+                    product_numbers = product_numbers - {'10', '25', '50', '3', '5', '20'}
+                    
+                    # Must have our target number
+                    if not cigar_numbers.issubset(product_numbers):
+                        continue
+                    
+                    # Must NOT have other variant numbers (e.g., 52 when looking for 56)
+                    other_variants = {'52', '54', '56'} - cigar_numbers
+                    if product_numbers & other_variants:
+                        continue
+                
+                # Found the right product! Get price for our box size
+                buttons = product.query_selector_all('button[data-price]')
+                for btn in buttons:
+                    btn_text = btn.inner_text().strip()
+                    if f'Box of {box_size}' in btn_text:
+                        price_attr = btn.get_attribute('data-price')
+                        if price_attr:
+                            # Parse "£7,000.00" format
+                            price_match = re.search(r'£([\d,]+(?:\.\d{2})?)', price_attr)
+                            if price_match:
+                                price = float(price_match.group(1).replace(',', ''))
+                                if price > 200:
+                                    page.close()
+                                    per_cigar = price / box_size
+                                    print(f"    ✓ Found: £{price:,.2f} (£{per_cigar:.2f}/cigar)")
+                                    return {"source": "JJ Fox", "url": url, "box_price": price}
+                
+            except Exception as e:
+                continue
+        
+        # No match found
+        page.close()
+        print(f"    ✗ No exact match for {brand} {name} Box of {box_size}")
         return None
-    
-    price = extract_jjfox_box_price(html, box_size, brand, name)
-    if price:
-        per_cigar = price / box_size
-        print(f"    ✓ Found: £{price:,.2f} (£{per_cigar:.2f}/cigar)")
-        return {"source": "JJ Fox", "url": url, "box_price": price}
-    
-    found_sizes = re.findall(r'Box of (\d+)', html, re.IGNORECASE)
-    if found_sizes:
-        print(f"    ✗ No Box of {box_size} found for correct product (found sizes: {list(set(found_sizes))})")
-    else:
-        print(f"    ✗ No results")
-    return None
+        
+    except Exception as e:
+        print(f"    ✗ Error: {str(e)[:100]}")
+        return None
 
 
 def calculate_discrepancy(price1, price2):
@@ -639,6 +646,9 @@ def main():
     save_prices(prices)
     update_history(prices)
     generate_js_prices(prices)
+    
+    # Cleanup
+    close_browser()
     
     print("\n" + "="*70)
     print("DONE!")
