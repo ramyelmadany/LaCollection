@@ -25,7 +25,7 @@ jobs:
       - name: Run scraper
         run: |
           cd scripts
-          python uk_price_scraper_v7.py
+          python uk_price_scraper_v8.py
           
       - name: Copy prices to src folder
         run: |
