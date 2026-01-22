@@ -22,7 +22,7 @@ jobs:
       - name: Run scraper
         run: |
           cd scripts
-          python uk_price_scraper.py <<< "1"
+          python uk_price_scraper_v3.py <<< "1"
           
       - name: Copy prices to src
         run: |
