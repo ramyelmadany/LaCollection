@@ -34,6 +34,7 @@ ssl_context.verify_mode = ssl.CERT_NONE
 
 # Google Sheet configuration
 SHEET_ID = "10A_FMj8eotx-xlzAlCNFxjOr3xEOuO4p5GxAZjHC86A"
+# Export the first sheet (gid=1253000469 is the Cigar Inventory sheet)
 SHEET_CSV_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv&gid=1253000469"
 
 # Retailer URLs
@@ -73,18 +74,51 @@ def fetch_inventory_from_sheet():
         print("  Failed to fetch inventory")
         return []
     
-    # Parse CSV
-    reader = csv.DictReader(io.StringIO(csv_data))
+    # Debug: print first few lines
+    lines = csv_data.split('\n')
+    print(f"  Downloaded {len(lines)} lines")
+    print(f"  First line: {lines[0][:100]}...")
+    if len(lines) > 1:
+        print(f"  Second line: {lines[1][:100]}...")
+    
+    # The sheet has a title row first, then headers on row 2
+    # We need to find the header row (contains "Brand", "Name", etc.)
+    header_row_idx = None
+    for i, line in enumerate(lines):
+        if 'Brand' in line and 'Name' in line:
+            header_row_idx = i
+            print(f"  Found header row at line {i + 1}")
+            break
+    
+    if header_row_idx is None:
+        print("  ERROR: Could not find header row with 'Brand' and 'Name'")
+        # Try to parse anyway assuming headers are in row 2 (index 1)
+        header_row_idx = 1
+    
+    # Skip rows before header and parse CSV
+    csv_content = '\n'.join(lines[header_row_idx:])
+    reader = csv.DictReader(io.StringIO(csv_content))
+    
+    # Debug: print column names
+    if reader.fieldnames:
+        print(f"  Columns found: {reader.fieldnames[:8]}...")
     
     # Extract unique cigars with their box sizes
     cigars = {}
+    row_count = 0
     
     for row in reader:
+        row_count += 1
         brand = row.get('Brand', '').strip()
         name = row.get('Name', '').strip()
         box_size_str = row.get('Number / Box', '').strip()
         
-        if not brand or not name:
+        # Skip empty rows or header-like rows
+        if not brand or not name or brand == 'Brand':
+            continue
+        
+        # Skip rows that are section headers (like "Onward: Table 1")
+        if 'Table' in brand or 'Subtotal' in brand:
             continue
         
         # Parse box size
@@ -102,18 +136,23 @@ def fetch_inventory_from_sheet():
                 "name": name,
                 "box_size": box_size,
                 "search_jjfox": create_jjfox_search(brand, name),
-                "search_cgars": name,  # For PDF matching
+                "search_cgars": name,
             }
     
     inventory = list(cigars.values())
-    print(f"  Found {len(inventory)} unique cigars in inventory")
+    print(f"  Processed {row_count} rows, found {len(inventory)} unique cigars")
+    
+    # Debug: print what we found
+    if inventory:
+        print(f"  Sample cigars found:")
+        for c in inventory[:5]:
+            print(f"    - {c['brand']} {c['name']} (box of {c['box_size']})")
     
     return inventory
 
 
 def create_jjfox_search(brand, name):
     """Create optimized search query for JJ Fox."""
-    # Combine brand and name, clean up for search
     query = f"{brand} {name}".lower()
     
     # Simplify some common variations
@@ -145,7 +184,6 @@ def scrape_jjfox(cigar):
     for m in matches:
         try:
             price = float(m.replace(',', ''))
-            # Filter: box prices for premium cigars typically £100-£25,000
             if 100 < price < 25000:
                 prices.append(price)
         except ValueError:
@@ -155,17 +193,12 @@ def scrape_jjfox(cigar):
         print(f"      No valid prices found")
         return None
     
-    # Get unique prices, sorted
     prices = sorted(set(prices))
-    
-    # Try to find price closest to expected box price
-    # Heuristic: premium Cuban boxes are typically £200-£5000
     box_prices = [p for p in prices if p >= 150]
     
     if not box_prices:
         return None
     
-    # Take the lowest box price (usually the standard box)
     box_price = min(box_prices)
     
     result = {
@@ -191,31 +224,25 @@ def scrape_cgars_pdf():
     
     print(f"  Downloaded {len(pdf_data):,} bytes")
     
-    # Extract text from PDF
-    # PDFs encode text in various ways - we'll try multiple approaches
     try:
         text = pdf_data.decode('latin-1', errors='ignore')
         
-        # CGars PDF typically has format like:
-        # "Product Name" followed by price "£XXX.XX"
         prices = {}
         
-        # Look for price patterns
-        # Pattern 1: Name followed by price
+        # Pattern for prices
         pattern1 = r'([A-Za-z][A-Za-z\s\d\-\.]+?)\s+£\s*([\d,]+(?:\.\d{2})?)'
         matches1 = re.findall(pattern1, text)
         
         for name, price in matches1:
             name = name.strip().lower()
-            if len(name) > 3:  # Filter out tiny matches
+            if len(name) > 3:
                 try:
                     price_val = float(price.replace(',', ''))
-                    if 50 < price_val < 30000:  # Valid price range
+                    if 50 < price_val < 30000:
                         prices[name] = price_val
                 except ValueError:
                     continue
         
-        # Pattern 2: Look for cigar-specific terms
         pattern2 = r'(siglo|behike|robusto|lancero|corona|magico|genio|lusitan|brillante|leyenda|esmeralda|trinidad|cohiba|montecristo|partagas|bolivar|hoyo|allones)[^\£]*£\s*([\d,]+(?:\.\d{2})?)'
         matches2 = re.findall(pattern2, text.lower())
         
@@ -240,14 +267,12 @@ def find_cgars_price(cgars_prices, cigar):
     brand = cigar["brand"].lower()
     name = cigar["name"].lower()
     
-    # Try various matching strategies
     search_terms = [
         f"{brand} {name}",
         name,
-        name.split()[0] if name else "",  # First word of name
+        name.split()[0] if name else "",
     ]
     
-    # Also add specific vitola terms
     vitola_terms = ["siglo vi", "siglo i", "behike 52", "behike 56", "robusto extra", 
                    "lanceros", "lusitanias", "brillantes", "leyendas", "esmeralda",
                    "double corona", "petit robusto", "medio siglo", "genios", "magicos"]
@@ -270,13 +295,11 @@ def scrape_all_prices(inventory):
     """Scrape prices from all sources for all cigars in inventory."""
     results = {}
     
-    # First, get CGars PDF prices (one download for all cigars)
     print("\n" + "="*60)
     print("STEP 1: CGARS PDF")
     print("="*60)
     cgars_prices = scrape_cgars_pdf()
     
-    # Now scrape JJ Fox for each cigar
     print("\n" + "="*60)
     print("STEP 2: JJ FOX SEARCH")
     print("="*60)
@@ -299,7 +322,7 @@ def scrape_all_prices(inventory):
         if jjfox_result and jjfox_result.get("box_price"):
             results[key]["sources"]["jjfox"] = jjfox_result
         
-        # CGars (from PDF)
+        # CGars
         cgars_price = find_cgars_price(cgars_prices, cigar)
         if cgars_price:
             results[key]["sources"]["cgars"] = {
@@ -310,7 +333,7 @@ def scrape_all_prices(inventory):
         else:
             print(f"    CGars: Not found in PDF")
         
-        # Calculate average from available sources
+        # Calculate average
         box_prices = []
         for source_data in results[key]["sources"].values():
             if source_data.get("box_price"):
@@ -320,7 +343,6 @@ def scrape_all_prices(inventory):
             results[key]["avg_box_price"] = sum(box_prices) / len(box_prices)
             print(f"    → Average: £{results[key]['avg_box_price']:.2f} ({len(box_prices)} source{'s' if len(box_prices) > 1 else ''})")
         
-        # Rate limiting - be nice to JJ Fox
         time.sleep(1.5)
     
     return results
@@ -358,14 +380,12 @@ def update_history(prices, history_file="price_history.json"):
                 "sources": list(data["sources"].keys()),
             }
     
-    # Check if we already have an entry for today
     existing_idx = next((i for i, e in enumerate(history) if e["date"] == today), None)
     if existing_idx is not None:
         history[existing_idx] = entry
     else:
         history.append(entry)
     
-    # Keep last 52 weeks
     history = history[-52:]
     
     with open(history_file, 'w') as f:
@@ -376,7 +396,6 @@ def update_history(prices, history_file="price_history.json"):
 def generate_js_prices(prices, output_file="uk_market_prices.js"):
     """Generate JavaScript module for use in the React app."""
     
-    # Group by brand
     brands = {}
     for key, data in prices.items():
         brand = data["brand"]
@@ -396,7 +415,6 @@ def generate_js_prices(prices, output_file="uk_market_prices.js"):
     js_content = f"""// UK Market Prices - Auto-generated by uk_price_scraper_v3.py
 // Last updated: {datetime.now().strftime("%Y-%m-%d %H:%M")}
 // Sources: JJ Fox (search), CGars Ltd (PDF)
-// Prices are averaged from available sources
 
 export const ukMarketPrices = {json.dumps(brands, indent=2)};
 
@@ -421,7 +439,7 @@ def main():
     print("Sources: JJ Fox (search), CGars (PDF)")
     print("Inventory: Google Sheet")
     
-    # Step 1: Fetch inventory from Google Sheet
+    # Step 1: Fetch inventory
     print("\n" + "="*60)
     print("LOADING INVENTORY")
     print("="*60)
@@ -429,11 +447,12 @@ def main():
     
     if not inventory:
         print("ERROR: Could not load inventory. Exiting.")
+        # Create empty output files so the workflow doesn't fail
+        save_prices({})
+        generate_js_prices({})
         return
     
-    print(f"\nWill search for {len(inventory)} unique cigars:")
-    for cigar in inventory:
-        print(f"  - {cigar['brand']} {cigar['name']} (box of {cigar['box_size']})")
+    print(f"\nWill search for {len(inventory)} unique cigars")
     
     # Step 2: Scrape prices
     prices = scrape_all_prices(inventory)
@@ -446,21 +465,7 @@ def main():
     found = sum(1 for p in prices.values() if p.get("avg_box_price"))
     print(f"Found prices for {found}/{len(inventory)} cigars")
     
-    # List what was found
-    print("\nPrices found:")
-    for key, data in prices.items():
-        if data.get("avg_box_price"):
-            sources = ", ".join(data["sources"].keys())
-            print(f"  {data['brand']} {data['name']}: £{data['avg_box_price']:.2f} ({sources})")
-    
-    # List what was NOT found
-    missing = [f"{d['brand']} {d['name']}" for d in prices.values() if not d.get("avg_box_price")]
-    if missing:
-        print(f"\nNo prices found for:")
-        for m in missing:
-            print(f"  - {m}")
-    
-    # Step 4: Save outputs
+    # Save outputs
     save_prices(prices)
     update_history(prices)
     generate_js_prices(prices)
