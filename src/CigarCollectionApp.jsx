@@ -1484,7 +1484,7 @@ export default function CigarCollectionApp() {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#1a120b' }}>
         <div className="text-center">
-          <h1 className="text-2xl tracking-widest font-semibold mb-4" style={{ color: '#d4af37' }}>La Colección de Ramy El-Madany</h1>
+          <h1 className="text-2xl tracking-widest font-semibold mb-4" style={{ color: '#d4af37' }}>LA COLECCIÓN</h1>
           <div className="text-gray-400">Loading from Google Sheets...</div>
         </div>
       </div>
@@ -1499,7 +1499,7 @@ export default function CigarCollectionApp() {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl tracking-widest font-semibold" style={{ color: '#d4af37' }}>La Colección de Ramy El-Madany</h1>
+              <h1 className="text-xl tracking-widest font-semibold" style={{ color: '#d4af37' }}>LA COLECCIÓN</h1>
               <button 
                 onClick={refreshData}
                 className="w-6 h-6 rounded-full flex items-center justify-center text-xs"
