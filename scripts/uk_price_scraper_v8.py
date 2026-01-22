@@ -192,14 +192,30 @@ def normalize_name(name):
 
 
 def find_cgars_price(cgars_prices, brand, name, box_size):
-    """Find a price match in CGars PDF data."""
+    """Find a price match in CGars PDF data. Requires brand name to match."""
     if not cgars_prices:
         return None
     
     search_name = normalize_name(name)
     search_brand = normalize_name(brand)
     
-    # Try exact match on name
+    # Brand name variations for matching
+    brand_aliases = {
+        'hoyo de monterrey': ['hoyo', 'hoyo de monterrey'],
+        'romeo y julieta': ['romeo', 'romeo y julieta', 'ryj'],
+        'h. upmann': ['h upmann', 'h. upmann', 'upmann'],
+        'ramon allones': ['ramon allones', 'r allones'],
+        'quai d\'orsay': ['quai dorsay', 'quai d\'orsay'],
+    }
+    
+    # Get all brand variations to search for
+    brand_variants = [search_brand]
+    for key, aliases in brand_aliases.items():
+        if search_brand in aliases or key == search_brand:
+            brand_variants.extend(aliases)
+    brand_variants = list(set(brand_variants))
+    
+    # Search for matches - MUST contain brand name
     for pdf_key, data in cgars_prices.items():
         pdf_name = normalize_name(data["name"])
         pdf_box = data["box_size"]
@@ -207,30 +223,30 @@ def find_cgars_price(cgars_prices, brand, name, box_size):
         if pdf_box != box_size:
             continue
         
+        # Check if brand is present in PDF name
+        brand_found = any(variant in pdf_name for variant in brand_variants)
+        if not brand_found:
+            continue
+        
+        # Now check if cigar name matches
+        # Option 1: Exact cigar name match
         if search_name == pdf_name:
             return data["price"]
         
-        if search_name in pdf_name or pdf_name in search_name:
-            return data["price"]
-    
-    # Try matching with brand prefix
-    full_search = f"{search_brand} {search_name}"
-    for pdf_key, data in cgars_prices.items():
-        pdf_name = normalize_name(data["name"])
-        pdf_box = data["box_size"]
-        
-        if pdf_box != box_size:
-            continue
-        
+        # Option 2: Cigar name is contained in PDF name (after brand check)
         if search_name in pdf_name:
             return data["price"]
         
-        search_words = set(full_search.split())
-        pdf_words = set(pdf_name.split())
-        common = search_words & pdf_words
+        # Option 3: PDF name contains both brand and key cigar name words
+        name_words = search_name.split()
+        # Require at least 2 significant words to match (excluding common words)
+        skip_words = {'de', 'la', 'el', 'los', 'y', 'no', 'box', 'of'}
+        significant_words = [w for w in name_words if w not in skip_words and len(w) > 2]
         
-        if len(common) >= 2 and len(common) >= len(search_words) * 0.5:
-            return data["price"]
+        if significant_words:
+            matches = sum(1 for w in significant_words if w in pdf_name)
+            if matches >= len(significant_words) * 0.7:  # 70% of significant words match
+                return data["price"]
     
     return None
 
