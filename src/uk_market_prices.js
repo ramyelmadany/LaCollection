@@ -1,7 +1,6 @@
 // UK Market Prices - Auto-generated
-// Last updated: 2026-01-22 14:21
+// Last updated: 2026-01-22 17:40
 // Sources: CGars + JJ Fox (averaged if within 30% discrepancy)
-// Matching: STRICT - only exact "Box of X" matches accepted
 // NOTE: These are BOX prices, not single cigar prices
 
 export const ukMarketPrices = {
@@ -24,6 +23,5 @@ export const priceMetadata = {
   sources: ["CGars", "JJ Fox"],
   currency: "GBP",
   priceType: "box",
-  matchingMode: "strict",
   discrepancyThreshold: 0.3
 };
