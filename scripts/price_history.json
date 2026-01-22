@@ -1,0 +1,182 @@
+[
+  {
+    "date": "2026-01-22",
+    "prices": {
+      "Montecristo|Brilllantes": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 18,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Trinidad|Robusto Extra": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 12,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Montecristo|Leyendas": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 20,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Hoyo de Monterrey|Destinos": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 20,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Ramon Allones|Absolutos": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 20,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Hoyo de Monterrey|Double Corona": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 50,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Bolivar|New Gold Medal": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 10,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Partagas|Lusitinas": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 10,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Cohiba|Vistosos": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 10,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Cohiba|Siglo VI": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 25,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Cohiba|Maduro 5 Genios": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 25,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Cohiba|Maduro 5 Magicos": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 25,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Cohiba|Behike 52": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 10,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Partagas|Linea Maestra Maestros": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 20,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Hoyo de Monterrey|Petit Robustos": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 25,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Cohiba|Siglo I": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 25,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Cohiba|Medio Siglo": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 25,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Cohiba|Behike 56": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 10,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Trinidad|Esmerelda": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 12,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Cohiba|Lanceros": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 25,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Name|Quantity Purchased (Boxes)": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 25,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Topes|1": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 25,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Vistosos|1": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 25,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Robusto Extra|1": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 25,
+        "sources": [
+          "jjfox"
+        ]
+      },
+      "Linea Maestra Origen|1": {
+        "avg_box_price_gbp": 150.0,
+        "box_size": 25,
+        "sources": [
+          "jjfox"
+        ]
+      }
+    }
+  }
+]
