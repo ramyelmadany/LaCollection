@@ -5,7 +5,7 @@
     "box_size": 18,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T21:09:52.451711",
+    "scraped_at": "2026-01-22T21:19:37.041372",
     "sources_used": [],
     "price_method": "none"
   },
@@ -15,7 +15,7 @@
     "box_size": 12,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T21:09:55.416489",
+    "scraped_at": "2026-01-22T21:19:48.044458",
     "sources_used": [],
     "price_method": "none"
   },
@@ -25,7 +25,7 @@
     "box_size": 20,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T21:09:58.420684",
+    "scraped_at": "2026-01-22T21:19:56.734123",
     "sources_used": [],
     "price_method": "none"
   },
@@ -35,7 +35,7 @@
     "box_size": 20,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T21:10:01.308886",
+    "scraped_at": "2026-01-22T21:20:05.650770",
     "sources_used": [],
     "price_method": "none"
   },
@@ -45,7 +45,7 @@
     "box_size": 20,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T21:10:04.188875",
+    "scraped_at": "2026-01-22T21:20:14.376778",
     "sources_used": [],
     "price_method": "none"
   },
@@ -59,7 +59,7 @@
       }
     },
     "final_price": 3823.0,
-    "scraped_at": "2026-01-22T21:10:06.967622",
+    "scraped_at": "2026-01-22T21:20:22.962429",
     "sources_used": [
       "cgars_pdf"
     ],
@@ -75,7 +75,7 @@
       }
     },
     "final_price": 899.99,
-    "scraped_at": "2026-01-22T21:10:09.815991",
+    "scraped_at": "2026-01-22T21:20:31.560762",
     "sources_used": [
       "cgars_pdf"
     ],
@@ -87,7 +87,7 @@
     "box_size": 10,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T21:10:12.436556",
+    "scraped_at": "2026-01-22T21:20:40.015362",
     "sources_used": [],
     "price_method": "none"
   },
@@ -97,7 +97,7 @@
     "box_size": 10,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T21:10:15.461390",
+    "scraped_at": "2026-01-22T21:20:48.692245",
     "sources_used": [],
     "price_method": "none"
   },
@@ -111,7 +111,7 @@
       }
     },
     "final_price": 3199.0,
-    "scraped_at": "2026-01-22T21:10:18.349931",
+    "scraped_at": "2026-01-22T21:20:57.350805",
     "sources_used": [
       "cgars_pdf"
     ],
@@ -121,11 +121,19 @@
     "brand": "Cohiba",
     "name": "Maduro 5 Genios",
     "box_size": 25,
-    "sources": {},
-    "final_price": null,
-    "scraped_at": "2026-01-22T21:10:21.286089",
-    "sources_used": [],
-    "price_method": "none"
+    "sources": {
+      "jjfox": {
+        "source": "JJ Fox",
+        "url": "https://www.jjfox.co.uk/search/cohiba+maduro+5+genios",
+        "box_price": 2700.0
+      }
+    },
+    "final_price": 2700.0,
+    "scraped_at": "2026-01-22T21:21:05.959418",
+    "sources_used": [
+      "jjfox"
+    ],
+    "price_method": "jjfox_only"
   },
   "Cohiba|Maduro 5 Magicos|25": {
     "brand": "Cohiba",
@@ -134,14 +142,20 @@
     "sources": {
       "cgars_pdf": {
         "box_price": 2629.0
+      },
+      "jjfox": {
+        "source": "JJ Fox",
+        "url": "https://www.jjfox.co.uk/search/cohiba+maduro+5+magicos",
+        "box_price": 2700.0
       }
     },
-    "final_price": 2629.0,
-    "scraped_at": "2026-01-22T21:10:24.396991",
+    "final_price": 2664.5,
+    "scraped_at": "2026-01-22T21:21:14.762682",
     "sources_used": [
-      "cgars_pdf"
+      "cgars_pdf",
+      "jjfox"
     ],
-    "price_method": "cgars_only"
+    "price_method": "averaged"
   },
   "Cohiba|Behike 52|10": {
     "brand": "Cohiba",
@@ -153,7 +167,7 @@
       }
     },
     "final_price": 3399.0,
-    "scraped_at": "2026-01-22T21:10:27.498317",
+    "scraped_at": "2026-01-22T21:21:23.651015",
     "sources_used": [
       "cgars_pdf"
     ],
@@ -165,7 +179,7 @@
     "box_size": 20,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T21:10:30.339411",
+    "scraped_at": "2026-01-22T21:21:32.326011",
     "sources_used": [],
     "price_method": "none"
   },
@@ -175,7 +189,7 @@
     "box_size": 25,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T21:10:33.200631",
+    "scraped_at": "2026-01-22T21:21:41.057923",
     "sources_used": [],
     "price_method": "none"
   },
@@ -189,7 +203,7 @@
       }
     },
     "final_price": 813.0,
-    "scraped_at": "2026-01-22T21:10:36.269456",
+    "scraped_at": "2026-01-22T21:21:49.780381",
     "sources_used": [
       "cgars_pdf"
     ],
@@ -205,7 +219,7 @@
       }
     },
     "final_price": 1635.0,
-    "scraped_at": "2026-01-22T21:10:39.079721",
+    "scraped_at": "2026-01-22T21:21:58.637099",
     "sources_used": [
       "cgars_pdf"
     ],
@@ -215,11 +229,19 @@
     "brand": "Cohiba",
     "name": "Behike 56",
     "box_size": 10,
-    "sources": {},
-    "final_price": null,
-    "scraped_at": "2026-01-22T21:10:41.934901",
-    "sources_used": [],
-    "price_method": "none"
+    "sources": {
+      "jjfox": {
+        "source": "JJ Fox",
+        "url": "https://www.jjfox.co.uk/search/cohiba+behike+56",
+        "box_price": 7000.0
+      }
+    },
+    "final_price": 7000.0,
+    "scraped_at": "2026-01-22T21:22:07.380177",
+    "sources_used": [
+      "jjfox"
+    ],
+    "price_method": "jjfox_only"
   },
   "Trinidad|Esmerelda|12": {
     "brand": "Trinidad",
@@ -227,7 +249,7 @@
     "box_size": 12,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T21:10:44.725452",
+    "scraped_at": "2026-01-22T21:22:15.931865",
     "sources_used": [],
     "price_method": "none"
   },
@@ -237,7 +259,7 @@
     "box_size": 25,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T21:10:47.604398",
+    "scraped_at": "2026-01-22T21:22:24.599082",
     "sources_used": [],
     "price_method": "none"
   },
@@ -251,7 +273,7 @@
       }
     },
     "final_price": 1355.0,
-    "scraped_at": "2026-01-22T21:10:50.477807",
+    "scraped_at": "2026-01-22T21:22:33.226817",
     "sources_used": [
       "cgars_pdf"
     ],
@@ -263,7 +285,7 @@
     "box_size": 25,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T21:10:53.323832",
+    "scraped_at": "2026-01-22T21:22:41.927392",
     "sources_used": [],
     "price_method": "none"
   },
@@ -273,7 +295,7 @@
     "box_size": 25,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T21:10:56.328011",
+    "scraped_at": "2026-01-22T21:22:50.704904",
     "sources_used": [],
     "price_method": "none"
   },
@@ -283,7 +305,7 @@
     "box_size": 25,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T21:10:59.324246",
+    "scraped_at": "2026-01-22T21:22:59.389231",
     "sources_used": [],
     "price_method": "none"
   },
@@ -293,7 +315,7 @@
     "box_size": 25,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T21:11:02.306780",
+    "scraped_at": "2026-01-22T21:23:08.111685",
     "sources_used": [],
     "price_method": "none"
   },
@@ -303,7 +325,7 @@
     "box_size": 25,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T21:11:05.568050",
+    "scraped_at": "2026-01-22T21:23:16.977282",
     "sources_used": [],
     "price_method": "none"
   }
