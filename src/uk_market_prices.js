@@ -1,10 +1,20 @@
 // UK Market Prices - Auto-generated
-// Last updated: 2026-01-22 21:23
+// Last updated: 2026-01-22 21:40
 // Sources: CGars PDF + JJ Fox (averaged if within 30%)
 // NOTE: These are BOX prices
 
 export const ukMarketPrices = {
-  "Montecristo": {},
+  "Montecristo": {
+    "Brillantes (Box of 18)": {
+      "boxPrice": 3598.0,
+      "boxSize": 18,
+      "perCigar": 199.89,
+      "sources": [
+        "cgars_pdf"
+      ],
+      "method": "cgars_high_discrepancy"
+    }
+  },
   "Trinidad": {},
   "Hoyo de Monterrey": {
     "Double Corona (Box of 50)": {
@@ -40,15 +50,6 @@ export const ukMarketPrices = {
       ],
       "method": "cgars_only"
     },
-    "Maduro 5 Genios (Box of 25)": {
-      "boxPrice": 2700.0,
-      "boxSize": 25,
-      "perCigar": 108.0,
-      "sources": [
-        "jjfox"
-      ],
-      "method": "jjfox_only"
-    },
     "Maduro 5 Magicos (Box of 25)": {
       "boxPrice": 2664.5,
       "boxSize": 25,
@@ -66,7 +67,7 @@ export const ukMarketPrices = {
       "sources": [
         "cgars_pdf"
       ],
-      "method": "cgars_only"
+      "method": "cgars_high_discrepancy"
     },
     "Siglo I (Box of 25)": {
       "boxPrice": 813.0,

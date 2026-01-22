@@ -2,6 +2,13 @@
   {
     "date": "2026-01-22",
     "prices": {
+      "Montecristo|Brillantes|18": {
+        "box_price_gbp": 3598.0,
+        "box_size": 18,
+        "sources_used": [
+          "cgars_pdf"
+        ]
+      },
       "Hoyo de Monterrey|Double Corona|50": {
         "box_price_gbp": 3823.0,
         "box_size": 50,
@@ -21,13 +28,6 @@
         "box_size": 25,
         "sources_used": [
           "cgars_pdf"
-        ]
-      },
-      "Cohiba|Maduro 5 Genios|25": {
-        "box_price_gbp": 2700.0,
-        "box_size": 25,
-        "sources_used": [
-          "jjfox"
         ]
       },
       "Cohiba|Maduro 5 Magicos|25": {
