@@ -2,9 +2,9 @@ name: Scrape UK Cigar Prices
 
 on:
   schedule:
-    # Runs every Monday at 6am UTC
+    # Run every Monday at 6am UTC
     - cron: '0 6 * * 1'
-  workflow_dispatch: # Allows manual trigger
+  workflow_dispatch:  # Allow manual trigger
 
 permissions:
   contents: write
@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
         
       - name: Set up Python
@@ -25,17 +25,17 @@ jobs:
       - name: Run scraper
         run: |
           cd scripts
-          python uk_price_scraper_v5.py
+          python uk_price_scraper_v6.py
           
-      - name: Copy prices to src
+      - name: Copy prices to src folder
         run: |
-          cp scripts/uk_market_prices.js src/uk_market_prices.js 2>/dev/null || true
-          cp scripts/prices.json src/prices.json 2>/dev/null || true
+          cp scripts/uk_market_prices.js src/uk_market_prices.js
+          cp scripts/prices.json src/prices.json
           
-      - name: Commit and push
+      - name: Commit and push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add -A
+          git add scripts/prices.json scripts/price_history.json scripts/uk_market_prices.js src/uk_market_prices.js src/prices.json
           git diff --staged --quiet || git commit -m "Update UK market prices [auto]"
           git push
