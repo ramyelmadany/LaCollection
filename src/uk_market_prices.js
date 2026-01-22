@@ -1,5 +1,5 @@
 // UK Market Prices - Auto-generated
-// Last updated: 2026-01-22 19:57
+// Last updated: 2026-01-22 20:19
 // Sources: CGars PDF + JJ Fox (averaged if within 30%)
 // NOTE: These are BOX prices
 
@@ -76,15 +76,6 @@ export const ukMarketPrices = {
       ],
       "method": "cgars_only"
     },
-    "Behike 56 (Box of 10)": {
-      "boxPrice": 1370.0,
-      "boxSize": 10,
-      "perCigar": 137.0,
-      "sources": [
-        "jjfox"
-      ],
-      "method": "jjfox_only"
-    },
     "Siglo VI (Box of 10)": {
       "boxPrice": 1355.0,
       "boxSize": 10,
@@ -92,7 +83,7 @@ export const ukMarketPrices = {
       "sources": [
         "cgars_pdf"
       ],
-      "method": "cgars_high_discrepancy"
+      "method": "cgars_only"
     }
   },
   "Name": {},
