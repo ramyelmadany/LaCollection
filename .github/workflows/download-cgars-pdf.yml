@@ -1,0 +1,46 @@
+name: Download CGars PDF
+
+on:
+  schedule:
+    # Run every Sunday at 5am UTC (before the price scraper runs Monday)
+    - cron: '0 5 * * 0'
+  workflow_dispatch:  # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  download-pdf:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Download CGars PDF
+        run: |
+          echo "Downloading CGars pricelist PDF..."
+          curl -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
+               -H "Accept: application/pdf,*/*" \
+               -H "Accept-Language: en-GB,en;q=0.9" \
+               -o scripts/cgars_pricelist.pdf \
+               "https://www.cgarsltd.co.uk/pdf/CG_Pricelist_CIGARS.pdf"
+          
+          # Check if we got a valid PDF
+          if file scripts/cgars_pricelist.pdf | grep -q "PDF"; then
+            echo "✓ Successfully downloaded PDF"
+            ls -la scripts/cgars_pricelist.pdf
+          else
+            echo "✗ Downloaded file is not a PDF"
+            file scripts/cgars_pricelist.pdf
+            head -c 500 scripts/cgars_pricelist.pdf
+            exit 1
+          fi
+          
+      - name: Commit PDF if changed
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add scripts/cgars_pricelist.pdf
+          git diff --staged --quiet || git commit -m "Update CGars pricelist PDF [auto]"
+          git push
