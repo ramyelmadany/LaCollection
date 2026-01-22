@@ -272,12 +272,12 @@ const brandImages = {
 
 // Brand styling - based on authentic cigar band colors
 const brandStyles = {
-  'Cohiba': { bg: 'linear-gradient(145deg, #4A0E0E, #2d2d2d)', text: '#FFD700', accent: '#FFD700', border: '#FFD700' }, // Black & gold
+  'Cohiba': { bg: 'linear-gradient(145deg, #1a1a1a, #2d2d2d)', text: '#FFD700', accent: '#FFD700', border: '#FFD700' }, // Black & gold
   'Trinidad': { bg: 'linear-gradient(145deg, #4A0E0E, #722F37)', text: '#D4AF37', accent: '#D4AF37', border: '#D4AF37' }, // Burgundy & gold
   'Montecristo': { bg: 'linear-gradient(145deg, #8B0000, #A52A2A)', text: '#FFD700', accent: '#FFD700', border: '#FFD700' }, // Red & gold
   'Hoyo de Monterrey': { bg: 'linear-gradient(145deg, #2F4F4F, #3D5C5C)', text: '#F5DEB3', accent: '#C9A227', border: '#C9A227' }, // Dark green & cream
   'Ramon Allones': { bg: 'linear-gradient(145deg, #228B22, #2E8B2E)', text: '#FFFFFF', accent: '#DC143C', border: '#DC143C' }, // Green & red
-  'Bolivar': { bg: 'linear-gradient(145deg, #DAA520, #B8860B)', text: '#4A0E0E', accent: '#4A0E0E', border: '#8B4513' }, // Gold & black
+  'Bolivar': { bg: 'linear-gradient(145deg, #DAA520, #B8860B)', text: '#1a1a1a', accent: '#1a1a1a', border: '#8B4513' }, // Gold & black
   'Partagas': { bg: 'linear-gradient(145deg, #8B0000, #A52A2A)', text: '#FFD700', accent: '#FFD700', border: '#FFD700' }, // Crimson & gold
   'H. Upmann': { bg: 'linear-gradient(145deg, #8B4513, #A0522D)', text: '#FFD700', accent: '#FFD700', border: '#FFD700' }, // Brown & gold
   'Punch': { bg: 'linear-gradient(145deg, #B22222, #CD5C5C)', text: '#FFD700', accent: '#FFD700', border: '#FFD700' }, // Red & gold
@@ -447,7 +447,7 @@ const OnwardsCard = ({ item, fmtCurrency }) => {
   const isPending = item.type === 'pending';
   
   return (
-    <div className="rounded-lg overflow-hidden" style={{ background: '#4A0E0E', border: '1px solid #333' }}>
+    <div className="rounded-lg overflow-hidden" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
       <div className="p-3" style={{ borderLeft: `3px solid ${s.accent}` }}>
         <div className="flex justify-between items-start mb-2">
           <div>
@@ -512,8 +512,8 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency }) => {
   
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
-      <div className="w-full max-w-md rounded-t-2xl max-h-[90vh] overflow-y-auto" style={{ background: '#4A0E0E', border: '1px solid #333' }} onClick={e => e.stopPropagation()}>
-        <div className="sticky top-0 z-10 p-4 flex justify-between items-start" style={{ background: '#4A0E0E', borderBottom: '1px solid #333' }}>
+      <div className="w-full max-w-md rounded-t-2xl max-h-[90vh] overflow-y-auto" style={{ background: '#1a1a1a', border: '1px solid #333' }} onClick={e => e.stopPropagation()}>
+        <div className="sticky top-0 z-10 p-4 flex justify-between items-start" style={{ background: '#1a1a1a', borderBottom: '1px solid #333' }}>
           <div>
             <h3 className="text-4xl font-bold" style={{ color: '#d4af37' }}>{box.brand}</h3>
             <p className="text-2xl text-gray-300">{box.name}</p>
@@ -635,8 +635,8 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
   
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.9)' }}>
-      <div className="w-full max-w-sm rounded-xl max-h-[85vh] overflow-y-auto" style={{ background: '#4A0E0E', border: '1px solid #333' }}>
-        <div className="sticky top-0 p-4 flex justify-between items-center" style={{ background: '#4A0E0E', borderBottom: '1px solid #333' }}>
+      <div className="w-full max-w-sm rounded-xl max-h-[85vh] overflow-y-auto" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+        <div className="sticky top-0 p-4 flex justify-between items-center" style={{ background: '#1a1a1a', borderBottom: '1px solid #333' }}>
           <h3 className="text-lg font-semibold" style={{ color: '#d4af37' }}>Log Smoke</h3>
           <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#333', color: '#888' }}>x</button>
         </div>
@@ -806,8 +806,8 @@ const AddBoxModal = ({ boxes, onClose, onAdd }) => {
   
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center p-4" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
-      <div className="w-full max-w-md rounded-xl max-h-[85vh] overflow-y-auto" style={{ background: '#4A0E0E', border: '1px solid #333' }} onClick={e => e.stopPropagation()}>
-        <div className="sticky top-0 z-10 p-4 flex justify-between items-center" style={{ background: '#4A0E0E', borderBottom: '1px solid #333' }}>
+      <div className="w-full max-w-md rounded-xl max-h-[85vh] overflow-y-auto" style={{ background: '#1a1a1a', border: '1px solid #333' }} onClick={e => e.stopPropagation()}>
+        <div className="sticky top-0 z-10 p-4 flex justify-between items-center" style={{ background: '#1a1a1a', borderBottom: '1px solid #333' }}>
           <h3 className="text-lg font-semibold" style={{ color: '#d4af37' }}>Add New Box</h3>
           <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#333', color: '#888' }}>x</button>
         </div>
@@ -929,7 +929,7 @@ const HistoryView = ({ history, boxes }) => {
       {history.slice().reverse().map((h, i) => {
         const st = brandStyles[h.brand] || brandStyles['Cohiba'];
         return (
-          <div key={i} className="p-3 rounded-lg" style={{ background: '#4A0E0E', border: '1px solid #333', borderLeft: `3px solid ${st.accent}` }}>
+          <div key={i} className="p-3 rounded-lg" style={{ background: '#1a1a1a', border: '1px solid #333', borderLeft: `3px solid ${st.accent}` }}>
             <div className="flex justify-between items-start">
               <div>
                 <div className="text-xl font-medium" style={{ color: st.accent }}>{h.brand} {h.name}</div>
@@ -969,7 +969,7 @@ const PricesView = ({ boxes, currency, FX, fmtCurrency, fmtFromGBP }) => {
   return (
     <div className="px-4">
       {/* Price metadata */}
-      <div className="rounded-lg p-3 mb-4" style={{ background: '#4A0E0E', border: '1px solid #333' }}>
+      <div className="rounded-lg p-3 mb-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm font-medium" style={{ color: '#d4af37' }}>UK Market Prices</span>
           <span className="text-xs text-gray-500">Updated: {PRICE_META.lastUpdated}</span>
@@ -982,7 +982,7 @@ const PricesView = ({ boxes, currency, FX, fmtCurrency, fmtFromGBP }) => {
         {Object.entries(ukMarket).map(([brand, cigars]) => {
           const s = brandStyles[brand] || brandStyles['Cohiba'];
           return (
-            <div key={brand} className="rounded-lg overflow-hidden" style={{ background: '#4A0E0E', border: '1px solid #333' }}>
+            <div key={brand} className="rounded-lg overflow-hidden" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
               <div className="px-3 py-2 flex items-center gap-2" style={{ background: '#252525', borderBottom: `2px solid ${s.accent}` }}>
                 <span className="text-2xl font-semibold tracking-wider" style={{ color: s.accent }}>{brand}</span>
               </div>
@@ -1564,19 +1564,19 @@ export default function CigarCollectionApp() {
             </button>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <div className="rounded-lg p-3" style={{ background: '#4A0E0E', border: '1px solid #333' }}>
+            <div className="rounded-lg p-3" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
               <div className="text-3xl font-light" style={{ color: '#d4af37' }}>{stats.totalCigars}</div>
               <div className="text-sm text-gray-500">Cigars in {stats.totalBoxes} boxes</div>
             </div>
-            <div className="rounded-lg p-3" style={{ background: '#4A0E0E', border: '1px solid #333' }}>
+            <div className="rounded-lg p-3" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
               <div className="text-3xl font-light" style={{ color: '#ff9999' }}>{stats.consumed}</div>
               <div className="text-sm text-gray-500">Enjoyed</div>
             </div>
-            <div className="rounded-lg p-3" style={{ background: '#4A0E0E', border: '1px solid #333' }}>
+            <div className="rounded-lg p-3" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
               <div className="text-xl font-light text-green-400">{fmtCurrency(statsMode === 'total' ? stats.totalCostUSD : stats.remainingCostUSD)}</div>
               <div className="text-sm text-gray-500">Your Cost</div>
             </div>
-            <div className="rounded-lg p-3" style={{ background: '#4A0E0E', border: '1px solid #333' }}>
+            <div className="rounded-lg p-3" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
               <div className="text-xl font-light text-blue-400">{fmtCurrency(statsMode === 'total' ? stats.totalMarketUSD : stats.remainingMarketUSD)}</div>
               <div className="text-sm text-gray-500">UK Market Value</div>
             </div>
@@ -1620,7 +1620,7 @@ export default function CigarCollectionApp() {
       
       {/* View toggle - 4 tabs */}
       <div className="px-4 mb-4">
-        <div className="flex rounded-lg overflow-hidden" style={{ background: '#4A0E0E', border: '1px solid #333' }}>
+        <div className="flex rounded-lg overflow-hidden" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
           {['collection', 'onwards', 'history', 'prices'].map(v => (
             <button key={v} onClick={() => setView(v)} className="flex-1 py-2.5 text-sm capitalize" style={{
               background: view === v ? '#d4af3730' : 'transparent',
@@ -1652,15 +1652,15 @@ export default function CigarCollectionApp() {
       {view === 'onwards' && (
         <div className="px-4">
           <div className="grid grid-cols-3 gap-2 mb-4">
-            <div className="rounded-lg p-3 text-center" style={{ background: '#4A0E0E', border: '1px solid #333' }}>
+            <div className="rounded-lg p-3 text-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
               <div className="text-2xl font-light" style={{ color: '#d4af37' }}>{stats.onwardsBoxes}</div>
               <div className="text-xs text-gray-500">Boxes</div>
             </div>
-            <div className="rounded-lg p-3 text-center" style={{ background: '#4A0E0E', border: '1px solid #333' }}>
+            <div className="rounded-lg p-3 text-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
               <div className="text-lg font-light text-gray-400">{fmtCurrency(stats.onwardsCost)}</div>
               <div className="text-xs text-gray-500">Cost</div>
             </div>
-            <div className="rounded-lg p-3 text-center" style={{ background: '#4A0E0E', border: '1px solid #333' }}>
+            <div className="rounded-lg p-3 text-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
               <div className="text-lg font-light text-green-400">+{fmtCurrency(stats.onwardsProfit)}</div>
               <div className="text-xs text-gray-500">Profit</div>
             </div>
