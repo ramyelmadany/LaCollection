@@ -290,38 +290,98 @@ def find_cgars_price(cgars_prices, brand, name, box_size):
     return None
 
 
-def extract_jjfox_box_price(html, box_size, cigar_name):
-    """Extract price from JJ Fox using data-price attributes."""
-    pattern1 = rf'data-price="£([\d,]+(?:\.\d{{2}})?)"[^>]*>(?:<span>)?Box of {box_size}(?:</span>)?<'
-    matches = re.findall(pattern1, html, re.IGNORECASE | re.DOTALL)
-    for price_str in matches:
-        try:
-            price = float(price_str.replace(',', ''))
-            if price > 100:
-                return price
-        except ValueError:
+def extract_jjfox_box_price(html, box_size, brand, cigar_name):
+    """Extract price from JJ Fox - must verify correct product first.
+    
+    The search results page shows multiple products. We need to:
+    1. Find the product card that matches our cigar name
+    2. Extract the box price from THAT specific product only
+    """
+    
+    # Normalize names for matching
+    search_brand = brand.lower()
+    search_name = cigar_name.lower()
+    full_search = f"{search_brand} {search_name}"
+    
+    # Extract numbers from cigar name for strict matching (e.g., "56" from "Behike 56")
+    cigar_numbers = set(re.findall(r'\b(\d+)\b', search_name))
+    
+    # Split HTML into product sections
+    # JJ Fox uses product cards with class patterns
+    product_sections = re.split(r'<div[^>]*class="[^"]*product-item[^"]*"', html, flags=re.IGNORECASE)
+    
+    for section in product_sections:
+        # Look for product title/name in this section
+        title_match = re.search(r'<h\d[^>]*class="[^"]*product[^"]*name[^"]*"[^>]*>.*?<a[^>]*>([^<]+)</a>', section, re.IGNORECASE | re.DOTALL)
+        if not title_match:
+            title_match = re.search(r'<a[^>]*class="[^"]*product[^"]*link[^"]*"[^>]*>([^<]+)</a>', section, re.IGNORECASE)
+        if not title_match:
+            # Try another pattern - look for product name near beginning of section
+            title_match = re.search(r'>([^<]*' + re.escape(search_brand) + r'[^<]*' + r')<', section, re.IGNORECASE)
+        
+        if not title_match:
             continue
-    
-    button_pattern = r'<button[^>]*class="config_option_btn_submit[^"]*"[^>]*data-price="£([\d,]+(?:\.\d{2})?)"[^>]*>(.*?)</button>'
-    button_matches = re.findall(button_pattern, html, re.IGNORECASE | re.DOTALL)
-    for price_str, content in button_matches:
-        if f'Box of {box_size}' in content or f'box of {box_size}' in content.lower():
-            try:
-                price = float(price_str.replace(',', ''))
-                if price > 100:
-                    return price
-            except ValueError:
+            
+        product_title = title_match.group(1).strip().lower()
+        
+        # Verify this is the right product:
+        # 1. Must contain brand name
+        if search_brand not in product_title and brand.lower().split()[0] not in product_title:
+            continue
+        
+        # 2. Must contain key parts of cigar name
+        name_parts = search_name.split()
+        significant_parts = [p for p in name_parts if len(p) > 2 and not p.isdigit()]
+        if significant_parts:
+            matches = sum(1 for p in significant_parts if p in product_title)
+            if matches < len(significant_parts) * 0.5:
                 continue
-    
-    box_text = f'Box of {box_size}'
-    for match in re.finditer(re.escape(box_text), html, re.IGNORECASE):
-        start = max(0, match.start() - 300)
-        chunk = html[start:match.start()]
-        price_match = re.search(r'data-price="£([\d,]+(?:\.\d{2})?)"', chunk)
+        
+        # 3. CRITICAL: Numbers must match exactly (Behike 56 ≠ Behike 52)
+        if cigar_numbers:
+            product_numbers = set(re.findall(r'\b(\d+)\b', product_title))
+            # Remove common box sizes that might appear in title
+            product_numbers_clean = product_numbers - {'10', '25', '50', '3', '5'}
+            cigar_numbers_clean = cigar_numbers - {'10', '25', '50', '3', '5'}
+            
+            if cigar_numbers_clean and cigar_numbers_clean != product_numbers_clean:
+                continue
+        
+        # Found the right product! Now extract price for the correct box size
+        box_pattern = rf'data-price="£([\d,]+(?:\.\d{{2}})?)"[^>]*>[^<]*Box of {box_size}'
+        price_match = re.search(box_pattern, section, re.IGNORECASE)
         if price_match:
             try:
                 price = float(price_match.group(1).replace(',', ''))
-                if price > 100:
+                if price > 200:  # Minimum box price threshold
+                    return price
+            except ValueError:
+                pass
+        
+        # Alternative: look for Box of X with price nearby
+        box_text = f'Box of {box_size}'
+        if box_text.lower() in section.lower():
+            # Find price in this section
+            prices = re.findall(r'data-price="£([\d,]+(?:\.\d{2})?)"', section)
+            for price_str in prices:
+                try:
+                    price = float(price_str.replace(',', ''))
+                    if price > 200:  # Minimum box price threshold
+                        return price
+                except ValueError:
+                    continue
+    
+    # Fallback: If no product sections found, try original simple matching
+    # but ONLY if we can verify product name appears near the price
+    full_name_pattern = rf'{re.escape(search_brand)}[^<]*{re.escape(search_name)}'
+    if re.search(full_name_pattern, html, re.IGNORECASE):
+        # Product exists on page, look for box price
+        pattern = rf'data-price="£([\d,]+(?:\.\d{{2}})?)"[^>]*>(?:<span>)?Box of {box_size}(?:</span>)?<'
+        matches = re.findall(pattern, html, re.IGNORECASE | re.DOTALL)
+        for price_str in matches:
+            try:
+                price = float(price_str.replace(',', ''))
+                if price > 200:  # Minimum box price threshold
                     return price
             except ValueError:
                 continue
@@ -346,7 +406,7 @@ def scrape_jjfox(cigar):
         print(f"    Failed to fetch")
         return None
     
-    price = extract_jjfox_box_price(html, box_size, name)
+    price = extract_jjfox_box_price(html, box_size, brand, name)
     if price:
         per_cigar = price / box_size
         print(f"    ✓ Found: £{price:,.2f} (£{per_cigar:.2f}/cigar)")
@@ -354,7 +414,7 @@ def scrape_jjfox(cigar):
     
     found_sizes = re.findall(r'Box of (\d+)', html, re.IGNORECASE)
     if found_sizes:
-        print(f"    ✗ No Box of {box_size} found (found: {list(set(found_sizes))})")
+        print(f"    ✗ No Box of {box_size} found for correct product (found sizes: {list(set(found_sizes))})")
     else:
         print(f"    ✗ No results")
     return None
