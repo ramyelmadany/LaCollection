@@ -3,10 +3,10 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 // Google Sheets Configuration
 const GOOGLE_SHEETS_CONFIG = {
   apiKey: 'AIzaSyCGwQ71BGsiWWWJjX10_teVe3zQAmu9ZDk',
-  clientId: '', // You'll need to add this from Google Cloud Console
+  clientId: '', // Add your OAuth Client ID from Google Cloud Console to enable write access
   sheetId: '10A_FMj8eotx-xlzAlCNFxjOr3xEOuO4p5GxAZjHC86A',
-  collectionRange: 'A3:O30', // Personal Collection data (expanded range)
-  onwardsRange: 'A34:L50', // Onwards table data
+  collectionRange: 'A:O', // All rows - filtering handles invalid/empty rows
+  onwardsRange: 'A:L', // All rows for onwards
   scopes: 'https://www.googleapis.com/auth/spreadsheets',
 };
 
