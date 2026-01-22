@@ -1,78 +1,58 @@
-[
-  {
-    "date": "2026-01-22",
-    "prices": {
-      "Montecristo|Brillantes|18": {
-        "box_price_gbp": 3598.0,
-        "box_size": 18,
-        "sources_used": [
-          "cgars_pdf"
-        ]
-      },
-      "Hoyo de Monterrey|Double Corona|50": {
-        "box_price_gbp": 3823.0,
-        "box_size": 50,
-        "sources_used": [
-          "cgars_pdf"
-        ]
-      },
-      "Bolivar|New Gold Medal|10": {
-        "box_price_gbp": 899.99,
-        "box_size": 10,
-        "sources_used": [
-          "cgars_pdf"
-        ]
-      },
-      "Cohiba|Siglo VI|25": {
-        "box_price_gbp": 3199.0,
-        "box_size": 25,
-        "sources_used": [
-          "cgars_pdf"
-        ]
-      },
-      "Cohiba|Maduro 5 Magicos|25": {
-        "box_price_gbp": 2664.5,
-        "box_size": 25,
-        "sources_used": [
-          "cgars_pdf",
-          "jjfox"
-        ]
-      },
-      "Cohiba|Behike 52|10": {
-        "box_price_gbp": 3399.0,
-        "box_size": 10,
-        "sources_used": [
-          "cgars_pdf"
-        ]
-      },
-      "Cohiba|Siglo I|25": {
-        "box_price_gbp": 813.0,
-        "box_size": 25,
-        "sources_used": [
-          "cgars_pdf"
-        ]
-      },
-      "Cohiba|Medio Siglo|25": {
-        "box_price_gbp": 1635.0,
-        "box_size": 25,
-        "sources_used": [
-          "cgars_pdf"
-        ]
-      },
-      "Cohiba|Behike 56|10": {
-        "box_price_gbp": 7000.0,
-        "box_size": 10,
-        "sources_used": [
-          "jjfox"
-        ]
-      },
-      "Cohiba|Siglo VI|10": {
-        "box_price_gbp": 1355.0,
-        "box_size": 10,
-        "sources_used": [
-          "cgars_pdf"
-        ]
-      }
+{
+  "Montecristo|Brillantes|18": [
+    {
+      "date": "2026-01-22",
+      "price_gbp": 2250.0,
+      "method": "jj_fox_only"
     }
-  }
-]
+  ],
+  "Cohiba|Maduro 5 Magicos|25": [
+    {
+      "date": "2026-01-22",
+      "price_gbp": 2700.0,
+      "method": "jj_fox_only"
+    }
+  ],
+  "Cohiba|Behike 52|10": [
+    {
+      "date": "2026-01-22",
+      "price_gbp": 230.0,
+      "method": "sautter_only"
+    }
+  ],
+  "Cohiba|Siglo I|25": [
+    {
+      "date": "2026-01-22",
+      "price_gbp": 770.0,
+      "method": "jj_fox_only"
+    }
+  ],
+  "Cohiba|Behike 56|10": [
+    {
+      "date": "2026-01-22",
+      "price_gbp": 7000.0,
+      "method": "jj_fox_only"
+    }
+  ],
+  "Cohiba|Lanceros|25": [
+    {
+      "date": "2026-01-22",
+      "price_gbp": 300.0,
+      "method": "sautter_only"
+    }
+  ],
+  "Trinidad|Topes|12": [
+    {
+      "date": "2026-01-22",
+      "price_gbp": 830.0,
+      "method": "jj_fox_only"
+    }
+  ],
+  "Partagas|Linea Maestra Origen|20": [
+    {
+      "date": "2026-01-22",
+      "price_gbp": 1500.0,
+      "method": "jj_fox_only"
+    }
+  ]
+}
