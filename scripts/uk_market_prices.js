@@ -1,40 +1,11 @@
 // UK Market Prices - Auto-generated
-// Last updated: 2026-01-22 19:46
+// Last updated: 2026-01-22 19:57
 // Sources: CGars PDF + JJ Fox (averaged if within 30%)
 // NOTE: These are BOX prices
 
 export const ukMarketPrices = {
-  "Montecristo": {
-    "Brilllantes (Box of 18)": {
-      "boxPrice": 2250.0,
-      "boxSize": 18,
-      "perCigar": 125.0,
-      "sources": [
-        "jjfox"
-      ],
-      "method": "jjfox_only"
-    },
-    "Leyendas (Box of 20)": {
-      "boxPrice": 1360.0,
-      "boxSize": 20,
-      "perCigar": 68.0,
-      "sources": [
-        "jjfox"
-      ],
-      "method": "jjfox_only"
-    }
-  },
-  "Trinidad": {
-    "Esmerelda (Box of 12)": {
-      "boxPrice": 690.0,
-      "boxSize": 12,
-      "perCigar": 57.5,
-      "sources": [
-        "jjfox"
-      ],
-      "method": "jjfox_only"
-    }
-  },
+  "Montecristo": {},
+  "Trinidad": {},
   "Hoyo de Monterrey": {
     "Double Corona (Box of 50)": {
       "boxPrice": 3823.0,
@@ -44,15 +15,6 @@ export const ukMarketPrices = {
         "cgars_pdf"
       ],
       "method": "cgars_only"
-    },
-    "Petit Robustos (Box of 25)": {
-      "boxPrice": 2700.0,
-      "boxSize": 25,
-      "perCigar": 108.0,
-      "sources": [
-        "jjfox"
-      ],
-      "method": "jjfox_only"
     }
   },
   "Ramon Allones": {},
@@ -67,54 +29,16 @@ export const ukMarketPrices = {
       "method": "cgars_only"
     }
   },
-  "Partagas": {
-    "Lusitinas (Box of 10)": {
-      "boxPrice": 460.0,
-      "boxSize": 10,
-      "perCigar": 46.0,
-      "sources": [
-        "jjfox"
-      ],
-      "method": "jjfox_only"
-    },
-    "Linea Maestra Maestros (Box of 20)": {
-      "boxPrice": 1360.0,
-      "boxSize": 20,
-      "perCigar": 68.0,
-      "sources": [
-        "jjfox"
-      ],
-      "method": "jjfox_only"
-    }
-  },
+  "Partagas": {},
   "Cohiba": {
-    "Vistosos (Box of 10)": {
-      "boxPrice": 1110.0,
-      "boxSize": 10,
-      "perCigar": 111.0,
-      "sources": [
-        "jjfox"
-      ],
-      "method": "jjfox_only"
-    },
     "Siglo VI (Box of 25)": {
-      "boxPrice": 2949.5,
+      "boxPrice": 3199.0,
       "boxSize": 25,
-      "perCigar": 117.98,
+      "perCigar": 127.96,
       "sources": [
-        "cgars_pdf",
-        "jjfox"
+        "cgars_pdf"
       ],
-      "method": "averaged"
-    },
-    "Maduro 5 Genios (Box of 25)": {
-      "boxPrice": 930.0,
-      "boxSize": 25,
-      "perCigar": 37.2,
-      "sources": [
-        "jjfox"
-      ],
-      "method": "jjfox_only"
+      "method": "cgars_only"
     },
     "Maduro 5 Magicos (Box of 25)": {
       "boxPrice": 2629.0,
@@ -123,7 +47,7 @@ export const ukMarketPrices = {
       "sources": [
         "cgars_pdf"
       ],
-      "method": "cgars_high_discrepancy"
+      "method": "cgars_only"
     },
     "Behike 52 (Box of 10)": {
       "boxPrice": 3399.0,
@@ -132,7 +56,7 @@ export const ukMarketPrices = {
       "sources": [
         "cgars_pdf"
       ],
-      "method": "cgars_high_discrepancy"
+      "method": "cgars_only"
     },
     "Siglo I (Box of 25)": {
       "boxPrice": 813.0,
@@ -141,7 +65,7 @@ export const ukMarketPrices = {
       "sources": [
         "cgars_pdf"
       ],
-      "method": "cgars_high_discrepancy"
+      "method": "cgars_only"
     },
     "Medio Siglo (Box of 25)": {
       "boxPrice": 1635.0,
@@ -150,92 +74,32 @@ export const ukMarketPrices = {
       "sources": [
         "cgars_pdf"
       ],
-      "method": "cgars_high_discrepancy"
+      "method": "cgars_only"
     },
     "Behike 56 (Box of 10)": {
-      "boxPrice": 1110.0,
+      "boxPrice": 1370.0,
       "boxSize": 10,
-      "perCigar": 111.0,
-      "sources": [
-        "jjfox"
-      ],
-      "method": "jjfox_only"
-    },
-    "Lanceros (Box of 25)": {
-      "boxPrice": 2700.0,
-      "boxSize": 25,
-      "perCigar": 108.0,
+      "perCigar": 137.0,
       "sources": [
         "jjfox"
       ],
       "method": "jjfox_only"
     },
     "Siglo VI (Box of 10)": {
-      "boxPrice": 1232.5,
+      "boxPrice": 1355.0,
       "boxSize": 10,
-      "perCigar": 123.25,
+      "perCigar": 135.5,
       "sources": [
-        "cgars_pdf",
-        "jjfox"
+        "cgars_pdf"
       ],
-      "method": "averaged"
+      "method": "cgars_high_discrepancy"
     }
   },
-  "Name": {
-    "Quantity Purchased (Boxes) (Box of 25)": {
-      "boxPrice": 930.0,
-      "boxSize": 25,
-      "perCigar": 37.2,
-      "sources": [
-        "jjfox"
-      ],
-      "method": "jjfox_only"
-    }
-  },
-  "Topes": {
-    "1 (Box of 25)": {
-      "boxPrice": 930.0,
-      "boxSize": 25,
-      "perCigar": 37.2,
-      "sources": [
-        "jjfox"
-      ],
-      "method": "jjfox_only"
-    }
-  },
-  "Vistosos": {
-    "1 (Box of 25)": {
-      "boxPrice": 930.0,
-      "boxSize": 25,
-      "perCigar": 37.2,
-      "sources": [
-        "jjfox"
-      ],
-      "method": "jjfox_only"
-    }
-  },
-  "Robusto Extra": {
-    "1 (Box of 25)": {
-      "boxPrice": 930.0,
-      "boxSize": 25,
-      "perCigar": 37.2,
-      "sources": [
-        "jjfox"
-      ],
-      "method": "jjfox_only"
-    }
-  },
-  "Linea Maestra Origen": {
-    "1 (Box of 25)": {
-      "boxPrice": 930.0,
-      "boxSize": 25,
-      "perCigar": 37.2,
-      "sources": [
-        "jjfox"
-      ],
-      "method": "jjfox_only"
-    }
-  }
+  "Name": {},
+  "Topes": {},
+  "Vistosos": {},
+  "Robusto Extra": {},
+  "Linea Maestra Origen": {}
 };
 
 export const priceMetadata = {

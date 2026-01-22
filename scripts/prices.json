@@ -3,19 +3,11 @@
     "brand": "Montecristo",
     "name": "Brilllantes",
     "box_size": 18,
-    "sources": {
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/montecristo+brilllantes",
-        "box_price": 2250.0
-      }
-    },
-    "final_price": 2250.0,
-    "scraped_at": "2026-01-22T19:45:30.837665",
-    "sources_used": [
-      "jjfox"
-    ],
-    "price_method": "jjfox_only"
+    "sources": {},
+    "final_price": null,
+    "scraped_at": "2026-01-22T19:55:43.654866",
+    "sources_used": [],
+    "price_method": "none"
   },
   "Trinidad|Robusto Extra|12": {
     "brand": "Trinidad",
@@ -23,7 +15,7 @@
     "box_size": 12,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T19:45:33.713718",
+    "scraped_at": "2026-01-22T19:55:46.714447",
     "sources_used": [],
     "price_method": "none"
   },
@@ -31,19 +23,11 @@
     "brand": "Montecristo",
     "name": "Leyendas",
     "box_size": 20,
-    "sources": {
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/montecristo+leyendas",
-        "box_price": 1360.0
-      }
-    },
-    "final_price": 1360.0,
-    "scraped_at": "2026-01-22T19:45:36.625701",
-    "sources_used": [
-      "jjfox"
-    ],
-    "price_method": "jjfox_only"
+    "sources": {},
+    "final_price": null,
+    "scraped_at": "2026-01-22T19:55:49.882851",
+    "sources_used": [],
+    "price_method": "none"
   },
   "Hoyo de Monterrey|Destinos|20": {
     "brand": "Hoyo de Monterrey",
@@ -51,7 +35,7 @@
     "box_size": 20,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T19:45:39.436123",
+    "scraped_at": "2026-01-22T19:55:52.833603",
     "sources_used": [],
     "price_method": "none"
   },
@@ -61,7 +45,7 @@
     "box_size": 20,
     "sources": {},
     "final_price": null,
-    "scraped_at": "2026-01-22T19:45:42.264734",
+    "scraped_at": "2026-01-22T19:55:55.703493",
     "sources_used": [],
     "price_method": "none"
   },
@@ -75,7 +59,7 @@
       }
     },
     "final_price": 3823.0,
-    "scraped_at": "2026-01-22T19:45:44.847736",
+    "scraped_at": "2026-01-22T19:55:58.400829",
     "sources_used": [
       "cgars_pdf"
     ],
@@ -91,7 +75,7 @@
       }
     },
     "final_price": 899.99,
-    "scraped_at": "2026-01-22T19:45:47.618673",
+    "scraped_at": "2026-01-22T19:56:01.332826",
     "sources_used": [
       "cgars_pdf"
     ],
@@ -101,37 +85,21 @@
     "brand": "Partagas",
     "name": "Lusitinas",
     "box_size": 10,
-    "sources": {
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/partagas+lusitinas",
-        "box_price": 460.0
-      }
-    },
-    "final_price": 460.0,
-    "scraped_at": "2026-01-22T19:45:50.342469",
-    "sources_used": [
-      "jjfox"
-    ],
-    "price_method": "jjfox_only"
+    "sources": {},
+    "final_price": null,
+    "scraped_at": "2026-01-22T19:56:04.250826",
+    "sources_used": [],
+    "price_method": "none"
   },
   "Cohiba|Vistosos|10": {
     "brand": "Cohiba",
     "name": "Vistosos",
     "box_size": 10,
-    "sources": {
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/cohiba+vistosos",
-        "box_price": 1110.0
-      }
-    },
-    "final_price": 1110.0,
-    "scraped_at": "2026-01-22T19:45:53.225418",
-    "sources_used": [
-      "jjfox"
-    ],
-    "price_method": "jjfox_only"
+    "sources": {},
+    "final_price": null,
+    "scraped_at": "2026-01-22T19:56:07.326710",
+    "sources_used": [],
+    "price_method": "none"
   },
   "Cohiba|Siglo VI|25": {
     "brand": "Cohiba",
@@ -140,38 +108,24 @@
     "sources": {
       "cgars_pdf": {
         "box_price": 3199.0
-      },
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/cohiba+siglo+vi",
-        "box_price": 2700.0
       }
     },
-    "final_price": 2949.5,
-    "scraped_at": "2026-01-22T19:45:56.015436",
+    "final_price": 3199.0,
+    "scraped_at": "2026-01-22T19:56:10.200309",
     "sources_used": [
-      "cgars_pdf",
-      "jjfox"
+      "cgars_pdf"
     ],
-    "price_method": "averaged"
+    "price_method": "cgars_only"
   },
   "Cohiba|Maduro 5 Genios|25": {
     "brand": "Cohiba",
     "name": "Maduro 5 Genios",
     "box_size": 25,
-    "sources": {
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/cohiba+maduro+5+genios",
-        "box_price": 930.0
-      }
-    },
-    "final_price": 930.0,
-    "scraped_at": "2026-01-22T19:45:58.716688",
-    "sources_used": [
-      "jjfox"
-    ],
-    "price_method": "jjfox_only"
+    "sources": {},
+    "final_price": null,
+    "scraped_at": "2026-01-22T19:56:13.042367",
+    "sources_used": [],
+    "price_method": "none"
   },
   "Cohiba|Maduro 5 Magicos|25": {
     "brand": "Cohiba",
@@ -180,19 +134,14 @@
     "sources": {
       "cgars_pdf": {
         "box_price": 2629.0
-      },
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/cohiba+maduro+5+magicos",
-        "box_price": 930.0
       }
     },
     "final_price": 2629.0,
-    "scraped_at": "2026-01-22T19:46:01.612995",
+    "scraped_at": "2026-01-22T19:56:16.223711",
     "sources_used": [
       "cgars_pdf"
     ],
-    "price_method": "cgars_high_discrepancy"
+    "price_method": "cgars_only"
   },
   "Cohiba|Behike 52|10": {
     "brand": "Cohiba",
@@ -201,55 +150,34 @@
     "sources": {
       "cgars_pdf": {
         "box_price": 3399.0
-      },
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/cohiba+behike+52",
-        "box_price": 1110.0
       }
     },
     "final_price": 3399.0,
-    "scraped_at": "2026-01-22T19:46:04.724923",
+    "scraped_at": "2026-01-22T19:56:19.272477",
     "sources_used": [
       "cgars_pdf"
     ],
-    "price_method": "cgars_high_discrepancy"
+    "price_method": "cgars_only"
   },
   "Partagas|Linea Maestra Maestros|20": {
     "brand": "Partagas",
     "name": "Linea Maestra Maestros",
     "box_size": 20,
-    "sources": {
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/partagas+linea+maestra+maestros",
-        "box_price": 1360.0
-      }
-    },
-    "final_price": 1360.0,
-    "scraped_at": "2026-01-22T19:46:07.550826",
-    "sources_used": [
-      "jjfox"
-    ],
-    "price_method": "jjfox_only"
+    "sources": {},
+    "final_price": null,
+    "scraped_at": "2026-01-22T19:56:22.147907",
+    "sources_used": [],
+    "price_method": "none"
   },
   "Hoyo de Monterrey|Petit Robustos|25": {
     "brand": "Hoyo de Monterrey",
     "name": "Petit Robustos",
     "box_size": 25,
-    "sources": {
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/hoyo+petit+robustos",
-        "box_price": 2700.0
-      }
-    },
-    "final_price": 2700.0,
-    "scraped_at": "2026-01-22T19:46:10.319950",
-    "sources_used": [
-      "jjfox"
-    ],
-    "price_method": "jjfox_only"
+    "sources": {},
+    "final_price": null,
+    "scraped_at": "2026-01-22T19:56:25.086261",
+    "sources_used": [],
+    "price_method": "none"
   },
   "Cohiba|Siglo I|25": {
     "brand": "Cohiba",
@@ -258,19 +186,14 @@
     "sources": {
       "cgars_pdf": {
         "box_price": 813.0
-      },
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/cohiba+siglo+i",
-        "box_price": 2700.0
       }
     },
     "final_price": 813.0,
-    "scraped_at": "2026-01-22T19:46:13.250443",
+    "scraped_at": "2026-01-22T19:56:28.070616",
     "sources_used": [
       "cgars_pdf"
     ],
-    "price_method": "cgars_high_discrepancy"
+    "price_method": "cgars_only"
   },
   "Cohiba|Medio Siglo|25": {
     "brand": "Cohiba",
@@ -279,19 +202,14 @@
     "sources": {
       "cgars_pdf": {
         "box_price": 1635.0
-      },
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/cohiba+medio+siglo",
-        "box_price": 2700.0
       }
     },
     "final_price": 1635.0,
-    "scraped_at": "2026-01-22T19:46:16.062807",
+    "scraped_at": "2026-01-22T19:56:30.923080",
     "sources_used": [
       "cgars_pdf"
     ],
-    "price_method": "cgars_high_discrepancy"
+    "price_method": "cgars_only"
   },
   "Cohiba|Behike 56|10": {
     "brand": "Cohiba",
@@ -301,11 +219,11 @@
       "jjfox": {
         "source": "JJ Fox",
         "url": "https://www.jjfox.co.uk/search/cohiba+behike+56",
-        "box_price": 1110.0
+        "box_price": 1370.0
       }
     },
-    "final_price": 1110.0,
-    "scraped_at": "2026-01-22T19:46:18.824220",
+    "final_price": 1370.0,
+    "scraped_at": "2026-01-22T19:56:33.755489",
     "sources_used": [
       "jjfox"
     ],
@@ -315,37 +233,21 @@
     "brand": "Trinidad",
     "name": "Esmerelda",
     "box_size": 12,
-    "sources": {
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/trinidad+esmerelda",
-        "box_price": 690.0
-      }
-    },
-    "final_price": 690.0,
-    "scraped_at": "2026-01-22T19:46:21.474168",
-    "sources_used": [
-      "jjfox"
-    ],
-    "price_method": "jjfox_only"
+    "sources": {},
+    "final_price": null,
+    "scraped_at": "2026-01-22T19:56:36.587297",
+    "sources_used": [],
+    "price_method": "none"
   },
   "Cohiba|Lanceros|25": {
     "brand": "Cohiba",
     "name": "Lanceros",
     "box_size": 25,
-    "sources": {
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/cohiba+lanceros",
-        "box_price": 2700.0
-      }
-    },
-    "final_price": 2700.0,
-    "scraped_at": "2026-01-22T19:46:24.148448",
-    "sources_used": [
-      "jjfox"
-    ],
-    "price_method": "jjfox_only"
+    "sources": {},
+    "final_price": null,
+    "scraped_at": "2026-01-22T19:56:39.400944",
+    "sources_used": [],
+    "price_method": "none"
   },
   "Cohiba|Siglo VI|10": {
     "brand": "Cohiba",
@@ -358,105 +260,64 @@
       "jjfox": {
         "source": "JJ Fox",
         "url": "https://www.jjfox.co.uk/search/cohiba+siglo+vi",
-        "box_price": 1110.0
+        "box_price": 6300.0
       }
     },
-    "final_price": 1232.5,
-    "scraped_at": "2026-01-22T19:46:26.861633",
+    "final_price": 1355.0,
+    "scraped_at": "2026-01-22T19:56:42.279617",
     "sources_used": [
-      "cgars_pdf",
-      "jjfox"
+      "cgars_pdf"
     ],
-    "price_method": "averaged"
+    "price_method": "cgars_high_discrepancy"
   },
   "Name|Quantity Purchased (Boxes)|25": {
     "brand": "Name",
     "name": "Quantity Purchased (Boxes)",
     "box_size": 25,
-    "sources": {
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/name+quantity+purchased+(boxes)",
-        "box_price": 930.0
-      }
-    },
-    "final_price": 930.0,
-    "scraped_at": "2026-01-22T19:46:29.570620",
-    "sources_used": [
-      "jjfox"
-    ],
-    "price_method": "jjfox_only"
+    "sources": {},
+    "final_price": null,
+    "scraped_at": "2026-01-22T19:56:45.162370",
+    "sources_used": [],
+    "price_method": "none"
   },
   "Topes|1|25": {
     "brand": "Topes",
     "name": "1",
     "box_size": 25,
-    "sources": {
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/topes+1",
-        "box_price": 930.0
-      }
-    },
-    "final_price": 930.0,
-    "scraped_at": "2026-01-22T19:46:32.528894",
-    "sources_used": [
-      "jjfox"
-    ],
-    "price_method": "jjfox_only"
+    "sources": {},
+    "final_price": null,
+    "scraped_at": "2026-01-22T19:56:48.251248",
+    "sources_used": [],
+    "price_method": "none"
   },
   "Vistosos|1|25": {
     "brand": "Vistosos",
     "name": "1",
     "box_size": 25,
-    "sources": {
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/vistosos+1",
-        "box_price": 930.0
-      }
-    },
-    "final_price": 930.0,
-    "scraped_at": "2026-01-22T19:46:35.521897",
-    "sources_used": [
-      "jjfox"
-    ],
-    "price_method": "jjfox_only"
+    "sources": {},
+    "final_price": null,
+    "scraped_at": "2026-01-22T19:56:51.238923",
+    "sources_used": [],
+    "price_method": "none"
   },
   "Robusto Extra|1|25": {
     "brand": "Robusto Extra",
     "name": "1",
     "box_size": 25,
-    "sources": {
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/robusto+extra+1",
-        "box_price": 930.0
-      }
-    },
-    "final_price": 930.0,
-    "scraped_at": "2026-01-22T19:46:38.344299",
-    "sources_used": [
-      "jjfox"
-    ],
-    "price_method": "jjfox_only"
+    "sources": {},
+    "final_price": null,
+    "scraped_at": "2026-01-22T19:56:54.219012",
+    "sources_used": [],
+    "price_method": "none"
   },
   "Linea Maestra Origen|1|25": {
     "brand": "Linea Maestra Origen",
     "name": "1",
     "box_size": 25,
-    "sources": {
-      "jjfox": {
-        "source": "JJ Fox",
-        "url": "https://www.jjfox.co.uk/search/linea+maestra+origen+1",
-        "box_price": 930.0
-      }
-    },
-    "final_price": 930.0,
-    "scraped_at": "2026-01-22T19:46:41.563835",
-    "sources_used": [
-      "jjfox"
-    ],
-    "price_method": "jjfox_only"
+    "sources": {},
+    "final_price": null,
+    "scraped_at": "2026-01-22T19:56:57.306344",
+    "sources_used": [],
+    "price_method": "none"
   }
 }

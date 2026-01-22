@@ -2,20 +2,6 @@
   {
     "date": "2026-01-22",
     "prices": {
-      "Montecristo|Brilllantes|18": {
-        "box_price_gbp": 2250.0,
-        "box_size": 18,
-        "sources_used": [
-          "jjfox"
-        ]
-      },
-      "Montecristo|Leyendas|20": {
-        "box_price_gbp": 1360.0,
-        "box_size": 20,
-        "sources_used": [
-          "jjfox"
-        ]
-      },
       "Hoyo de Monterrey|Double Corona|50": {
         "box_price_gbp": 3823.0,
         "box_size": 50,
@@ -30,33 +16,11 @@
           "cgars_pdf"
         ]
       },
-      "Partagas|Lusitinas|10": {
-        "box_price_gbp": 460.0,
-        "box_size": 10,
-        "sources_used": [
-          "jjfox"
-        ]
-      },
-      "Cohiba|Vistosos|10": {
-        "box_price_gbp": 1110.0,
-        "box_size": 10,
-        "sources_used": [
-          "jjfox"
-        ]
-      },
       "Cohiba|Siglo VI|25": {
-        "box_price_gbp": 2949.5,
+        "box_price_gbp": 3199.0,
         "box_size": 25,
         "sources_used": [
-          "cgars_pdf",
-          "jjfox"
-        ]
-      },
-      "Cohiba|Maduro 5 Genios|25": {
-        "box_price_gbp": 930.0,
-        "box_size": 25,
-        "sources_used": [
-          "jjfox"
+          "cgars_pdf"
         ]
       },
       "Cohiba|Maduro 5 Magicos|25": {
@@ -71,20 +35,6 @@
         "box_size": 10,
         "sources_used": [
           "cgars_pdf"
-        ]
-      },
-      "Partagas|Linea Maestra Maestros|20": {
-        "box_price_gbp": 1360.0,
-        "box_size": 20,
-        "sources_used": [
-          "jjfox"
-        ]
-      },
-      "Hoyo de Monterrey|Petit Robustos|25": {
-        "box_price_gbp": 2700.0,
-        "box_size": 25,
-        "sources_used": [
-          "jjfox"
         ]
       },
       "Cohiba|Siglo I|25": {
@@ -102,67 +52,17 @@
         ]
       },
       "Cohiba|Behike 56|10": {
-        "box_price_gbp": 1110.0,
+        "box_price_gbp": 1370.0,
         "box_size": 10,
-        "sources_used": [
-          "jjfox"
-        ]
-      },
-      "Trinidad|Esmerelda|12": {
-        "box_price_gbp": 690.0,
-        "box_size": 12,
-        "sources_used": [
-          "jjfox"
-        ]
-      },
-      "Cohiba|Lanceros|25": {
-        "box_price_gbp": 2700.0,
-        "box_size": 25,
         "sources_used": [
           "jjfox"
         ]
       },
       "Cohiba|Siglo VI|10": {
-        "box_price_gbp": 1232.5,
+        "box_price_gbp": 1355.0,
         "box_size": 10,
         "sources_used": [
-          "cgars_pdf",
-          "jjfox"
-        ]
-      },
-      "Name|Quantity Purchased (Boxes)|25": {
-        "box_price_gbp": 930.0,
-        "box_size": 25,
-        "sources_used": [
-          "jjfox"
-        ]
-      },
-      "Topes|1|25": {
-        "box_price_gbp": 930.0,
-        "box_size": 25,
-        "sources_used": [
-          "jjfox"
-        ]
-      },
-      "Vistosos|1|25": {
-        "box_price_gbp": 930.0,
-        "box_size": 25,
-        "sources_used": [
-          "jjfox"
-        ]
-      },
-      "Robusto Extra|1|25": {
-        "box_price_gbp": 930.0,
-        "box_size": 25,
-        "sources_used": [
-          "jjfox"
-        ]
-      },
-      "Linea Maestra Origen|1|25": {
-        "box_price_gbp": 930.0,
-        "box_size": 25,
-        "sources_used": [
-          "jjfox"
+          "cgars_pdf"
         ]
       }
     }
