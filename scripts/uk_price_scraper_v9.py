@@ -63,6 +63,9 @@ MAX_DISCREPANCY = 0.30
 _playwright = None
 _browser = None
 
+# Cache for JJ Fox brand search results
+_jjfox_brand_cache = {}
+
 
 def get_browser():
     """Get or create Playwright browser instance."""
@@ -75,13 +78,14 @@ def get_browser():
 
 def close_browser():
     """Close Playwright browser."""
-    global _playwright, _browser
+    global _playwright, _browser, _jjfox_brand_cache
     if _browser:
         _browser.close()
         _browser = None
     if _playwright:
         _playwright.stop()
         _playwright = None
+    _jjfox_brand_cache = {}
 
 
 def fetch_url(url, retries=3):
@@ -330,90 +334,135 @@ def find_cgars_price(cgars_prices, brand, name, box_size):
 
 
 def scrape_jjfox(cigar):
-    """Scrape JJ Fox for box price using Playwright headless browser."""
+    """Scrape JJ Fox for box price using Playwright headless browser.
+    
+    Strategy:
+    1. Search by BRAND NAME only (e.g., "Cohiba" not "Cohiba Behike 56")
+    2. Cache the search results for reuse with other products of same brand
+    3. Scan all results for the correct cigar name
+    4. Find the correct box size for that product
+    """
+    global _jjfox_brand_cache
+    
     brand = cigar["brand"]
     name = cigar["name"]
     box_size = cigar["box_size"]
     
+    # Search by brand only - simpler and more reliable
     search_brand = brand.lower().replace("hoyo de monterrey", "hoyo")
-    search_name = name.lower()
-    query = f"{search_brand} {search_name}".replace(" ", "+")
+    query = search_brand.replace(" ", "+")
     url = JJFOX_SEARCH_URL.format(query=query)
     
-    print(f"  JJ Fox: Searching with Playwright...")
+    # Build the search name we're looking for
+    search_name = name.lower().strip()
+    
+    # Extract identifying numbers from cigar name (e.g., "56" from "Behike 56")
+    cigar_numbers = set(re.findall(r'\b(\d+)\b', name))
+    cigar_numbers = cigar_numbers - {'10', '25', '50', '3', '5', '20'}  # Remove box sizes
+    
+    print(f"  JJ Fox: Looking for '{name}' Box of {box_size}...")
     
     try:
-        browser = get_browser()
-        page = browser.new_page(
-            user_agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-        )
-        
-        # Navigate and wait for content
-        page.goto(url, wait_until='networkidle', timeout=30000)
-        time.sleep(2)  # Extra wait for dynamic content
-        
-        # Get all product items
-        products = page.query_selector_all('li.product-item')
-        
-        # Extract identifying number from cigar name (e.g., "56" from "Behike 56")
-        cigar_numbers = set(re.findall(r'\b(\d+)\b', name))
-        cigar_numbers = cigar_numbers - {'10', '25', '50', '3', '5', '20'}  # Remove box sizes
-        
-        for product in products:
-            try:
-                # Get product text
-                product_text = product.inner_text().lower()
-                first_line = product_text.split('\n')[0] if product_text else ''
-                
-                # Check if this is the right product
-                # 1. Brand must be present
-                if search_brand.split()[0] not in first_line:
-                    continue
-                
-                # 2. Key name words must be present
-                name_words = [w for w in search_name.split() if len(w) > 3 and not w.isdigit()]
-                if name_words:
-                    matches = sum(1 for w in name_words if w in first_line)
-                    if matches < len(name_words) * 0.5:
-                        continue
-                
-                # 3. CRITICAL: Numbers must match exactly
-                if cigar_numbers:
-                    product_numbers = set(re.findall(r'\b(\d+)\b', first_line))
-                    product_numbers = product_numbers - {'10', '25', '50', '3', '5', '20'}
+        # Check cache first
+        if search_brand not in _jjfox_brand_cache:
+            print(f"    Searching brand '{brand}'...")
+            browser = get_browser()
+            page = browser.new_page(
+                user_agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            )
+            
+            # Navigate and wait for content
+            page.goto(url, wait_until='networkidle', timeout=30000)
+            time.sleep(2)  # Extra wait for dynamic content
+            
+            # Get all product items and extract their data
+            products = page.query_selector_all('li.product-item')
+            brand_products = []
+            
+            for product in products:
+                try:
+                    product_text = product.inner_text()
+                    lines = product_text.split('\n')
+                    product_name = lines[0].strip() if lines else ''
                     
-                    # Must have our target number
-                    if not cigar_numbers.issubset(product_numbers):
-                        continue
-                    
-                    # Must NOT have other variant numbers (e.g., 52 when looking for 56)
-                    other_variants = {'52', '54', '56'} - cigar_numbers
-                    if product_numbers & other_variants:
-                        continue
-                
-                # Found the right product! Get price for our box size
-                buttons = product.query_selector_all('button[data-price]')
-                for btn in buttons:
-                    btn_text = btn.inner_text().strip()
-                    if f'Box of {box_size}' in btn_text:
+                    # Get all price buttons
+                    buttons = product.query_selector_all('button[data-price]')
+                    prices = {}
+                    for btn in buttons:
+                        btn_text = btn.inner_text().strip()
                         price_attr = btn.get_attribute('data-price')
                         if price_attr:
-                            # Parse "£7,000.00" format
                             price_match = re.search(r'£([\d,]+(?:\.\d{2})?)', price_attr)
                             if price_match:
                                 price = float(price_match.group(1).replace(',', ''))
-                                if price > 200:
-                                    page.close()
-                                    per_cigar = price / box_size
-                                    print(f"    ✓ Found: £{price:,.2f} (£{per_cigar:.2f}/cigar)")
-                                    return {"source": "JJ Fox", "url": url, "box_price": price}
-                
-            except Exception as e:
-                continue
+                                # Extract box size from button text
+                                box_match = re.search(r'Box of (\d+)', btn_text)
+                                if box_match:
+                                    box_sz = int(box_match.group(1))
+                                    prices[box_sz] = price
+                    
+                    if product_name and prices:
+                        brand_products.append({
+                            'name': product_name,
+                            'name_lower': product_name.lower(),
+                            'prices': prices
+                        })
+                except Exception:
+                    continue
+            
+            page.close()
+            _jjfox_brand_cache[search_brand] = brand_products
+            print(f"    Cached {len(brand_products)} products for brand '{brand}'")
         
-        # No match found
-        page.close()
-        print(f"    ✗ No exact match for {brand} {name} Box of {box_size}")
+        # Search in cached products
+        cached_products = _jjfox_brand_cache.get(search_brand, [])
+        
+        for product in cached_products:
+            product_name = product['name_lower']
+            
+            # Check if this is the right product
+            # 1. Product name must contain the cigar name (e.g., "behike 56")
+            if search_name not in product_name:
+                continue
+            
+            # 2. If we have identifying numbers, they must match exactly
+            if cigar_numbers:
+                product_numbers = set(re.findall(r'\b(\d+)\b', product_name))
+                product_numbers = product_numbers - {'10', '25', '50', '3', '5', '20'}
+                
+                # Must have our target number(s)
+                if not cigar_numbers.issubset(product_numbers):
+                    continue
+                
+                # Must NOT have different variant numbers
+                other_variants = product_numbers - cigar_numbers
+                skip_product = False
+                for our_num in cigar_numbers:
+                    for other_num in other_variants:
+                        try:
+                            # If numbers are close (within 10), they're likely variants
+                            if abs(int(our_num) - int(other_num)) <= 10:
+                                skip_product = True
+                                break
+                        except ValueError:
+                            pass
+                    if skip_product:
+                        break
+                if skip_product:
+                    continue
+            
+            # Found the right product! Check if our box size is available
+            if box_size in product['prices']:
+                price = product['prices'][box_size]
+                if price > 200:
+                    per_cigar = price / box_size
+                    print(f"    ✓ Found: {product['name'][:40]} - £{price:,.2f}")
+                    return {"source": "JJ Fox", "url": url, "box_price": price}
+            else:
+                available_sizes = list(product['prices'].keys())
+                print(f"    ✗ Found product but Box of {box_size} not available (has: {available_sizes})")
+        
+        print(f"    ✗ Product not found on JJ Fox")
         return None
         
     except Exception as e:
