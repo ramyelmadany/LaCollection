@@ -1,6 +1,178 @@
 [
   {
     "date": "2026-01-22",
-    "prices": {}
+    "prices": {
+      "Montecristo|Brilllantes|18": {
+        "box_price_gbp": 2250.0,
+        "box_size": 18,
+        "sources_used": [
+          "jjfox"
+        ]
+      },
+      "Trinidad|Robusto Extra|12": {
+        "box_price_gbp": 322.99,
+        "box_size": 12,
+        "sources_used": [
+          "cgars_pdf"
+        ]
+      },
+      "Montecristo|Leyendas|20": {
+        "box_price_gbp": 1360.0,
+        "box_size": 20,
+        "sources_used": [
+          "jjfox"
+        ]
+      },
+      "Hoyo de Monterrey|Double Corona|50": {
+        "box_price_gbp": 3823.0,
+        "box_size": 50,
+        "sources_used": [
+          "cgars_pdf"
+        ]
+      },
+      "Bolivar|New Gold Medal|10": {
+        "box_price_gbp": 899.99,
+        "box_size": 10,
+        "sources_used": [
+          "cgars_pdf"
+        ]
+      },
+      "Partagas|Lusitinas|10": {
+        "box_price_gbp": 460.0,
+        "box_size": 10,
+        "sources_used": [
+          "jjfox"
+        ]
+      },
+      "Cohiba|Vistosos|10": {
+        "box_price_gbp": 1110.0,
+        "box_size": 10,
+        "sources_used": [
+          "jjfox"
+        ]
+      },
+      "Cohiba|Siglo VI|25": {
+        "box_price_gbp": 2949.5,
+        "box_size": 25,
+        "sources_used": [
+          "cgars_pdf",
+          "jjfox"
+        ]
+      },
+      "Cohiba|Maduro 5 Genios|25": {
+        "box_price_gbp": 1739.0,
+        "box_size": 25,
+        "sources_used": [
+          "cgars_pdf"
+        ]
+      },
+      "Cohiba|Maduro 5 Magicos|25": {
+        "box_price_gbp": 2629.0,
+        "box_size": 25,
+        "sources_used": [
+          "cgars_pdf"
+        ]
+      },
+      "Cohiba|Behike 52|10": {
+        "box_price_gbp": 3399.0,
+        "box_size": 10,
+        "sources_used": [
+          "cgars_pdf"
+        ]
+      },
+      "Partagas|Linea Maestra Maestros|20": {
+        "box_price_gbp": 2518.0,
+        "box_size": 20,
+        "sources_used": [
+          "cgars_pdf"
+        ]
+      },
+      "Hoyo de Monterrey|Petit Robustos|25": {
+        "box_price_gbp": 2349.99,
+        "box_size": 25,
+        "sources_used": [
+          "cgars_pdf",
+          "jjfox"
+        ]
+      },
+      "Cohiba|Siglo I|25": {
+        "box_price_gbp": 1598.0,
+        "box_size": 25,
+        "sources_used": [
+          "cgars_pdf"
+        ]
+      },
+      "Cohiba|Medio Siglo|25": {
+        "box_price_gbp": 1635.0,
+        "box_size": 25,
+        "sources_used": [
+          "cgars_pdf"
+        ]
+      },
+      "Cohiba|Behike 56|10": {
+        "box_price_gbp": 3399.0,
+        "box_size": 10,
+        "sources_used": [
+          "cgars_pdf"
+        ]
+      },
+      "Trinidad|Esmerelda|12": {
+        "box_price_gbp": 690.0,
+        "box_size": 12,
+        "sources_used": [
+          "jjfox"
+        ]
+      },
+      "Cohiba|Lanceros|25": {
+        "box_price_gbp": 2700.0,
+        "box_size": 25,
+        "sources_used": [
+          "jjfox"
+        ]
+      },
+      "Cohiba|Siglo VI|10": {
+        "box_price_gbp": 1232.5,
+        "box_size": 10,
+        "sources_used": [
+          "cgars_pdf",
+          "jjfox"
+        ]
+      },
+      "Name|Quantity Purchased (Boxes)|25": {
+        "box_price_gbp": 930.0,
+        "box_size": 25,
+        "sources_used": [
+          "jjfox"
+        ]
+      },
+      "Topes|1|25": {
+        "box_price_gbp": 549.0,
+        "box_size": 25,
+        "sources_used": [
+          "cgars_pdf"
+        ]
+      },
+      "Vistosos|1|25": {
+        "box_price_gbp": 549.0,
+        "box_size": 25,
+        "sources_used": [
+          "cgars_pdf"
+        ]
+      },
+      "Robusto Extra|1|25": {
+        "box_price_gbp": 549.0,
+        "box_size": 25,
+        "sources_used": [
+          "cgars_pdf"
+        ]
+      },
+      "Linea Maestra Origen|1|25": {
+        "box_price_gbp": 549.0,
+        "box_size": 25,
+        "sources_used": [
+          "cgars_pdf"
+        ]
+      }
+    }
   }
 ]
