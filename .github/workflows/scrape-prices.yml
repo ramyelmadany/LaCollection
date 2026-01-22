@@ -22,14 +22,10 @@ jobs:
         with:
           python-version: '3.11'
           
-      - name: Install dependencies
-        run: |
-          pip install pdfplumber
-          
       - name: Run scraper
         run: |
           cd scripts
-          python uk_price_scraper_v4.py
+          python uk_price_scraper_v5.py
           
       - name: Copy prices to src
         run: |
