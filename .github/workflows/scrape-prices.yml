@@ -6,6 +6,9 @@ on:
     - cron: '0 6 * * 1'
   workflow_dispatch: # Allows manual trigger
 
+permissions:
+  contents: write
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
@@ -19,15 +22,19 @@ jobs:
         with:
           python-version: '3.11'
           
+      - name: Install dependencies
+        run: |
+          pip install pdfplumber
+          
       - name: Run scraper
         run: |
           cd scripts
-          python uk_price_scraper_v3.py <<< "1"
+          python uk_price_scraper_v4.py
           
       - name: Copy prices to src
         run: |
-          cp scripts/uk_market_prices.js src/uk_market_prices.js
-          cp scripts/prices.json src/prices.json
+          cp scripts/uk_market_prices.js src/uk_market_prices.js 2>/dev/null || true
+          cp scripts/prices.json src/prices.json 2>/dev/null || true
           
       - name: Commit and push
         run: |
