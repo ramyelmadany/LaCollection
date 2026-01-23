@@ -217,7 +217,7 @@ const updateSheetRow = async (rowIndex, values, accessToken) => {
 // Append a new row to Google Sheets (requires OAuth token)
 const appendSheetRow = async (values, accessToken) => {
   const { sheetId } = GOOGLE_SHEETS_CONFIG;
-  const range = 'A:O';
+  const range = GOOGLE_SHEETS_CONFIG.collectionRange;
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
   
   try {
