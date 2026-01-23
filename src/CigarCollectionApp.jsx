@@ -5,8 +5,8 @@ const GOOGLE_SHEETS_CONFIG = {
   apiKey: 'AIzaSyCGwQ71BGsiWWWJjX10_teVe3zQAmu9ZDk',
   clientId: '945855470299-l1is4q9t6lb1ak8v5n0871hsk6kt8ihl.apps.googleusercontent.com', // Add your OAuth Client ID from Google Cloud Console to enable write access
   sheetId: '10A_FMj8eotx-xlzAlCNFxjOr3xEOuO4p5GxAZjHC86A',
-  collectionRange: 'A:O', // All rows - filtering handles invalid/empty rows
-  onwardsRange: 'A:L', // All rows for onwards
+  collectionRange: "'La Colección'!A:O", // All rows - filtering handles invalid/empty rows
+  onwardsRange: "'La Colección'!A:L", // All rows for onwards
   scopes: 'https://www.googleapis.com/auth/spreadsheets',
 };
 
@@ -217,7 +217,7 @@ const updateSheetRow = async (rowIndex, values, accessToken) => {
 // Append a new row to Google Sheets (requires OAuth token)
 const appendSheetRow = async (values, accessToken) => {
   const { sheetId } = GOOGLE_SHEETS_CONFIG;
-  const range = 'A:O';
+  const range = "'La Colección'!A:O";
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
   
   try {
