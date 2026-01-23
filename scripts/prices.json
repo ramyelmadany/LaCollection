@@ -3,134 +3,232 @@
     "brand": "Montecristo",
     "name": "Brillantes",
     "box_size": 18,
-    "price_gbp": 1399.99,
-    "per_cigar_gbp": 77.78,
-    "method": "my_smoking_shop",
+    "price_gbp": 1377.99,
+    "per_cigar_gbp": 76.56,
+    "method": "averaged",
     "sources": [
+      "Havana House",
       "My Smoking Shop"
     ],
-    "timestamp": "2026-01-23T02:43:21.428511"
+    "timestamp": "2026-01-23T09:12:37.397559"
+  },
+  "Trinidad|Robusto Extra|12": {
+    "brand": "Trinidad",
+    "name": "Robusto Extra",
+    "box_size": 12,
+    "price_gbp": 974.5,
+    "per_cigar_gbp": 81.21,
+    "method": "averaged",
+    "sources": [
+      "CGars",
+      "Havana House"
+    ],
+    "timestamp": "2026-01-23T09:15:08.647711"
   },
   "Ramon Allones|Absolutos|20": {
     "brand": "Ramon Allones",
     "name": "Absolutos",
     "box_size": 20,
-    "price_gbp": 1245.0,
-    "per_cigar_gbp": 62.25,
+    "price_gbp": 1247.0,
+    "per_cigar_gbp": 62.35,
+    "method": "averaged",
+    "sources": [
+      "CGars",
+      "Havana House"
+    ],
+    "timestamp": "2026-01-23T09:21:41.742337"
+  },
+  "Hoyo de Monterrey|Double Corona|50": {
+    "brand": "Hoyo de Monterrey",
+    "name": "Double Corona",
+    "box_size": 50,
+    "price_gbp": 3823.0,
+    "per_cigar_gbp": 76.46,
+    "method": "cgars",
+    "sources": [
+      "CGars"
+    ],
+    "timestamp": "2026-01-23T09:24:11.831695"
+  },
+  "Bolivar|New Gold Medal|10": {
+    "brand": "Bolivar",
+    "name": "New Gold Medal",
+    "box_size": 10,
+    "price_gbp": 899.99,
+    "per_cigar_gbp": 90.0,
+    "method": "cgars",
+    "sources": [
+      "CGars"
+    ],
+    "timestamp": "2026-01-23T09:26:11.829596"
+  },
+  "Cohiba|Siglo VI|25": {
+    "brand": "Cohiba",
+    "name": "Siglo VI",
+    "box_size": 25,
+    "price_gbp": 1600.0,
+    "per_cigar_gbp": 64.0,
     "method": "havana_house",
     "sources": [
       "Havana House"
     ],
-    "timestamp": "2026-01-23T02:50:36.608490"
+    "timestamp": "2026-01-23T09:32:53.814229"
   },
   "Cohiba|Maduro 5 Genios|25": {
     "brand": "Cohiba",
     "name": "Maduro 5 Genios",
     "box_size": 25,
-    "price_gbp": 2700.0,
-    "per_cigar_gbp": 108.0,
-    "method": "havana_house",
+    "price_gbp": 999.0,
+    "per_cigar_gbp": 39.96,
+    "method": "lowest",
     "sources": [
+      "CGars",
       "Havana House"
     ],
-    "timestamp": "2026-01-23T03:00:56.183521"
+    "timestamp": "2026-01-23T09:34:34.942956"
   },
   "Cohiba|Maduro 5 Magicos|25": {
     "brand": "Cohiba",
     "name": "Maduro 5 Magicos",
     "box_size": 25,
-    "price_gbp": 2250.0,
-    "per_cigar_gbp": 90.0,
-    "method": "havana_house",
+    "price_gbp": 999.0,
+    "per_cigar_gbp": 39.96,
+    "method": "lowest",
     "sources": [
+      "CGars",
       "Havana House"
     ],
-    "timestamp": "2026-01-23T03:02:10.719771"
+    "timestamp": "2026-01-23T09:35:05.612547"
   },
   "Cohiba|Behike 52|10": {
     "brand": "Cohiba",
     "name": "Behike 52",
     "box_size": 10,
-    "price_gbp": 4000.0,
-    "per_cigar_gbp": 400.0,
+    "price_gbp": 3699.5,
+    "per_cigar_gbp": 369.95,
+    "method": "averaged",
+    "sources": [
+      "CGars",
+      "Havana House"
+    ],
+    "timestamp": "2026-01-23T09:36:11.221357"
+  },
+  "Partagas|Linea Maestra Maestros|20": {
+    "brand": "Partagas",
+    "name": "Linea Maestra Maestros",
+    "box_size": 20,
+    "price_gbp": 1331.13,
+    "per_cigar_gbp": 66.56,
+    "method": "averaged",
+    "sources": [
+      "CGars",
+      "Havana House",
+      "My Smoking Shop"
+    ],
+    "timestamp": "2026-01-23T09:36:53.512660"
+  },
+  "Hoyo de Monterrey|Petit Robustos|25": {
+    "brand": "Hoyo de Monterrey",
+    "name": "Petit Robustos",
+    "box_size": 25,
+    "price_gbp": 710.5,
+    "per_cigar_gbp": 28.42,
     "method": "havana_house",
     "sources": [
       "Havana House"
     ],
-    "timestamp": "2026-01-23T03:03:26.118546"
+    "timestamp": "2026-01-23T09:38:54.163633"
   },
   "Cohiba|Siglo I|25": {
     "brand": "Cohiba",
     "name": "Siglo I",
     "box_size": 25,
-    "price_gbp": 747.0,
-    "per_cigar_gbp": 29.88,
-    "method": "averaged",
+    "price_gbp": 813.0,
+    "per_cigar_gbp": 32.52,
+    "method": "lowest",
     "sources": [
-      "Havana House",
-      "My Smoking Shop"
+      "CGars",
+      "Havana House"
     ],
-    "timestamp": "2026-01-23T03:06:22.070394"
+    "timestamp": "2026-01-23T09:38:54.163840"
   },
   "Cohiba|Medio Siglo|25": {
     "brand": "Cohiba",
     "name": "Medio Siglo",
     "box_size": 25,
-    "price_gbp": 1504.49,
-    "per_cigar_gbp": 60.18,
-    "method": "averaged",
+    "price_gbp": 1044.0,
+    "per_cigar_gbp": 41.76,
+    "method": "lowest",
     "sources": [
-      "Havana House",
-      "My Smoking Shop"
+      "CGars",
+      "Havana House"
     ],
-    "timestamp": "2026-01-23T03:06:50.567736"
+    "timestamp": "2026-01-23T09:39:54.392098"
   },
   "Cohiba|Behike 56|10": {
     "brand": "Cohiba",
     "name": "Behike 56",
     "box_size": 10,
-    "price_gbp": 4000.0,
-    "per_cigar_gbp": 400.0,
-    "method": "havana_house",
+    "price_gbp": 5599.5,
+    "per_cigar_gbp": 559.95,
+    "method": "averaged",
     "sources": [
+      "CGars",
       "Havana House"
     ],
-    "timestamp": "2026-01-23T03:06:50.567791"
+    "timestamp": "2026-01-23T09:39:54.392356"
   },
   "Cohiba|Lanceros|25": {
     "brand": "Cohiba",
     "name": "Lanceros",
     "box_size": 25,
-    "price_gbp": 1900.0,
-    "per_cigar_gbp": 76.0,
-    "method": "havana_house",
+    "price_gbp": 1964.99,
+    "per_cigar_gbp": 78.6,
+    "method": "lowest",
     "sources": [
-      "Havana House"
+      "CGars",
+      "Havana House",
+      "My Smoking Shop"
     ],
-    "timestamp": "2026-01-23T03:10:02.732613"
+    "timestamp": "2026-01-23T09:43:32.476701"
+  },
+  "Cohiba|Siglo VI|10": {
+    "brand": "Cohiba",
+    "name": "Siglo VI",
+    "box_size": 10,
+    "price_gbp": 1355.0,
+    "per_cigar_gbp": 135.5,
+    "method": "cgars",
+    "sources": [
+      "CGars"
+    ],
+    "timestamp": "2026-01-23T09:43:37.350010"
   },
   "Trinidad|Topes|12": {
     "brand": "Trinidad",
     "name": "Topes",
     "box_size": 12,
-    "price_gbp": 764.0,
-    "per_cigar_gbp": 63.67,
-    "method": "havana_house",
+    "price_gbp": 765.0,
+    "per_cigar_gbp": 63.75,
+    "method": "averaged",
     "sources": [
+      "CGars",
       "Havana House"
     ],
-    "timestamp": "2026-01-23T03:11:16.920593"
+    "timestamp": "2026-01-23T09:44:37.323973"
   },
   "Partagas|Linea Maestra Origen|20": {
     "brand": "Partagas",
     "name": "Linea Maestra Origen",
     "box_size": 20,
-    "price_gbp": 1304.4,
-    "per_cigar_gbp": 65.22,
-    "method": "havana_house",
+    "price_gbp": 1331.13,
+    "per_cigar_gbp": 66.56,
+    "method": "averaged",
     "sources": [
-      "Havana House"
+      "CGars",
+      "Havana House",
+      "My Smoking Shop"
     ],
-    "timestamp": "2026-01-23T03:12:30.099352"
+    "timestamp": "2026-01-23T09:44:54.871226"
   }
 }
