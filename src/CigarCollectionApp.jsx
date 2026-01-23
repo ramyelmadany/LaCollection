@@ -814,7 +814,7 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
           </div>
           
           {/* Delete Button */}
-          {isSignedIn && (
+          {true && (
             <div className="mt-4 pt-4 border-t border-gray-700">
               {!showDeleteConfirm ? (
                 <button
