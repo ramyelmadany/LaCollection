@@ -70,41 +70,30 @@ def load_inventory() -> pd.DataFrame:
     try:
         response = requests.get(SHEET_URL, timeout=30)
         response.raise_for_status()
-        df = pd.read_csv(StringIO(response.text))
+        
+        # Read CSV, skipping the first row if it's empty/metadata
+        # The Google Sheet has row 1 empty/metadata and row 2 with headers
+        df = pd.read_csv(StringIO(response.text), header=1)  # Skip first row, use second as header
         
         # Debug: print column names
         print(f"Raw columns: {df.columns.tolist()}")
         
-        # Normalize column names - strip whitespace and handle variations
+        # Normalize column names - strip whitespace
         df.columns = df.columns.str.strip()
         
         # Handle the specific Google Sheet structure
-        # The sheet has: Date of Purchase, Box Number, Received, Brand, Name, Number / Box, etc.
         column_mapping = {
             # Box size variations
             'Number in Box': 'Box Size',
             'number in box': 'Box Size',
-            'box size': 'Box Size',
             'Number / Box': 'Box Size',
             'number / box': 'Box Size',
-            # Handle merged header issues
-            'Name|uantity Purchased (Boxes)': 'Name',
-            'Nameuantity Purchased (Boxes)': 'Name',
         }
         
         # Apply column mapping
         for old_name, new_name in column_mapping.items():
             if old_name in df.columns:
                 df.rename(columns={old_name: new_name}, inplace=True)
-        
-        # Also try partial matching for merged headers
-        for col in df.columns:
-            if 'brand' in col.lower():
-                df.rename(columns={col: 'Brand'}, inplace=True)
-            elif col.lower().startswith('name') and 'Name' not in df.columns:
-                df.rename(columns={col: 'Name'}, inplace=True)
-            elif 'number' in col.lower() and 'box' in col.lower():
-                df.rename(columns={col: 'Box Size'}, inplace=True)
         
         print(f"Mapped columns: {df.columns.tolist()}")
         
@@ -122,8 +111,8 @@ def load_inventory() -> pd.DataFrame:
         
         # Remove rows with empty Brand or Name
         df = df.dropna(subset=['Brand', 'Name'])
-        df = df[df['Brand'].str.strip() != '']
-        df = df[df['Name'].str.strip() != '']
+        df = df[df['Brand'].astype(str).str.strip() != '']
+        df = df[df['Name'].astype(str).str.strip() != '']
         
         # Get unique combinations of Brand, Name, Box Size
         df_unique = df[['Brand', 'Name', 'Box Size']].drop_duplicates()
