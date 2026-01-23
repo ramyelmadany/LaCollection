@@ -72,32 +72,64 @@ def load_inventory() -> pd.DataFrame:
         response.raise_for_status()
         df = pd.read_csv(StringIO(response.text))
         
-        # Normalize column names
+        # Debug: print column names
+        print(f"Raw columns: {df.columns.tolist()}")
+        
+        # Normalize column names - strip whitespace and handle variations
         df.columns = df.columns.str.strip()
         
-        # Expected columns: Brand, Name, Box Size (or Number in Box)
-        # Rename if needed
+        # Handle the specific Google Sheet structure
+        # The sheet has: Date of Purchase, Box Number, Received, Brand, Name, Number / Box, etc.
         column_mapping = {
+            # Box size variations
             'Number in Box': 'Box Size',
             'number in box': 'Box Size',
             'box size': 'Box Size',
+            'Number / Box': 'Box Size',
+            'number / box': 'Box Size',
+            # Handle merged header issues
+            'Name|uantity Purchased (Boxes)': 'Name',
+            'Nameuantity Purchased (Boxes)': 'Name',
         }
-        df.rename(columns=column_mapping, inplace=True)
+        
+        # Apply column mapping
+        for old_name, new_name in column_mapping.items():
+            if old_name in df.columns:
+                df.rename(columns={old_name: new_name}, inplace=True)
+        
+        # Also try partial matching for merged headers
+        for col in df.columns:
+            if 'brand' in col.lower():
+                df.rename(columns={col: 'Brand'}, inplace=True)
+            elif col.lower().startswith('name') and 'Name' not in df.columns:
+                df.rename(columns={col: 'Name'}, inplace=True)
+            elif 'number' in col.lower() and 'box' in col.lower():
+                df.rename(columns={col: 'Box Size'}, inplace=True)
+        
+        print(f"Mapped columns: {df.columns.tolist()}")
         
         # Ensure required columns exist
         required = ['Brand', 'Name']
         for col in required:
             if col not in df.columns:
-                raise ValueError(f"Missing required column: {col}")
+                raise ValueError(f"Missing required column: {col}. Available columns: {df.columns.tolist()}")
         
         # Convert Box Size to int if present
         if 'Box Size' in df.columns:
             df['Box Size'] = pd.to_numeric(df['Box Size'], errors='coerce').fillna(1).astype(int)
         else:
             df['Box Size'] = 1
+        
+        # Remove rows with empty Brand or Name
+        df = df.dropna(subset=['Brand', 'Name'])
+        df = df[df['Brand'].str.strip() != '']
+        df = df[df['Name'].str.strip() != '']
+        
+        # Get unique combinations of Brand, Name, Box Size
+        df_unique = df[['Brand', 'Name', 'Box Size']].drop_duplicates()
             
-        print(f"Loaded {len(df)} items from inventory")
-        return df
+        print(f"Loaded {len(df_unique)} unique items from inventory")
+        return df_unique
         
     except Exception as e:
         print(f"Error loading inventory: {e}")
