@@ -1911,7 +1911,7 @@ export default function CigarCollectionApp() {
       {view === 'prices' && <PricesView boxes={boxes} currency={currency} FX={FX} fmtCurrency={fmtCurrency} fmtFromGBP={fmtFromGBP} />}
       
       {/* Modals */}
-      {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} onClose={() => setSelectedGroup(null)} currency={currency} FX={FX} fmtCurrency={fmtCurrency} />}
+      {selectedGroup && <BoxDetailModal boxes={selectedBoxes} onClose={() => setSelectedBoxes(null)} currency={currency} FX={FX} fmtCurrency={fmtCurrency} />}
       {showLogModal && <SmokeLogModal boxes={boxes} onClose={() => setShowLogModal(false)} onLog={handleLog} />}
       {showAddModal && <AddBoxModal boxes={boxes} onClose={() => setShowAddModal(false)} onAdd={handleAddBoxes} />}
       
