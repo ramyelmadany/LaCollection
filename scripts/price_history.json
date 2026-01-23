@@ -4,6 +4,13 @@
       "date": "2026-01-22",
       "price_gbp": 2250.0,
       "method": "jj_fox_only"
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 1799.0,
+      "sources": [
+        "CGars"
+      ]
     }
   ],
   "Cohiba|Maduro 5 Magicos|25": [
@@ -11,6 +18,13 @@
       "date": "2026-01-22",
       "price_gbp": 2700.0,
       "method": "jj_fox_only"
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 2629.0,
+      "sources": [
+        "CGars"
+      ]
     }
   ],
   "Cohiba|Behike 52|10": [
@@ -25,6 +39,13 @@
       "date": "2026-01-22",
       "price_gbp": 770.0,
       "method": "jj_fox_only"
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 813.0,
+      "sources": [
+        "CGars"
+      ]
     }
   ],
   "Cohiba|Behike 56|10": [
@@ -46,6 +67,13 @@
       "date": "2026-01-22",
       "price_gbp": 830.0,
       "method": "jj_fox_only"
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 766.0,
+      "sources": [
+        "CGars"
+      ]
     }
   ],
   "Partagas|Linea Maestra Origen|20": [
@@ -53,6 +81,85 @@
       "date": "2026-01-22",
       "price_gbp": 1500.0,
       "method": "jj_fox_only"
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 2518.0,
+      "sources": [
+        "CGars"
+      ]
+    }
+  ],
+  "Hoyo de Monterrey|Double Corona|50": [
+    {
+      "date": "2026-01-23",
+      "price_gbp": 3823.0,
+      "sources": [
+        "CGars"
+      ]
+    }
+  ],
+  "Bolivar|New Gold Medal|10": [
+    {
+      "date": "2026-01-23",
+      "price_gbp": 899.99,
+      "sources": [
+        "CGars"
+      ]
+    }
+  ],
+  "Cohiba|Siglo VI|25": [
+    {
+      "date": "2026-01-23",
+      "price_gbp": 3199.0,
+      "sources": [
+        "CGars"
+      ]
+    }
+  ],
+  "Cohiba|Maduro 5 Genios|25": [
+    {
+      "date": "2026-01-23",
+      "price_gbp": 2629.0,
+      "sources": [
+        "CGars"
+      ]
+    }
+  ],
+  "Partagas|Linea Maestra Maestros|20": [
+    {
+      "date": "2026-01-23",
+      "price_gbp": 2518.0,
+      "sources": [
+        "CGars"
+      ]
+    }
+  ],
+  "Hoyo de Monterrey|Petit Robustos|25": [
+    {
+      "date": "2026-01-23",
+      "price_gbp": 739.0,
+      "sources": [
+        "CGars"
+      ]
+    }
+  ],
+  "Cohiba|Medio Siglo|25": [
+    {
+      "date": "2026-01-23",
+      "price_gbp": 1635.0,
+      "sources": [
+        "CGars"
+      ]
+    }
+  ],
+  "Cohiba|Siglo VI|10": [
+    {
+      "date": "2026-01-23",
+      "price_gbp": 1355.0,
+      "sources": [
+        "CGars"
+      ]
     }
   ]
 }
