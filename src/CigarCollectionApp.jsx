@@ -217,25 +217,71 @@ const updateSheetRow = async (rowIndex, values, accessToken) => {
 // Append a new row to Google Sheets (requires OAuth token)
 const appendSheetRow = async (values, accessToken) => {
   const { sheetId } = GOOGLE_SHEETS_CONFIG;
-  const range = GOOGLE_SHEETS_CONFIG.collectionRange;
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+  
+  // First, find the "Subtotal Spent" row
+  const findUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'Cigar Inventory'!A:A?key=${GOOGLE_SHEETS_CONFIG.apiKey}`;
   
   try {
-    const response = await fetch(url, {
+    const findResponse = await fetch(findUrl);
+    const findData = await findResponse.json();
+    const rows = findData.values || [];
+    
+    // Find the row index where "Subtotal Spent" is located
+    let insertRowIndex = rows.length + 1; // Default to end
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i][0] && rows[i][0].includes('Subtotal')) {
+        insertRowIndex = i + 1; // Convert to 1-based index
+        break;
+      }
+    }
+    
+    // Insert a blank row at that position
+    const insertUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}:batchUpdate`;
+    const insertResponse = await fetch(insertUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        range: range,
+        requests: [{
+          insertDimension: {
+            range: {
+              sheetId: 1253000469,
+              dimension: 'ROWS',
+              startIndex: insertRowIndex - 1,
+              endIndex: insertRowIndex
+            },
+            inheritFromBefore: true
+          }
+        }]
+      }),
+    });
+    
+    if (!insertResponse.ok) {
+      const error = await insertResponse.json();
+      throw new Error(error.error?.message || 'Failed to insert row');
+    }
+    
+    // Now write the data to that row
+    const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'Cigar Inventory'!A${insertRowIndex}:O${insertRowIndex}?valueInputOption=USER_ENTERED`;
+    const writeResponse = await fetch(writeUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        range: `'Cigar Inventory'!A${insertRowIndex}:O${insertRowIndex}`,
         values: [values],
       }),
     });
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error?.message || 'Failed to append row');
+    
+    if (!writeResponse.ok) {
+      const error = await writeResponse.json();
+      throw new Error(error.error?.message || 'Failed to write row');
     }
+    
     return true;
   } catch (error) {
     console.error('Error appending row:', error);
