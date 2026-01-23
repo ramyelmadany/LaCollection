@@ -11,6 +11,13 @@
       "sources": [
         "CGars"
       ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 1399.99,
+      "sources": [
+        "My Smoking Shop"
+      ]
     }
   ],
   "Cohiba|Maduro 5 Magicos|25": [
@@ -25,6 +32,13 @@
       "sources": [
         "CGars"
       ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 2250.0,
+      "sources": [
+        "Havana House"
+      ]
     }
   ],
   "Cohiba|Behike 52|10": [
@@ -32,6 +46,13 @@
       "date": "2026-01-22",
       "price_gbp": 230.0,
       "method": "sautter_only"
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 4000.0,
+      "sources": [
+        "Havana House"
+      ]
     }
   ],
   "Cohiba|Siglo I|25": [
@@ -46,6 +67,14 @@
       "sources": [
         "CGars"
       ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 747.0,
+      "sources": [
+        "Havana House",
+        "My Smoking Shop"
+      ]
     }
   ],
   "Cohiba|Behike 56|10": [
@@ -53,6 +82,13 @@
       "date": "2026-01-22",
       "price_gbp": 7000.0,
       "method": "jj_fox_only"
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 4000.0,
+      "sources": [
+        "Havana House"
+      ]
     }
   ],
   "Cohiba|Lanceros|25": [
@@ -60,6 +96,13 @@
       "date": "2026-01-22",
       "price_gbp": 300.0,
       "method": "sautter_only"
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 1900.0,
+      "sources": [
+        "Havana House"
+      ]
     }
   ],
   "Trinidad|Topes|12": [
@@ -74,6 +117,13 @@
       "sources": [
         "CGars"
       ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 764.0,
+      "sources": [
+        "Havana House"
+      ]
     }
   ],
   "Partagas|Linea Maestra Origen|20": [
@@ -87,6 +137,13 @@
       "price_gbp": 2518.0,
       "sources": [
         "CGars"
+      ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 1304.4,
+      "sources": [
+        "Havana House"
       ]
     }
   ],
@@ -124,6 +181,13 @@
       "sources": [
         "CGars"
       ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 2700.0,
+      "sources": [
+        "Havana House"
+      ]
     }
   ],
   "Partagas|Linea Maestra Maestros|20": [
@@ -151,6 +215,14 @@
       "sources": [
         "CGars"
       ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 1504.49,
+      "sources": [
+        "Havana House",
+        "My Smoking Shop"
+      ]
     }
   ],
   "Cohiba|Siglo VI|10": [
@@ -159,6 +231,15 @@
       "price_gbp": 1355.0,
       "sources": [
         "CGars"
+      ]
+    }
+  ],
+  "Ramon Allones|Absolutos|20": [
+    {
+      "date": "2026-01-23",
+      "price_gbp": 1245.0,
+      "sources": [
+        "Havana House"
       ]
     }
   ]
