@@ -644,14 +644,26 @@ const OnwardsCard = ({ item, fmtCurrency }) => {
 };
 
 // Box Detail Modal
-const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency }) => {
+const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, isSignedIn }) => {
   const [selectedIdx, setSelectedIdx] = useState(0);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const box = boxes[selectedIdx];
   const s = brandStyles[box.brand] || brandStyles['Cohiba'];
   const market = getMarket(box.brand, box.name, box.perBox);
   const marketGBP = market?.gbp || FX.toGBP(box.priceUSD) * 1.15;
   const marketUSD = FX.toUSD(marketGBP);
   const savingsUSD = marketUSD - box.priceUSD;
+
+  const handleDelete = async () => {
+    if (!onDelete) return;
+    setIsDeleting(true);
+    const success = await onDelete(box);
+    setIsDeleting(false);
+    if (success) {
+      onClose();
+    }
+  };
   
   // Calculate box age
   const calculateAge = (dateStr) => {
