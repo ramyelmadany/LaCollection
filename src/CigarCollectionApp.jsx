@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { ukMarketPrices } from './uk_market_prices.js';
+
 // Google Sheets Configuration
 const GOOGLE_SHEETS_CONFIG = {
   apiKey: 'AIzaSyCGwQ71BGsiWWWJjX10_teVe3zQAmu9ZDk',
-  clientId: '945855470299-l1is4q9t6lb1ak8v5n0871hsk6kt8ihl.apps.googleusercontent.com', // Add your OAuth Client ID from Google Cloud Console to enable write access
+  clientId: '945855470299-l1is4q9t6lb1ak8v5n0871hsk6kt8ihl.apps.googleusercontent.com',
   sheetId: '10A_FMj8eotx-xlzAlCNFxjOr3xEOuO4p5GxAZjHC86A',
   collectionRange: 'A:O', // All rows - filtering handles invalid/empty rows
   onwardsRange: 'A:L', // All rows for onwards
@@ -318,90 +318,13 @@ const ukMarket = {
   }
 };
 
-// Get UK market price with priority: manual override > scraped > hardcoded fallback
 const getMarket = (brand, name, perBox) => {
-  // 1. Check for manual price override first (stored in localStorage)
-  const manualKey = `ukPrice_${brand}_${name}_${perBox}`;
-  try {
-    const manualPrice = localStorage.getItem(manualKey);
-    if (manualPrice) {
-      const parsed = JSON.parse(manualPrice);
-      return {
-        gbp: parsed.gbp,
-        perCigarGBP: parsed.gbp / perBox,
-        source: 'manual'
-      };
-    }
-  } catch (e) {
-    console.warn('Error reading manual price:', e);
-  }
-  
-  // 2. Check scraped prices (uk_market_prices.js) - PRIMARY SOURCE
-  if (ukMarketPrices && ukMarketPrices[brand]) {
-    const scrapedBrand = ukMarketPrices[brand];
-    
-    // Try exact match with box size
-    const exactKey = `${name} (Box of ${perBox})`;
-    if (scrapedBrand[exactKey]) {
-      const data = scrapedBrand[exactKey];
-      return {
-        gbp: data.boxPrice,
-        perCigarGBP: data.perCigar,
-        source: (data.sources || []).join(', ') || 'scraped'
-      };
-    }
-    
-    // Try matching just by name (any box size) and adjust
-    for (const [productKey, data] of Object.entries(scrapedBrand)) {
-      if (productKey.startsWith(name + ' (Box of')) {
-        const ratio = perBox / data.boxSize;
-        return {
-          gbp: data.boxPrice * ratio,
-          perCigarGBP: data.perCigar,
-          source: (data.sources || []).join(', ') + ' (adj)'
-        };
-      }
-    }
-  }
-  
-  // 3. Fall back to hardcoded ukMarket (FALLBACK)
   const m = ukMarket[brand]?.[name];
   if (m) {
     const ratio = perBox / m.perBox;
-    return {
-      gbp: m.gbp * ratio,
-      perCigarGBP: m.gbp / m.perBox,
-      source: m.source + ' (fallback)'
-    };
+    return { gbp: m.gbp * ratio, perCigarGBP: m.gbp / m.perBox, source: m.source };
   }
-  
   return null;
-};
-
-// Helper functions for manual price overrides
-const setManualUKPrice = (brand, name, perBox, gbpPrice) => {
-  const key = `ukPrice_${brand}_${name}_${perBox}`;
-  if (gbpPrice === null || gbpPrice === '' || isNaN(gbpPrice)) {
-    localStorage.removeItem(key);
-  } else {
-    localStorage.setItem(key, JSON.stringify({ gbp: parseFloat(gbpPrice) }));
-  }
-};
-
-const getManualUKPrice = (brand, name, perBox) => {
-  try {
-    const key = `ukPrice_${brand}_${name}_${perBox}`;
-    const stored = localStorage.getItem(key);
-    if (stored) {
-      return JSON.parse(stored).gbp;
-    }
-  } catch (e) {}
-  return null;
-};
-
-const clearManualUKPrice = (brand, name, perBox) => {
-  const key = `ukPrice_${brand}_${name}_${perBox}`;
-  localStorage.removeItem(key);
 };
 
 // Onwards data
@@ -636,33 +559,6 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency }) => {
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">UK market:</span>
                 <span className="text-blue-400">{fmtCurrency(marketUSD)}</span>
-              </div>
-              <div className="flex justify-between text-sm items-center">
-                <span className="text-gray-400 text-xs">Source: {market?.source || 'estimate'}</span>
-                <div className="flex items-center gap-1">
-                  <input
-                    type="number"
-                    step="0.01"
-                    placeholder="Override £"
-                    defaultValue={getManualUKPrice(box.brand, box.name, box.perBox) || ''}
-                    className="w-20 px-1 py-0.5 text-xs bg-gray-700 border border-gray-600 rounded text-white"
-                    onBlur={(e) => {
-                      setManualUKPrice(box.brand, box.name, box.perBox, e.target.value);
-                      window.location.reload();
-                    }}
-                  />
-                  {getManualUKPrice(box.brand, box.name, box.perBox) && (
-                    <button
-                      onClick={() => {
-                        clearManualUKPrice(box.brand, box.name, box.perBox);
-                        window.location.reload();
-                      }}
-                      className="text-xs text-red-400 hover:text-red-300"
-                    >
-                      ✕
-                    </button>
-                  )}
-                </div>
               </div>
               {savingsUSD > 0 && (
                 <div className="flex justify-between text-sm pt-2 border-t border-gray-700">
@@ -1588,7 +1484,7 @@ export default function CigarCollectionApp() {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#1a120b' }}>
         <div className="text-center">
-          <h1 className="text-2xl tracking-widest font-semibold mb-4" style={{ color: '#d4af37' }}>LA COLECCIÓN</h1>
+          <h1 className="text-2xl tracking-widest font-semibold mb-4" style={{ color: '#d4af37' }}>LA COLECCION</h1>
           <div className="text-gray-400">Loading from Google Sheets...</div>
         </div>
       </div>
@@ -1603,7 +1499,7 @@ export default function CigarCollectionApp() {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl tracking-widest font-semibold" style={{ color: '#d4af37' }}>LA COLECCIÓN</h1>
+              <h1 className="text-xl tracking-widest font-semibold" style={{ color: '#d4af37' }}>LA COLECCION</h1>
               <button 
                 onClick={refreshData}
                 className="w-6 h-6 rounded-full flex items-center justify-center text-xs"
