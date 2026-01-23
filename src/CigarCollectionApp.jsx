@@ -810,39 +810,30 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
             <span className="px-3 py-1 rounded-full text-sm" style={{ 
               background: box.received ? '#1c3a1c' : '#3a3a1c', color: box.received ? '#99ff99' : '#ffff99'
             }}>{box.received ? 'Received' : 'Pending'}</span>
-            {/* Delete Button */}
-          {true && (
-            <div className="mt-4 pt-4 border-t border-gray-700">
-              {!showDeleteConfirm ? (
-                <button
-                  onClick={() => setShowDeleteConfirm(true)}
-                  className="w-full py-2 px-4 bg-red-900 hover:bg-red-800 text-red-200 rounded text-sm"
-                >
-                  Delete Box
-                </button>
-              ) : (
-                <div className="space-y-2">
-                  <p className="text-red-400 text-sm text-center">Are you sure you want to delete this box?</p>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setShowDeleteConfirm(false)}
-                      className="flex-1 py-2 px-4 bg-gray-700 hover:bg-gray-600 text-white rounded text-sm"
-                      disabled={isDeleting}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleDelete}
-                      className="flex-1 py-2 px-4 bg-red-700 hover:bg-red-600 text-white rounded text-sm"
-                      disabled={isDeleting}
-                    >
-                      {isDeleting ? 'Deleting...' : 'Yes, Delete'}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+            {true && (
+  <button
+    onClick={() => setShowDeleteConfirm(true)}
+    className="px-3 py-1 rounded-full text-sm bg-red-900 hover:bg-red-800 text-red-200"
+  >
+    {showDeleteConfirm ? (isDeleting ? 'Deleting...' : 'Confirm Delete?') : 'Delete'}
+  </button>
+)}
+{showDeleteConfirm && !isDeleting && (
+  <button
+    onClick={() => setShowDeleteConfirm(false)}
+    className="px-3 py-1 rounded-full text-sm bg-gray-700 hover:bg-gray-600 text-white"
+  >
+    Cancel
+  </button>
+)}
+{showDeleteConfirm && (
+  <button
+    onClick={handleDelete}
+    className="px-3 py-1 rounded-full text-sm bg-red-700 hover:bg-red-600 text-white"
+  >
+    {isDeleting ? 'Deleting...' : 'Yes, Delete'}
+  </button>
+)}
           </div>
           </div>
           
