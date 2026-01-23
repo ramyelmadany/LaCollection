@@ -810,10 +810,7 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
             <span className="px-3 py-1 rounded-full text-sm" style={{ 
               background: box.received ? '#1c3a1c' : '#3a3a1c', color: box.received ? '#99ff99' : '#ffff99'
             }}>{box.received ? 'Received' : 'Pending'}</span>
-          </div>
-          </div>
-          
-          {/* Delete Button */}
+            {/* Delete Button */}
           {true && (
             <div className="mt-4 pt-4 border-t border-gray-700">
               {!showDeleteConfirm ? (
@@ -846,6 +843,10 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
               )}
             </div>
           )}
+          </div>
+          </div>
+          
+          
         </div>
       );
     };
