@@ -289,6 +289,44 @@ const appendSheetRow = async (values, accessToken) => {
   }
 };
 
+// Delete a row from Google Sheets (requires OAuth token)
+const deleteSheetRow = async (rowIndex, accessToken) => {
+  const { sheetId } = GOOGLE_SHEETS_CONFIG;
+  
+  try {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}:batchUpdate`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        requests: [{
+          deleteDimension: {
+            range: {
+              sheetId: 1253000469,
+              dimension: 'ROWS',
+              startIndex: rowIndex - 1,
+              endIndex: rowIndex
+            }
+          }
+        }]
+      }),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error?.message || 'Failed to delete row');
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error deleting row:', error);
+    return false;
+  }
+};
+
 // Default exchange rate (fallback if API fails)
 const DEFAULT_FX_RATE = 0.79;
 
