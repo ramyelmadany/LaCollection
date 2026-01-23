@@ -34,7 +34,7 @@ jobs:
       - name: Run scraper
         run: |
           cd scripts
-          python uk_price_scraper_v22.py
+          python uk_price_scraper_v23.py
 
       - name: Copy prices to src
         run: |
