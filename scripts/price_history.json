@@ -42,6 +42,14 @@
         "Havana House",
         "My Smoking Shop"
       ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 1377.99,
+      "sources": [
+        "Havana House",
+        "My Smoking Shop"
+      ]
     }
   ],
   "Cohiba|Maduro 5 Magicos|25": [
@@ -61,6 +69,14 @@
       "date": "2026-01-23",
       "price_gbp": 2250.0,
       "sources": [
+        "Havana House"
+      ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 999.0,
+      "sources": [
+        "CGars",
         "Havana House"
       ]
     },
@@ -126,6 +142,15 @@
         "CGars",
         "Havana House"
       ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 900.0,
+      "sources": [
+        "CGars",
+        "Havana House",
+        "JJ Fox"
+      ]
     }
   ],
   "Cohiba|Siglo I|25": [
@@ -172,6 +197,16 @@
         "CGars",
         "Havana House"
       ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 690.0,
+      "sources": [
+        "CGars",
+        "Havana House",
+        "My Smoking Shop",
+        "JJ Fox"
+      ]
     }
   ],
   "Cohiba|Behike 56|10": [
@@ -210,6 +245,15 @@
       "sources": [
         "CGars",
         "Havana House"
+      ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 5399.67,
+      "sources": [
+        "CGars",
+        "Havana House",
+        "JJ Fox"
       ]
     }
   ],
@@ -250,6 +294,14 @@
         "CGars",
         "Havana House",
         "My Smoking Shop"
+      ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 2899.5,
+      "sources": [
+        "CGars",
+        "Havana House"
       ]
     }
   ],
@@ -295,6 +347,15 @@
       "sources": [
         "CGars",
         "Havana House"
+      ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 740.0,
+      "sources": [
+        "CGars",
+        "Havana House",
+        "JJ Fox"
       ]
     }
   ],
@@ -343,6 +404,15 @@
         "Havana House",
         "My Smoking Shop"
       ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 1304.4,
+      "sources": [
+        "CGars",
+        "Havana House",
+        "JJ Fox"
+      ]
     }
   ],
   "Hoyo de Monterrey|Double Corona|50": [
@@ -375,9 +445,24 @@
         "CGars",
         "Havana House"
       ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 195.0,
+      "sources": [
+        "CGars",
+        "Havana House"
+      ]
     }
   ],
   "Bolivar|New Gold Medal|10": [
+    {
+      "date": "2026-01-23",
+      "price_gbp": 899.99,
+      "sources": [
+        "CGars"
+      ]
+    },
     {
       "date": "2026-01-23",
       "price_gbp": 899.99,
@@ -435,6 +520,15 @@
       "sources": [
         "Havana House"
       ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 690.0,
+      "sources": [
+        "Havana House",
+        "My Smoking Shop",
+        "JJ Fox"
+      ]
     }
   ],
   "Cohiba|Maduro 5 Genios|25": [
@@ -449,6 +543,14 @@
       "date": "2026-01-23",
       "price_gbp": 2700.0,
       "sources": [
+        "Havana House"
+      ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 999.0,
+      "sources": [
+        "CGars",
         "Havana House"
       ]
     },
@@ -510,6 +612,15 @@
         "Havana House",
         "My Smoking Shop"
       ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 1304.4,
+      "sources": [
+        "CGars",
+        "Havana House",
+        "JJ Fox"
+      ]
     }
   ],
   "Hoyo de Monterrey|Petit Robustos|25": [
@@ -539,6 +650,14 @@
       "price_gbp": 710.5,
       "sources": [
         "Havana House"
+      ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 710.5,
+      "sources": [
+        "Havana House",
+        "JJ Fox"
       ]
     }
   ],
@@ -581,6 +700,16 @@
         "CGars",
         "Havana House"
       ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 690.0,
+      "sources": [
+        "CGars",
+        "Havana House",
+        "My Smoking Shop",
+        "JJ Fox"
+      ]
     }
   ],
   "Cohiba|Siglo VI|10": [
@@ -611,6 +740,14 @@
       "sources": [
         "CGars"
       ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 1355.0,
+      "sources": [
+        "CGars",
+        "JJ Fox"
+      ]
     }
   ],
   "Ramon Allones|Absolutos|20": [
@@ -618,6 +755,14 @@
       "date": "2026-01-23",
       "price_gbp": 1245.0,
       "sources": [
+        "Havana House"
+      ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 1247.0,
+      "sources": [
+        "CGars",
         "Havana House"
       ]
     },
@@ -670,9 +815,25 @@
         "CGars",
         "Havana House"
       ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 974.5,
+      "sources": [
+        "CGars",
+        "Havana House"
+      ]
     }
   ],
   "Montecristo|Leyendas|20": [
+    {
+      "date": "2026-01-23",
+      "price_gbp": 1569.5,
+      "sources": [
+        "CGars",
+        "Havana House"
+      ]
+    },
     {
       "date": "2026-01-23",
       "price_gbp": 1569.5,
@@ -697,6 +858,25 @@
       "sources": [
         "CGars",
         "Havana House"
+      ]
+    },
+    {
+      "date": "2026-01-23",
+      "price_gbp": 744.25,
+      "sources": [
+        "CGars",
+        "Havana House",
+        "My Smoking Shop",
+        "JJ Fox"
+      ]
+    }
+  ],
+  "Partagas|Lusitanias|10": [
+    {
+      "date": "2026-01-23",
+      "price_gbp": 699.0,
+      "sources": [
+        "CGars"
       ]
     }
   ]
