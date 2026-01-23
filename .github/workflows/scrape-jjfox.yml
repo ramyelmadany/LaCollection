@@ -1,0 +1,72 @@
+name: Scrape JJ Fox Prices
+
+on:
+  # Manual trigger only for testing
+  workflow_dispatch:
+  
+  # Uncomment below to run on schedule once tested
+  # schedule:
+  #   - cron: '0 7 * * *'  # Run daily at 7 AM UTC
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  scrape-jjfox:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: scrapers/requirements.txt
+      
+      - name: Install dependencies
+        run: |
+          pip install -r scrapers/requirements.txt
+          playwright install chromium
+          playwright install-deps
+      
+      - name: Run JJ Fox scraper
+        env:
+          OUTPUT_DIR: ./output
+        run: |
+          mkdir -p output
+          cd scrapers/jjfox
+          python scrape_jjfox.py
+      
+      - name: List output files
+        run: |
+          echo "=== Output files ==="
+          ls -la output/
+          echo ""
+          echo "=== Preview of results ==="
+          cat output/prices_jjfox.json | head -100
+      
+      - name: Upload results as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jjfox-prices
+          path: output/prices_jjfox.json
+          retention-days: 7
+      
+      # Optional: Copy to src/ and commit (uncomment when ready)
+      # - name: Update src/ with new prices
+      #   run: |
+      #     mkdir -p src/
+      #     cp output/prices_jjfox.json src/
+      #     
+      # - name: Commit updated prices
+      #   if: github.ref == 'refs/heads/main'
+      #   run: |
+      #     git config --local user.email "github-actions[bot]@users.noreply.github.com"
+      #     git config --local user.name "github-actions[bot]"
+      #     git add src/prices_jjfox.json
+      #     git diff --cached --quiet || git commit -m "Update JJ Fox prices $(date +%Y-%m-%d)"
+      #     git push
