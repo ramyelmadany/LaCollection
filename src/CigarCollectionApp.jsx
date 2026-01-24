@@ -749,7 +749,7 @@ const CigarGroupCard = ({ group, onClick, maxLengths }) => {
       }}>
         <div className="p-3">
           <div className="text-center mb-1">
-            <div className="font-bold tracking-wide" style={{ color: s.text, fontFamily: 'Georgia, serif', fontSize: brandSize }}>{brand}</div>
+            <div className="font-bold tracking-wide" style={{ color: s.text, fontFamily: 'tt-ricordi-allegria, Georgia, serif', fontSize: brandSize }}>{brand}</div>
           </div>
           <div className="text-center mb-3">
             <div className="font-medium" style={{ color: s.text, opacity: 0.9, fontSize: nameSize }}>{name}</div>
@@ -811,7 +811,7 @@ const OnwardsCard = ({ item, fmtCurrency }) => {
       <div className="p-3" style={{ borderLeft: `3px solid ${s.accent}` }}>
         <div className="flex justify-between items-start mb-2">
           <div>
-            <div className="text-2xl font-semibold" style={{ color: '#d4af37' }}>{item.brand}</div>
+            <div className="text-2xl font-semibold" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{item.brand}</div>
             <div className="text-xl text-gray-300">{item.name}</div>
           </div>
           <div className="text-right">
@@ -888,7 +888,7 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
       <div className="w-full max-w-md rounded-t-2xl max-h-[90vh] overflow-y-auto" style={{ background: '#2A0808', border: '1px solid #333' }} onClick={e => e.stopPropagation()}>
         <div className="sticky top-0 z-10 p-4 flex justify-between items-start" style={{ background: '#2A0808', borderBottom: '1px solid #4A1515' }}>
   <div>
-    <h3 className="text-4xl font-bold" style={{ color: '#d4af37' }}>{box.brand}</h3>
+    <h3 className="text-4xl font-bold" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.brand}</h3>
     <p className="text-2xl text-gray-300">{box.name}</p>
     {(box.ringGauge || box.length) && (
       <p className="text-sm text-gray-500 mt-1">
@@ -930,7 +930,7 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
           </div>
           
           <div className="rounded-lg p-4" style={{ background: '#252525' }}>
-            <div className="text-xs text-gray-500 mb-3">Pricing ({currency})</div>
+            <div className="text-xs text-gray-500 mb-3" style={{ fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Pricing ({currency})</div>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Your cost:</span>
@@ -992,7 +992,7 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
           {/* Vitola */}
           {box.notes && (
             <div className="rounded-lg p-4" style={{ background: '#252525' }}>
-              <div className="text-xs text-gray-500 mb-2">Vitola</div>
+              <div className="text-xs text-gray-500 mb-2" style={{ fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Vitola</div>
               <div className="text-sm text-gray-300">{box.notes}</div>
             </div>
           )}
@@ -1000,7 +1000,7 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
           {/* Age Information */}
           {(boxAge || purchaseAge) && (
             <div className="rounded-lg p-4" style={{ background: '#252525' }}>
-              <div className="text-xs text-gray-500 mb-3">Age</div>
+              <div className="text-xs text-gray-500 mb-3" style={{ fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Age</div>
               <div className="grid grid-cols-2 gap-4">
                 {boxAge && (
                   <div className="text-center">
@@ -2688,7 +2688,7 @@ export default function CigarCollectionApp() {
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl tracking-widest font-semibold" style={{ color: '#d4af37' }}>LA COLECCIÓN</h1>
+              <h1 className="text-xl tracking-widest font-semibold" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>LA COLECCIÓN</h1>
               <button 
                 onClick={refreshData}
                 className="w-6 h-6 rounded-full flex items-center justify-center text-xs"
@@ -2822,7 +2822,7 @@ export default function CigarCollectionApp() {
             <div key={brand} className="mb-6">
               {/* Brand Header */}
               <div className="mb-3 pb-2" style={{ borderBottom: '2px solid #d4af37' }}>
-                <h2 className="text-2xl font-bold tracking-wide" style={{ color: '#d4af37', fontFamily: 'Georgia, serif' }}>{brand}</h2>
+                <h2 className="text-2xl font-bold tracking-wide" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{brand}</h2>
               </div>
               {/* Cigar cards for this brand */}
               <div className="grid grid-cols-2 gap-3">
