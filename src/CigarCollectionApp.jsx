@@ -622,10 +622,10 @@ const brandImages = {
 // Brand styling - based on authentic cigar band colors
 const brandStyles = {
   'Cohiba': { bg: 'linear-gradient(145deg, #1a1a1a, #2d2d2d)', text: '#FFD700', accent: '#FFD700', border: '#FFD700' }, // Black & gold
-  'Trinidad': { bg: 'linear-gradient(145deg, #4A0E0E, #722F37)', text: '#D4AF37', accent: '#D4AF37', border: '#D4AF37' }, // Burgundy & gold
-  'Montecristo': { bg: 'linear-gradient(145deg, #8B0000, #A52A2A)', text: '#FFD700', accent: '#FFD700', border: '#FFD700' }, // Red & gold
-  'Hoyo de Monterrey': { bg: '#F5F5F0', text: '#8B0000', accent: '#A52A2A', border: '#A52A2A' }, // Off-white & red
-  'Ramon Allones': { bg: 'linear-gradient(145deg, #228B22, #2E8B2E)', text: '#FFFFFF', accent: '#DC143C', border: '#DC143C' }, // Green & red
+  'Trinidad': { bg: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', text: '#1a1a1a', accent: '#1a1a1a', border: '#1a1a1a' }, // Wheat & black
+  'Montecristo': { bg: 'linear-gradient(145deg, #FFD700, #E5C100)', text: '#8B0000', accent: '#8B0000', border: '#8B0000' }, // Gold & red (inverted)
+  'Hoyo de Monterrey': { bg: 'linear-gradient(145deg, #F5F5F0, #E8E8E3)', text: '#8B0000', accent: '#A52A2A', border: '#A52A2A' }, // Off-white & red
+  'Ramon Allones': { bg: 'linear-gradient(145deg, #228B22, #2E8B2E)', text: '#DC143C', accent: '#DC143C', border: '#DC143C' }, // Green & red
   'Bolivar': { bg: 'linear-gradient(145deg, #DAA520, #B8860B)', text: '#1a1a1a', accent: '#1a1a1a', border: '#8B4513' }, // Gold & black
   'Partagas': { bg: 'linear-gradient(145deg, #8B0000, #A52A2A)', text: '#FFD700', accent: '#FFD700', border: '#FFD700' }, // Crimson & gold
   'H. Upmann': { bg: 'linear-gradient(145deg, #8B4513, #A0522D)', text: '#FFD700', accent: '#FFD700', border: '#FFD700' }, // Brown & gold
@@ -869,7 +869,7 @@ const CigarGroupCard = ({ group, onClick, maxLengths }) => {
           const openCount = openBoxes.reduce((sum, b) => sum + b.remaining, 0);
           return openBoxes.length > 0 ? (
             <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center font-bold shadow-lg" 
-              style={{ background: '#e8e8e8', color: '#000', fontSize: 11 }}>{openCount}</div>
+              style={{ background: s.bg.includes('#F5') || s.bg.includes('#FFD') || s.bg.includes('#E8') || s.bg.includes('#DAA') ? '#1a1a1a' : '#e8e8e8', color: s.bg.includes('#F5') || s.bg.includes('#FFD') || s.bg.includes('#E8') || s.bg.includes('#DAA') ? '#fff' : '#000', fontSize: 11 }}>{openCount}</div>
           ) : null;
         })()}
         {isFinished && (
