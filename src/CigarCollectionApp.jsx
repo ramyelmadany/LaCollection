@@ -2117,6 +2117,7 @@ export default function CigarCollectionApp() {
   const [syncStatus, setSyncStatus] = useState('idle'); // 'idle', 'syncing', 'success', 'error', 'writing'
   const [accessToken, setAccessToken] = useState(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   
   // Initialize Google Identity Services
   useEffect(() => {
@@ -2684,64 +2685,95 @@ export default function CigarCollectionApp() {
     <div className="min-h-screen pb-24" style={{ background: '#1a120b', fontFamily: 'Georgia, serif' }}>
       
       {/* Header */}
-      <div className="sticky top-0 z-40 px-4 py-3" style={{ background: 'linear-gradient(180deg, #1a120b, #1a120bee, transparent)' }}>
+      <div className="sticky top-0 z-40 px-4 py-4" style={{ background: '#1a120b' }}>
         <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl tracking-widest font-semibold" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>LA COLECCIÓN</h1>
-              <button 
-                onClick={refreshData}
-                className="w-6 h-6 rounded-full flex items-center justify-center text-xs"
-                style={{ 
-                  background: '#252525', 
-                  border: '1px solid #444', 
-                  color: syncStatus === 'syncing' || syncStatus === 'writing' ? '#d4af37' : syncStatus === 'success' ? '#4ade80' : syncStatus === 'error' ? '#f87171' : '#888' 
-                }}
-                title="Refresh from Google Sheets"
-              >
-                {syncStatus === 'syncing' || syncStatus === 'writing' ? '↻' : '↺'}
-              </button>
-            </div>
-            <div className="flex items-center gap-2">
-              <p className="text-xs text-gray-500">
-                {isSignedIn ? '✓ Two-way sync enabled' : 'Read-only • Sign in to edit'}
-              </p>
-              {!isSignedIn ? (
-                <button 
-                  onClick={handleGoogleSignIn}
-                  className="text-xs px-2 py-0.5 rounded"
-                  style={{ background: '#252525', color: '#4285f4', border: '1px solid #4285f4' }}
-                >
-                  Sign In
-                </button>
-              ) : (
-                <button 
-                  onClick={handleGoogleSignOut}
-                  className="text-xs px-2 py-0.5 rounded"
-                  style={{ background: '#252525', color: '#888', border: '1px solid #444' }}
-                >
-                  Sign Out
-                </button>
-              )}
-            </div>
-          </div>
-          <div className="text-right text-xs">
-            <button 
-              onClick={() => setCurrency(currency === 'USD' ? 'GBP' : 'USD')} 
-              className="px-2 py-1 rounded mb-1"
-              style={{ background: '#252525', border: '1px solid #444' }}
-            >
-              <span style={{ color: currency === 'USD' ? '#d4af37' : '#666' }}>$</span>
-              <span className="text-gray-500 mx-1">/</span>
-              <span style={{ color: currency === 'GBP' ? '#d4af37' : '#666' }}>£</span>
-            </button>
-            <div className="text-gray-500">
-              {fxLoading ? 'Loading FX...' : `£1 = $${(1 / FX.rate).toFixed(2)}`}
-            </div>
-            {fxUpdated && <div className="text-gray-600">FX: {fxUpdated}</div>}
-          </div>
+          <h1 className="text-xl tracking-widest font-semibold" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>LA COLECCIÓN</h1>
+          <button 
+            onClick={() => setMenuOpen(true)}
+            className="w-10 h-10 flex flex-col items-center justify-center gap-1.5"
+          >
+            <div className="w-6 h-0.5" style={{ background: '#d4af37' }}></div>
+            <div className="w-6 h-0.5" style={{ background: '#d4af37' }}></div>
+            <div className="w-6 h-0.5" style={{ background: '#d4af37' }}></div>
+          </button>
         </div>
       </div>
+
+      {/* Slide-in Menu */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-50" onClick={() => setMenuOpen(false)}>
+          <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.8)' }}></div>
+          <div 
+            className="absolute top-0 right-0 h-full w-72 p-6"
+            style={{ background: '#1a1a1a', borderLeft: '1px solid #333' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-8">
+              <span className="text-lg" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Menu</span>
+              <button onClick={() => setMenuOpen(false)} className="text-2xl text-gray-500">×</button>
+            </div>
+            
+            <div className="space-y-2 mb-8">
+              {['collection', 'onwards', 'history', 'prices'].map(v => (
+                <button 
+                  key={v} 
+                  onClick={() => { setView(v); setMenuOpen(false); }}
+                  className="w-full text-left py-3 px-4 rounded-lg capitalize"
+                  style={{
+                    background: view === v ? '#d4af3720' : 'transparent',
+                    color: view === v ? '#d4af37' : '#888'
+                  }}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+            
+            <div className="border-t border-gray-700 pt-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400">Currency</span>
+                <button 
+                  onClick={() => setCurrency(currency === 'USD' ? 'GBP' : 'USD')} 
+                  className="px-3 py-1 rounded"
+                  style={{ background: '#252525', border: '1px solid #444' }}
+                >
+                  <span style={{ color: currency === 'USD' ? '#d4af37' : '#666' }}>$</span>
+                  <span className="text-gray-500 mx-1">/</span>
+                  <span style={{ color: currency === 'GBP' ? '#d4af37' : '#666' }}>£</span>
+                </button>
+              </div>
+              
+              <div className="text-sm text-gray-500">
+                {fxLoading ? 'Loading FX...' : `£1 = $${(1 / FX.rate).toFixed(2)}`}
+                {fxUpdated && <span className="ml-2">({fxUpdated})</span>}
+              </div>
+              
+              <div className="pt-4">
+                {!isSignedIn ? (
+                  <button 
+                    onClick={() => { handleGoogleSignIn(); setMenuOpen(false); }}
+                    className="w-full py-3 rounded-lg text-center"
+                    style={{ background: '#252525', color: '#4285f4', border: '1px solid #4285f4' }}
+                  >
+                    Sign In with Google
+                  </button>
+                ) : (
+                  <div>
+                    <div className="text-sm text-green-400 mb-2">✓ Two-way sync enabled</div>
+                    <button 
+                      onClick={() => { handleGoogleSignOut(); setMenuOpen(false); }}
+                      className="w-full py-3 rounded-lg text-center"
+                      style={{ background: '#252525', color: '#888', border: '1px solid #444' }}
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Stats - only show on collection view */}
       {view === 'collection' && (
@@ -2802,19 +2834,7 @@ export default function CigarCollectionApp() {
           </div>
         </div>
       )}
-      
-      {/* View toggle - 4 tabs */}
-      <div className="px-4 mb-4">
-        <div className="flex rounded-lg overflow-hidden" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-          {['collection', 'onwards', 'history', 'prices'].map(v => (
-            <button key={v} onClick={() => setView(v)} className="flex-1 py-2.5 text-sm capitalize" style={{
-              background: view === v ? '#d4af3730' : 'transparent',
-              color: view === v ? '#d4af37' : '#666'
-            }}>{v}</button>
-          ))}
-        </div>
-      </div>
-      
+    
       {/* Collection View */}
       {view === 'collection' && (
         <div className="px-4">
