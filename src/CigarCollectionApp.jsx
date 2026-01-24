@@ -7,6 +7,8 @@ const GOOGLE_SHEETS_CONFIG = {
   sheetId: '10A_FMj8eotx-xlzAlCNFxjOr3xEOuO4p5GxAZjHC86A',
   collectionRange: 'A:O', // All rows - filtering handles invalid/empty rows
   onwardsRange: 'A:L', // All rows for onwards
+  historyRange: 'History!A:F', // History tab for smoke logs
+  historySheetId: 563552694, // Sheet ID for History tab
   scopes: 'https://www.googleapis.com/auth/spreadsheets',
 };
 
