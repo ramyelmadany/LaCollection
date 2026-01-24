@@ -708,14 +708,13 @@ const CigarGroupCard = ({ group, onClick }) => {
                 const openBoxes = boxes.filter(b => b.remaining > 0 && b.remaining < b.perBox).length;
                 const isFull = i < fullBoxes;
                 const isOpen = i === fullBoxes && openBoxes > 0;
-                return <div key={i} className="rounded-sm" style={{ 
+                return <div key={i} className="flex-1 rounded-sm" style={{ 
                   height: (isFull || isOpen) ? '100%' : '20%', 
-                  flex: isOpen ? '0.5' : '1',
-                  background: (isFull || isOpen) ? 'linear-gradient(90deg, #5D4037, #8D6E63, #5D4037)' : 'rgba(0,0,0,0.3)'
+                  background: isFull ? 'linear-gradient(90deg, #5D4037, #8D6E63, #5D4037)' : isOpen ? '#d4c4a8' : 'rgba(0,0,0,0.3)'
                 }} />;
               })}
             </div>
-          </div>
+          </div>Claude is AI and can make mistakes. Please double-check responses.
           <div className="flex justify-between items-center text-sm">
             <span className="font-bold" style={{ color: s.text }}>{totalRemaining} left</span>
             <span style={{ color: s.text, opacity: 0.7 }}>{nonEmptyBoxes} box{nonEmptyBoxes !== 1 ? 'es' : ''}</span>
