@@ -1203,7 +1203,6 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, o
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const box = boxes[selectedIdx];
   const s = brandStyles[box.brand] || brandStyles['Cohiba'];
   const market = getMarket(box.brand, box.name, box.perBox);
