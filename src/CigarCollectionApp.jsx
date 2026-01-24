@@ -6,7 +6,8 @@ const GOOGLE_SHEETS_CONFIG = {
   clientId: '945855470299-l1is4q9t6lb1ak8v5n0871hsk6kt8ihl.apps.googleusercontent.com', // Add your OAuth Client ID from Google Cloud Console to enable write access
   sheetId: '10A_FMj8eotx-xlzAlCNFxjOr3xEOuO4p5GxAZjHC86A',
   collectionRange: 'A:O', // All rows - filtering handles invalid/empty rows
-  onwardsRange: 'A:L', // All rows for onwards
+  onwardsRange: 'Onwards!A:L', // Onwards tab
+  onwardsSheetId: 1785734797, // Sheet ID for Onwards tab
   historyRange: 'History!A:F', // History tab for smoke logs
   historySheetId: 563552694, // Sheet ID for History tab
   scopes: 'https://www.googleapis.com/auth/spreadsheets',
