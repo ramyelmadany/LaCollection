@@ -1644,14 +1644,14 @@ export default function CigarCollectionApp() {
   // Handle smoke logging - updates local state AND Google Sheets
   const handleLog = async (logEntry) => {
     // Update local state first for instant UI feedback
-    const updatedBox = boxes.find(b => b.id === logEntry.boxId);
+    const updatedBox = boxes.find(b => b.boxNum === logEntry.boxNum);
     if (!updatedBox) return;
     
     const newRemaining = updatedBox.remaining - logEntry.qty;
     const newConsumed = updatedBox.consumed + logEntry.qty;
     
     setBoxes(prev => prev.map(b => 
-      b.id === logEntry.boxId 
+      b.boxNum === logEntry.boxNum 
         ? { ...b, remaining: newRemaining, consumed: newConsumed }
         : b
     ));
