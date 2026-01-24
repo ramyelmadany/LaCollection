@@ -2789,7 +2789,7 @@ export default function CigarCollectionApp() {
             
             {/* Navigation */}
             <div className="space-y-2 mb-6">
-              {['collection', 'onwards', 'history', 'prices'].map(v => (
+              {['collection', 'value', 'onwards', 'history', 'prices'].map(v => (
                 <button 
                   key={v} 
                   onClick={() => { setView(v); setMenuOpen(false); }}
@@ -2802,41 +2802,6 @@ export default function CigarCollectionApp() {
                   {v}
                 </button>
               ))}
-            </div>
-            
-            {/* Value Section */}
-            <div className="border-t border-gray-700 pt-6 mb-6">
-              <div className="text-sm text-gray-500 mb-4" style={{ fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Value</div>
-              
-              {/* Current Collection */}
-              <div className="mb-4">
-                <div className="text-xs text-gray-500 mb-2">Current Collection</div>
-                <div className="rounded-lg p-3" style={{ background: '#252525' }}>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs text-gray-500">Your Cost</span>
-                    <span className="text-sm text-green-400">{fmtCurrency(stats.remainingCostUSD)}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-500">UK Market</span>
-                    <span className="text-sm text-blue-400">{fmtCurrency(stats.remainingMarketUSD)}</span>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Historical Collection */}
-              <div>
-                <div className="text-xs text-gray-500 mb-2">Historical Collection</div>
-                <div className="rounded-lg p-3" style={{ background: '#252525' }}>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs text-gray-500">Your Cost</span>
-                    <span className="text-sm text-green-400">{fmtCurrency(stats.totalCostUSD)}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-500">UK Market</span>
-                    <span className="text-sm text-blue-400">{fmtCurrency(stats.totalMarketUSD)}</span>
-                  </div>
-                </div>
-              </div>
             </div>
             
             {/* Settings */}
