@@ -708,19 +708,6 @@ const CigarGroupCard = ({ group, onClick }) => {
               opacity: 0.9,
               fontSize: name.length > 20 ? '1rem' : name.length > 12 ? '1.25rem' : '1.5rem'
             }}>{name}</div>
-          </div><div className="text-center mb-1">
-            <div className="font-bold tracking-wide" style={{ 
-              color: s.text, 
-              fontFamily: 'Georgia, serif',
-              fontSize: brand.length > 15 ? '1.25rem' : brand.length > 10 ? '1.5rem' : '1.875rem'
-            }}>{brand}</div>
-          </div>
-          <div className="text-center mb-3">
-            <div className="font-medium" style={{ 
-              color: s.text, 
-              opacity: 0.9,
-              fontSize: name.length > 20 ? '1rem' : name.length > 12 ? '1.25rem' : '1.5rem'
-            }}>{name}</div>
           </div>
           <div className="h-5 rounded overflow-hidden mb-2" style={{ background: 'rgba(0,0,0,0.3)' }}>
             <div className="h-full flex gap-0.5 p-1 items-end">
