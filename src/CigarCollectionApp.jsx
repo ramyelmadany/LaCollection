@@ -118,7 +118,7 @@ const rowToBox = (row, index) => {
 const rowToOnwards = (row, index) => {
   // Columns: Date of Purchase | Received | Brand | Name | Quantity Purchased | Number / Box | Price / Box | Price / Cigar | Sale Price | Sale Price Base | Profit | Sold To/By
   const priceUSD = parseCurrency(row[6]);
-  const salePrice = parseCurrency(row[8]);
+  const salePrice = parseCurrency(row[8]) || parseCurrency(row[9]);
   const profit = parseCurrency(row[10]);
   
   return {
