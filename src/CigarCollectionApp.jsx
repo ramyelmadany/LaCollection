@@ -988,7 +988,84 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
     </div>
   );
 };
-            
+
+// Edit History Modal
+const EditHistoryModal = ({ entry, index, onClose, onSave }) => {
+  const [date, setDate] = useState(entry.date || new Date().toISOString().split('T')[0]);
+  const [qty, setQty] = useState(entry.qty || 1);
+  const [notes, setNotes] = useState(entry.notes || '');
+  const [brand, setBrand] = useState(entry.brand || '');
+  const [name, setName] = useState(entry.name || '');
+  
+  const isExternal = entry.boxNum === 'EXT' || entry.source === 'external';
+  
+  const handleSave = () => {
+    const newEntry = {
+      ...entry,
+      date,
+      qty,
+      notes,
+      brand: isExternal ? brand : entry.brand,
+      name: isExternal ? name : entry.name,
+    };
+    onSave(index, entry, newEntry);
+  };
+  
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.9)' }}>
+      <div className="w-full max-w-sm rounded-xl max-h-[85vh] overflow-y-auto" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+        <div className="sticky top-0 p-4 flex justify-between items-center" style={{ background: '#1a1a1a', borderBottom: '1px solid #333' }}>
+          <h3 className="text-lg font-semibold" style={{ color: '#d4af37' }}>Edit Log</h3>
+          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#333', color: '#888' }}>x</button>
+        </div>
+        
+        <div className="p-4 space-y-4">
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Date</label>
+            <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+          </div>
+          
+          {isExternal ? (
+            <>
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Brand</label>
+                <input type="text" value={brand} onChange={e => setBrand(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Cigar Name</label>
+                <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+              </div>
+            </>
+          ) : (
+            <div className="p-3 rounded-lg" style={{ background: '#252525', border: '1px solid #333' }}>
+              <div className="text-sm font-medium" style={{ color: '#d4af37' }}>{entry.brand} {entry.name}</div>
+              <div className="text-xs text-gray-500">Box {entry.boxNum}</div>
+            </div>
+          )}
+          
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Quantity</label>
+            <div className="flex items-center gap-4">
+              <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-10 h-10 rounded-lg text-lg" style={{ background: '#252525', border: '1px solid #333', color: '#d4af37' }}>-</button>
+              <span className="text-2xl font-light" style={{ color: '#d4af37', minWidth: 40, textAlign: 'center' }}>{qty}</span>
+              <button onClick={() => setQty(qty + 1)} className="w-10 h-10 rounded-lg text-lg" style={{ background: '#252525', border: '1px solid #333', color: '#d4af37' }}>+</button>
+            </div>
+          </div>
+          
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Notes (optional)</label>
+            <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Tasting notes, occasion..." className="w-full px-3 py-2 rounded-lg text-sm resize-none" rows={2} style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+          </div>
+          
+          <button onClick={handleSave} className="w-full py-3 rounded-lg font-semibold" style={{ background: '#d4af37', color: '#000' }}>
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Smoke Log Modal
 const SmokeLogModal = ({ boxes, onClose, onLog }) => {
   const [source, setSource] = useState(null); // 'collection' or 'external'
@@ -1361,7 +1438,7 @@ const AddBoxModal = ({ boxes, onClose, onAdd }) => {
 };
 
 // History View
-const HistoryView = ({ history, boxes, onUndo }) => {
+const HistoryView = ({ history, boxes, onDelete, onEdit }) => {
   if (history.length === 0) {
     return (
       <div className="px-4 py-12 text-center">
@@ -1382,20 +1459,30 @@ const HistoryView = ({ history, boxes, onUndo }) => {
             <div className="flex justify-between items-start">
               <div>
                 <div className="text-xl font-medium" style={{ color: st.accent }}>{h.brand} {h.name}</div>
-                <div className="text-lg text-gray-400">Box {h.boxNum}</div>
+                <div className="text-lg text-gray-400">{h.boxNum === 'EXT' ? 'External' : `Box ${h.boxNum}`}</div>
                 {h.notes && <div className="text-base text-gray-500 mt-1 italic">{h.notes}</div>}
               </div>
               <div className="text-right">
                 <div className="text-lg font-light text-gray-300">x{h.qty}</div>
                 <div className="text-xs text-gray-500">{fmt.date(h.date)}</div>
-                {onUndo && (
-                  <button
-                    onClick={() => onUndo(actualIndex, h)}
-                    className="mt-2 px-2 py-1 text-xs rounded bg-gray-700 hover:bg-gray-600 text-gray-300"
-                  >
-                    Undo
-                  </button>
-                )}
+                <div className="mt-2 flex gap-2 justify-end">
+                  {onEdit && (
+                    <button
+                      onClick={() => onEdit(actualIndex, h)}
+                      className="px-2 py-1 text-xs rounded bg-gray-700 hover:bg-gray-600 text-gray-300"
+                    >
+                      Edit
+                    </button>
+                  )}
+                  {onDelete && (
+                    <button
+                      onClick={() => onDelete(actualIndex, h)}
+                      className="px-2 py-1 text-xs rounded bg-red-900 hover:bg-red-800 text-red-200"
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -1500,6 +1587,7 @@ export default function CigarCollectionApp() {
   const [showLogModal, setShowLogModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [history, setHistory] = useState([]);
+  const [editingHistory, setEditingHistory] = useState(null);
   const [currency, setCurrency] = useState('USD');
   const [fxRate, setFxRate] = useState(DEFAULT_FX_RATE);
   const [fxUpdated, setFxUpdated] = useState(null);
@@ -1916,8 +2004,8 @@ export default function CigarCollectionApp() {
     }
   };
   
-  // Handle undo smoke log - reverses the smoke and updates Google Sheets
-  const handleUndo = async (index, entry) => {
+  // Handle delete history entry - reverses the smoke and updates Google Sheets
+  const handleDeleteHistory = async (index, entry) => {
     // For external cigars, just remove from history
     if (entry.source === 'external' || entry.boxNum === 'EXT') {
       setHistory(prev => prev.filter((_, i) => i !== index));
@@ -1947,6 +2035,11 @@ export default function CigarCollectionApp() {
       await updateBoxInSheet({ ...box, remaining: newRemaining, consumed: newConsumed });
       await deleteHistoryEntry(entry, accessToken);
     }
+  };
+  
+  // Handle edit history entry
+  const handleEditHistory = (index, entry) => {
+    setEditingHistory({ index, entry });
   };
   
   // Handle adding new boxes
@@ -2238,7 +2331,7 @@ export default function CigarCollectionApp() {
       )}
       
       {/* History View */}
-      {view === 'history' && <HistoryView history={history} boxes={boxes} onUndo={handleUndo} />}
+      {view === 'history' && <HistoryView history={history} boxes={boxes} onDelete={handleDeleteHistory} onEdit={handleEditHistory} />}
       
       {/* Prices View */}
       {view === 'prices' && <PricesView boxes={boxes} currency={currency} FX={FX} fmtCurrency={fmtCurrency} fmtFromGBP={fmtFromGBP} />}
@@ -2247,6 +2340,41 @@ export default function CigarCollectionApp() {
       {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} onClose={() => setSelectedGroup(null)} currency={currency} FX={FX} fmtCurrency={fmtCurrency} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { const data = await fetchSheetData(); if (data) { setBoxes(data.filter(row => row[0] && row[0] !== 'Date of Purchase' && !row[3]?.includes('Subtotal')).map(rowToBox)); } } return success; }} />}
       {showLogModal && <SmokeLogModal boxes={boxes} onClose={() => setShowLogModal(false)} onLog={handleLog} />}
       {showAddModal && <AddBoxModal boxes={boxes} onClose={() => setShowAddModal(false)} onAdd={handleAddBoxes} />}
+      {editingHistory && <EditHistoryModal 
+        entry={editingHistory.entry} 
+        index={editingHistory.index}
+        onClose={() => setEditingHistory(null)} 
+        onSave={async (index, oldEntry, newEntry) => {
+          // Delete old entry and add new one
+          await deleteHistoryEntry(oldEntry, accessToken);
+          await addHistoryEntry(newEntry, accessToken);
+          
+          // Update local state
+          setHistory(prev => prev.map((h, i) => i === index ? { ...newEntry, timestamp: Date.now() } : h));
+          
+          // If collection cigar and qty changed, update box counts
+          if (oldEntry.boxNum !== 'EXT' && oldEntry.source !== 'external') {
+            const qtyDiff = newEntry.qty - oldEntry.qty;
+            if (qtyDiff !== 0) {
+              const box = boxes.find(b => b.boxNum === oldEntry.boxNum);
+              if (box) {
+                const newRemaining = box.remaining - qtyDiff;
+                const newConsumed = box.consumed + qtyDiff;
+                setBoxes(prev => prev.map(b => 
+                  b.boxNum === oldEntry.boxNum 
+                    ? { ...b, remaining: newRemaining, consumed: newConsumed }
+                    : b
+                ));
+                if (isSignedIn && accessToken) {
+                  await updateBoxInSheet({ ...box, remaining: newRemaining, consumed: newConsumed });
+                }
+              }
+            }
+          }
+          
+          setEditingHistory(null);
+        }}
+      />}
       
       {/* Bottom buttons */}
       <div className="fixed bottom-4 left-4 right-4 z-30 flex gap-3">
