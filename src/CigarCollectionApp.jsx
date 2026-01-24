@@ -359,6 +359,78 @@ const deleteSheetRow = async (boxNum, accessToken) => {
   }
 };
 
+// Update a row in Google Sheets by finding the box number first
+const updateBoxInSheet = async (boxNum, updatedData, accessToken) => {
+  const { apiKey, sheetId, collectionRange } = GOOGLE_SHEETS_CONFIG;
+  
+  try {
+    // First, fetch all data to find the row with matching box number
+    const fetchUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${collectionRange}?key=${apiKey}`;
+    const fetchResponse = await fetch(fetchUrl);
+    if (!fetchResponse.ok) throw new Error('Failed to fetch sheet data');
+    const data = await fetchResponse.json();
+    const rows = data.values || [];
+    
+    // Find the row index (box number is in column B, index 1)
+    let rowIndex = -1;
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i][1] === String(boxNum) || rows[i][1] === boxNum) {
+        rowIndex = i + 1; // +1 because sheets are 1-indexed
+        break;
+      }
+    }
+    
+    if (rowIndex === -1) {
+      throw new Error(`Box number ${boxNum} not found in sheet`);
+    }
+    
+    // Build the row data in the correct order (A:R)
+    const rowData = [
+      updatedData.datePurchased ? formatDateForSheet(updatedData.datePurchased) : '',  // A - Date of Purchase
+      updatedData.boxNum || boxNum,  // B - Box Number
+      updatedData.received ? 'Yes' : 'No',  // C - Received
+      updatedData.brand || '',  // D - Brand
+      updatedData.name || '',  // E - Name
+      updatedData.perBox || '',  // F - Per Box
+      updatedData.priceUSD || '',  // G - Price USD
+      updatedData.status || '',  // H - Status
+      updatedData.dateOfBox ? formatDateForSheet(updatedData.dateOfBox) : '',  // I - Date of Box
+      updatedData.code || '',  // J - Code
+      '',  // K - Cost per Cigar (formula)
+      updatedData.location || '',  // L - Location
+      '',  // M - Age (formula)
+      updatedData.consumed || 0,  // N - Consumed
+      updatedData.remaining || 0,  // O - Remaining
+      updatedData.ringGauge || '',  // P - Ring Gauge
+      updatedData.length || '',  // Q - Length
+      updatedData.notes || '',  // R - Notes
+    ];
+    
+    // Update the row
+    const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'Cigar Inventory'!A${rowIndex}:R${rowIndex}?valueInputOption=USER_ENTERED`;
+    const response = await fetch(updateUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        values: [rowData]
+      }),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error?.message || 'Failed to update row');
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error updating row:', error);
+    return false;
+  }
+};
+
 // Fetch history data from Google Sheets
 const fetchHistoryData = async () => {
   const { apiKey, sheetId, historyRange } = GOOGLE_SHEETS_CONFIG;
@@ -843,10 +915,292 @@ const OnwardsCard = ({ item, fmtCurrency }) => {
   );
 };
 
+// Edit Box Modal
+const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
+  const [brand, setBrand] = useState(box.brand || '');
+  const [name, setName] = useState(box.name || '');
+  const [boxNum, setBoxNum] = useState(box.boxNum || '');
+  const [perBox, setPerBox] = useState(box.perBox || '');
+  const [priceUSD, setPriceUSD] = useState(box.priceUSD || '');
+  const [datePurchased, setDatePurchased] = useState(box.datePurchased || '');
+  const [location, setLocation] = useState(box.location || '');
+  const [newLocation, setNewLocation] = useState('');
+  const [status, setStatus] = useState(box.status || 'Ageing');
+  const [received, setReceived] = useState(box.received || false);
+  const [code, setCode] = useState(box.code || '');
+  const [dateOfBox, setDateOfBox] = useState(box.dateOfBox || '');
+  const [ringGauge, setRingGauge] = useState(box.ringGauge || '');
+  const [length, setLength] = useState(box.length || '');
+  const [notes, setNotes] = useState(box.notes || '');
+  const [consumed, setConsumed] = useState(box.consumed || 0);
+  const [remaining, setRemaining] = useState(box.remaining || 0);
+  const [isSaving, setIsSaving] = useState(false);
+  
+  const allLocations = [...new Set([...availableLocations, box.location].filter(Boolean))];
+  
+  const handleSave = async () => {
+    setIsSaving(true);
+    const finalLocation = location === '__new__' ? newLocation : location;
+    
+    const updatedData = {
+      brand,
+      name,
+      boxNum,
+      perBox: parseInt(perBox),
+      priceUSD: parseFloat(priceUSD),
+      datePurchased,
+      location: finalLocation,
+      status,
+      received,
+      code,
+      dateOfBox,
+      ringGauge,
+      length,
+      notes,
+      consumed: parseInt(consumed),
+      remaining: parseInt(remaining),
+    };
+    
+    await onSave(updatedData);
+    setIsSaving(false);
+  };
+  
+  return (
+    <div className="fixed inset-0 z-[60] flex items-end justify-center" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
+      <div className="w-full max-w-md rounded-t-2xl max-h-[90vh] overflow-y-auto" style={{ background: '#1a1a1a', border: '1px solid #333' }} onClick={e => e.stopPropagation()}>
+        <div className="sticky top-0 z-10 p-4 flex justify-between items-center" style={{ background: '#1a1a1a', borderBottom: '1px solid #333' }}>
+          <h3 className="text-lg font-semibold" style={{ color: '#d4af37' }}>Edit Box</h3>
+          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#333', color: '#888' }}>×</button>
+        </div>
+        
+        <div className="p-4 space-y-4">
+          {/* Brand */}
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Brand</label>
+            <input 
+              type="text" 
+              value={brand} 
+              onChange={e => setBrand(e.target.value)} 
+              className="w-full px-3 py-2 rounded-lg text-base" 
+              style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+            />
+          </div>
+          
+          {/* Cigar Name */}
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Cigar Name</label>
+            <input 
+              type="text" 
+              value={name} 
+              onChange={e => setName(e.target.value)} 
+              className="w-full px-3 py-2 rounded-lg text-base" 
+              style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+            />
+          </div>
+          
+          {/* Ring Gauge and Length */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs text-gray-500 block mb-2">Ring Gauge</label>
+              <input 
+                type="text" 
+                value={ringGauge} 
+                onChange={e => setRingGauge(e.target.value)} 
+                className="w-full px-3 py-2 rounded-lg text-base" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+              />
+            </div>
+            <div>
+              <label className="text-xs text-gray-500 block mb-2">Length (inches)</label>
+              <input 
+                type="text" 
+                value={length} 
+                onChange={e => setLength(e.target.value)} 
+                className="w-full px-3 py-2 rounded-lg text-base" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+              />
+            </div>
+          </div>
+          
+          {/* Vitola Notes */}
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Vitola Notes</label>
+            <input 
+              type="text" 
+              value={notes} 
+              onChange={e => setNotes(e.target.value)} 
+              className="w-full px-3 py-2 rounded-lg text-base" 
+              style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+            />
+          </div>
+          
+          {/* Box Number and Per Box */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs text-gray-500 block mb-2">Box Number</label>
+              <input 
+                type="text" 
+                value={boxNum} 
+                onChange={e => setBoxNum(e.target.value)} 
+                className="w-full px-3 py-2 rounded-lg text-base" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+              />
+            </div>
+            <div>
+              <label className="text-xs text-gray-500 block mb-2">Cigars Per Box</label>
+              <input 
+                type="number" 
+                value={perBox} 
+                onChange={e => setPerBox(e.target.value)} 
+                className="w-full px-3 py-2 rounded-lg text-base" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+              />
+            </div>
+          </div>
+          
+          {/* Consumed and Remaining */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs text-gray-500 block mb-2">Consumed</label>
+              <input 
+                type="number" 
+                value={consumed} 
+                onChange={e => setConsumed(e.target.value)} 
+                className="w-full px-3 py-2 rounded-lg text-base" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+              />
+            </div>
+            <div>
+              <label className="text-xs text-gray-500 block mb-2">Remaining</label>
+              <input 
+                type="number" 
+                value={remaining} 
+                onChange={e => setRemaining(e.target.value)} 
+                className="w-full px-3 py-2 rounded-lg text-base" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+              />
+            </div>
+          </div>
+          
+          {/* Price */}
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Price (USD)</label>
+            <input 
+              type="number" 
+              value={priceUSD} 
+              onChange={e => setPriceUSD(e.target.value)} 
+              className="w-full px-3 py-2 rounded-lg text-base" 
+              style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+            />
+          </div>
+          
+          {/* Date Purchased and Location */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs text-gray-500 block mb-2">Date Purchased</label>
+              <input 
+                type="date" 
+                value={datePurchased} 
+                onChange={e => setDatePurchased(e.target.value)} 
+                className="w-full px-3 py-2 rounded-lg text-base" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+              />
+            </div>
+            <div>
+              <label className="text-xs text-gray-500 block mb-2">Location</label>
+              <select 
+                value={location} 
+                onChange={e => setLocation(e.target.value)} 
+                className="w-full px-3 py-2 rounded-lg text-base" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}
+              >
+                {allLocations.map(l => <option key={l} value={l}>{l}</option>)}
+                <option value="__new__">— New Location —</option>
+              </select>
+              {location === '__new__' && (
+                <input 
+                  type="text" 
+                  value={newLocation} 
+                  onChange={e => setNewLocation(e.target.value)} 
+                  placeholder="Enter new location..." 
+                  className="w-full px-3 py-2 rounded-lg text-base mt-2" 
+                  style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+                />
+              )}
+            </div>
+          </div>
+          
+          {/* Status and Received */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs text-gray-500 block mb-2">Status</label>
+              <select 
+                value={status} 
+                onChange={e => setStatus(e.target.value)} 
+                className="w-full px-3 py-2 rounded-lg text-base" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}
+              >
+                <option value="Ageing">Ageing</option>
+                <option value="Immediate">Immediate</option>
+                <option value="Combination">Combination</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-gray-500 block mb-2">Received</label>
+              <button 
+                onClick={() => setReceived(!received)} 
+                className="w-full px-3 py-2 rounded-lg text-base text-left" 
+                style={{ background: received ? '#1c3a1c' : '#252525', border: '1px solid #333', color: received ? '#99ff99' : '#888' }}
+              >
+                {received ? 'Yes' : 'No'}
+              </button>
+            </div>
+          </div>
+          
+          {/* Factory Code and Box Date */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs text-gray-500 block mb-2">Factory Code</label>
+              <input 
+                type="text" 
+                value={code} 
+                onChange={e => setCode(e.target.value.toUpperCase())} 
+                maxLength={3} 
+                className="w-full px-3 py-2 rounded-lg text-base font-mono" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+              />
+            </div>
+            <div>
+              <label className="text-xs text-gray-500 block mb-2">Box Date (Release)</label>
+              <input 
+                type="date" 
+                value={dateOfBox} 
+                onChange={e => setDateOfBox(e.target.value)} 
+                className="w-full px-3 py-2 rounded-lg text-base" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+              />
+            </div>
+          </div>
+          
+          {/* Save Button */}
+          <button 
+            onClick={handleSave} 
+            disabled={isSaving}
+            className="w-full py-3 rounded-lg font-semibold mt-4" 
+            style={{ background: isSaving ? '#333' : '#d4af37', color: isSaving ? '#666' : '#000' }}
+          >
+            {isSaving ? 'Saving...' : 'Save Changes'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Box Detail Modal
-const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, isSignedIn }) => {
+const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, onEdit, isSignedIn, availableLocations = [] }) => {
   const [selectedIdx, setSelectedIdx] = useState(0);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const box = boxes[selectedIdx];
   const s = brandStyles[box.brand] || brandStyles['Cohiba'];
@@ -1018,23 +1372,41 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
             </div>
           )}
           
-          <div className="flex gap-2 flex-wrap">
-            <span className="px-3 py-1 rounded-full text-sm" style={{ 
-              background: box.status === 'Ageing' ? '#4a1c1c' : box.status === 'Immediate' ? '#1c3a1c' : '#3a3a1c',
-              color: box.status === 'Ageing' ? '#ff9999' : box.status === 'Immediate' ? '#99ff99' : '#ffff99'
-            }}>{box.status}</span>
-            <span className="px-3 py-1 rounded-full text-sm" style={{ 
-              background: box.received ? '#1c3a1c' : '#3a3a1c', color: box.received ? '#99ff99' : '#ffff99'
-            }}>{box.received ? 'Received' : 'Pending'}</span>
+          {/* Status */}
+          <div className="rounded-lg p-4" style={{ background: '#252525' }}>
+            <div className="text-xs text-gray-500 mb-3" style={{ fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Status</div>
+            <div className="flex flex-col gap-2">
+              <span className="px-3 py-2 rounded-lg text-sm text-center" style={{ 
+                background: box.received ? '#1c3a1c' : '#3a3a1c', 
+                color: box.received ? '#99ff99' : '#ffff99'
+              }}>
+                {box.received ? 'Received into collection' : 'Receipt pending'}
+              </span>
+              <span className="px-3 py-2 rounded-lg text-sm text-center" style={{ 
+                background: box.status === 'Ageing' ? '#4a1c1c' : box.status === 'Immediate' ? '#1c3a1c' : '#3a3a1c',
+                color: box.status === 'Ageing' ? '#ff9999' : box.status === 'Immediate' ? '#99ff99' : '#ffff99'
+              }}>
+                {box.status}
+              </span>
             </div>
+          </div>
           
           {isSignedIn && !showDeleteConfirm && (
-            <button
-              onClick={() => setShowDeleteConfirm(true)}
-              className="w-full mt-3 py-2 rounded-lg text-sm bg-red-900 hover:bg-red-800 text-red-200"
-            >
-              Delete Box
-            </button>
+            <div className="flex flex-col gap-2 mt-3">
+              <button
+                onClick={() => setShowEditModal(true)}
+                className="w-full py-2 rounded-lg text-sm"
+                style={{ background: '#252525', color: '#d4af37', border: '1px solid #d4af37' }}
+              >
+                Edit Box
+              </button>
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="w-full py-2 rounded-lg text-sm bg-red-900 hover:bg-red-800 text-red-200"
+              >
+                Delete Box
+              </button>
+            </div>
           )}
           {showDeleteConfirm && (
             <div className="mt-3 p-3 rounded-lg" style={{ background: '#3a1c1c', border: '1px solid #ff6666' }}>
@@ -1057,6 +1429,22 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
           )}
         </div>
       </div>
+      
+      {/* Edit Modal */}
+      {showEditModal && (
+        <EditBoxModal 
+          box={box} 
+          onClose={() => setShowEditModal(false)} 
+          onSave={async (updatedData) => {
+            const success = await onEdit(box, updatedData);
+            if (success) {
+              setShowEditModal(false);
+            }
+            return success;
+          }}
+          availableLocations={availableLocations}
+        />
+      )}
     </div>
   );
 };
@@ -3306,7 +3694,7 @@ export default function CigarCollectionApp() {
       {view === 'prices' && <PricesView boxes={boxes} currency={currency} FX={FX} fmtCurrency={fmtCurrency} fmtFromGBP={fmtFromGBP} />}
       
       {/* Modals */}
-      {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} onClose={() => setSelectedGroup(null)} currency={currency} FX={FX} fmtCurrency={fmtCurrency} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { const data = await fetchSheetData(); if (data) { setBoxes(data.filter(row => row[0] && row[0] !== 'Date of Purchase' && !row[3]?.includes('Subtotal')).map(rowToBox)); } } return success; }} />}
+      {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} onClose={() => setSelectedGroup(null)} currency={currency} FX={FX} fmtCurrency={fmtCurrency} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { const data = await fetchSheetData(); if (data) { setBoxes(data.filter(row => row[0] && row[0] !== 'Date of Purchase' && !row[3]?.includes('Subtotal')).map(rowToBox)); } } return success; }} onEdit={async (box, updatedData) => { if (!googleAccessToken) return false; const success = await updateBoxInSheet(box.boxNum, updatedData, googleAccessToken); if (success) { await refreshData(); } return success; }} availableLocations={availableLocations} />}
       {showLogModal && <SmokeLogModal boxes={boxes} onClose={() => setShowLogModal(false)} onLog={handleLog} />}
       {showAddModal && <AddBoxModal boxes={boxes} onClose={() => setShowAddModal(false)} onAdd={handleAddBoxes} highestBoxNum={highestBoxNum} />}
       {showSignInPrompt && (
