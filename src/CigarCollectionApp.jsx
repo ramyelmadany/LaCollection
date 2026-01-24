@@ -1182,15 +1182,24 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
             </div>
           </div>
           
-          {/* Save Button */}
-          <button 
-            onClick={handleSave} 
-            disabled={isSaving}
-            className="w-full py-3 rounded-lg font-semibold mt-4" 
-            style={{ background: isSaving ? '#333' : '#d4af37', color: isSaving ? '#666' : '#000' }}
-          >
-            {isSaving ? 'Saving...' : 'Save Changes'}
-          </button>
+          {/* Save and Discard Buttons */}
+          <div className="flex gap-3 mt-4">
+            <button 
+              onClick={onClose}
+              className="flex-1 py-3 rounded-lg font-semibold"
+              style={{ background: '#252525', color: '#888', border: '1px solid #444' }}
+            >
+              Discard
+            </button>
+            <button 
+              onClick={handleSave} 
+              disabled={isSaving}
+              className="flex-1 py-3 rounded-lg font-semibold" 
+              style={{ background: isSaving ? '#333' : '#d4af37', color: isSaving ? '#666' : '#000' }}
+            >
+              {isSaving ? 'Saving...' : 'Save'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -1333,14 +1342,30 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, o
             </div>
           </div>
           
-          <div className="rounded-lg p-4" style={{ background: '#252525' }}>
+         <div className="rounded-lg p-4" style={{ background: '#252525' }}>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div><div className="text-xs text-gray-500">Box ID</div><div className="text-gray-300">{box.boxNum}</div></div>
               <div><div className="text-xs text-gray-500">Location</div><div className="text-gray-300">{box.location}</div></div>
               <div><div className="text-xs text-gray-500">Purchased</div><div className="text-gray-300">{fmt.date(box.datePurchased)}</div></div>
-              <div><div className="text-xs text-gray-500">Status</div><div style={{ color: box.status === 'Ageing' ? '#ff9999' : box.status === 'Immediate' ? '#99ff99' : '#ffff99' }}>{box.status}</div></div>
               {box.code && <div><div className="text-xs text-gray-500">Factory Code</div><div className="text-gray-300 font-mono">{box.code}</div></div>}
               <div><div className="text-xs text-gray-500">Release Date</div><div className="text-gray-300">{box.dateOfBox ? fmt.date(box.dateOfBox) : 'Unknown'}</div></div>
+            </div>
+            <div className="mt-4 pt-4 border-t border-gray-700">
+              <div className="text-xs text-gray-500 mb-2">Status</div>
+              <div className="flex flex-col gap-2">
+                <span className="px-3 py-1.5 rounded-lg text-xs text-center" style={{ 
+                  background: box.received ? '#1c3a1c' : '#3a3a1c', 
+                  color: box.received ? '#99ff99' : '#ffff99'
+                }}>
+                  {box.received ? 'Received into collection' : 'Receipt pending'}
+                </span>
+                <span className="px-3 py-1.5 rounded-lg text-xs text-center" style={{ 
+                  background: box.status === 'Ageing' ? '#4a1c1c' : box.status === 'Immediate' ? '#1c3a1c' : '#3a3a1c',
+                  color: box.status === 'Ageing' ? '#ff9999' : box.status === 'Immediate' ? '#99ff99' : '#ffff99'
+                }}>
+                  {box.status}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -1372,25 +1397,6 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, o
               </div>
             </div>
           )}
-          
-          {/* Status */}
-          <div className="rounded-lg p-4" style={{ background: '#252525' }}>
-            <div className="text-xs text-gray-500 mb-3" style={{ fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Status</div>
-            <div className="flex flex-col gap-2">
-              <span className="px-3 py-2 rounded-lg text-sm text-center" style={{ 
-                background: box.received ? '#1c3a1c' : '#3a3a1c', 
-                color: box.received ? '#99ff99' : '#ffff99'
-              }}>
-                {box.received ? 'Received into collection' : 'Receipt pending'}
-              </span>
-              <span className="px-3 py-2 rounded-lg text-sm text-center" style={{ 
-                background: box.status === 'Ageing' ? '#4a1c1c' : box.status === 'Immediate' ? '#1c3a1c' : '#3a3a1c',
-                color: box.status === 'Ageing' ? '#ff9999' : box.status === 'Immediate' ? '#99ff99' : '#ffff99'
-              }}>
-                {box.status}
-              </span>
-            </div>
-          </div>
           
           {isSignedIn && !showDeleteConfirm && (
             <div className="flex flex-col gap-2 mt-3">
