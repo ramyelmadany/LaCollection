@@ -1427,6 +1427,7 @@ export default function CigarCollectionApp() {
   const [fxUpdated, setFxUpdated] = useState(null);
   const [fxLoading, setFxLoading] = useState(true);
   const [dataLoading, setDataLoading] = useState(true);
+  const [splashDelay, setSplashDelay] = useState(true);
   const [syncStatus, setSyncStatus] = useState('idle'); // 'idle', 'syncing', 'success', 'error', 'writing'
   const [accessToken, setAccessToken] = useState(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -1652,6 +1653,9 @@ export default function CigarCollectionApp() {
     };
     
     loadData();
+    
+    // Minimum splash screen duration
+    setTimeout(() => setSplashDelay(false), 2000);
   }, []);
   
   // Valid Cuban cigar brands (for filtering)
@@ -1929,7 +1933,7 @@ export default function CigarCollectionApp() {
   }, [boxes, onwards, FX]);
 
   // Show loading screen while fetching data
-  if (dataLoading) {
+  if (dataLoading || splashDelay) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#1a120b' }}>
         <div className="text-center">
