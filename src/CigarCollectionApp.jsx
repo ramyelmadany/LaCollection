@@ -2099,7 +2099,7 @@ export default function CigarCollectionApp() {
       )}
       
       {/* History View */}
-      {view === 'history' && <HistoryView history={history} boxes={boxes} />}
+      {view === 'history' && <HistoryView history={history} boxes={boxes} onUndo={handleUndo} />}
       
       {/* Prices View */}
       {view === 'prices' && <PricesView boxes={boxes} currency={currency} FX={FX} fmtCurrency={fmtCurrency} fmtFromGBP={fmtFromGBP} />}
