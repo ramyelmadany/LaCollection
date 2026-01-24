@@ -879,30 +879,32 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
               </div>
               <div className="flex justify-between text-sm items-center">
                 <span className="text-gray-400 text-xs">Source: {market?.source || 'estimate'}</span>
-                <div className="flex items-center gap-1">
-                  <input
-                    type="number"
-                    step="0.01"
-                    placeholder="Override £"
-                    defaultValue={getManualUKPrice(box.brand, box.name, box.perBox) || ''}
-                    className="w-20 px-1 py-0.5 text-xs bg-gray-700 border border-gray-600 rounded text-white"
-                    onBlur={(e) => {
-                      setManualUKPrice(box.brand, box.name, box.perBox, e.target.value);
-                      window.location.reload();
-                    }}
-                  />
-                  {getManualUKPrice(box.brand, box.name, box.perBox) && (
-                    <button
-                      onClick={() => {
-                        clearManualUKPrice(box.brand, box.name, box.perBox);
+                {isSignedIn && (
+                  <div className="flex items-center gap-1">
+                    <input
+                      type="number"
+                      step="0.01"
+                      placeholder="Override £"
+                      defaultValue={getManualUKPrice(box.brand, box.name, box.perBox) || ''}
+                      className="w-20 px-1 py-0.5 text-xs bg-gray-700 border border-gray-600 rounded text-white"
+                      onBlur={(e) => {
+                        setManualUKPrice(box.brand, box.name, box.perBox, e.target.value);
                         window.location.reload();
                       }}
-                      className="text-xs text-red-400 hover:text-red-300"
-                    >
-                      ✕
-                    </button>
-                  )}
-                </div>
+                    />
+                    {getManualUKPrice(box.brand, box.name, box.perBox) && (
+                      <button
+                        onClick={() => {
+                          clearManualUKPrice(box.brand, box.name, box.perBox);
+                          window.location.reload();
+                        }}
+                        className="text-xs text-red-400 hover:text-red-300"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
               {savingsUSD > 0 && (
                 <div className="flex justify-between text-sm pt-2 border-t border-gray-700">
