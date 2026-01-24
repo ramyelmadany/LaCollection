@@ -1351,16 +1351,34 @@ export default function CigarCollectionApp() {
   const updateBoxInSheet = useCallback(async (box) => {
     if (!accessToken) return false;
     
-    // Row index = box.id + 2 (accounting for header rows)
-    const rowIndex = box.id + 2;
-    
-    // Update columns N (consumed) and O (remaining)
-    const consumedCell = `N${rowIndex}`;
-    const remainingCell = `O${rowIndex}`;
-    
     setSyncStatus('writing');
     
     try {
+      // First, fetch all data to find the row with matching box number
+      const { apiKey, sheetId, collectionRange } = GOOGLE_SHEETS_CONFIG;
+      const fetchUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${collectionRange}?key=${apiKey}`;
+      const fetchResponse = await fetch(fetchUrl);
+      if (!fetchResponse.ok) throw new Error('Failed to fetch sheet data');
+      const data = await fetchResponse.json();
+      const rows = data.values || [];
+      
+      // Find the row index (box number is in column B, index 1)
+      let rowIndex = -1;
+      for (let i = 0; i < rows.length; i++) {
+        if (rows[i][1] === String(box.boxNum) || rows[i][1] === box.boxNum) {
+          rowIndex = i + 1; // +1 because sheets are 1-indexed
+          break;
+        }
+      }
+      
+      if (rowIndex === -1) {
+        throw new Error(`Box number ${box.boxNum} not found in sheet`);
+      }
+      
+      // Update columns N (consumed) and O (remaining)
+      const consumedCell = `N${rowIndex}`;
+      const remainingCell = `O${rowIndex}`;
+      
       await updateSheetCell(consumedCell, box.consumed, accessToken);
       await updateSheetCell(remainingCell, box.remaining, accessToken);
       setSyncStatus('success');
