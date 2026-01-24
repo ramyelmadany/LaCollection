@@ -2118,6 +2118,9 @@ export default function CigarCollectionApp() {
   const [accessToken, setAccessToken] = useState(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [pullStart, setPullStart] = useState(0);
+  const [pullDistance, setPullDistance] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   
   // Initialize Google Identity Services
   useEffect(() => {
@@ -2682,7 +2685,44 @@ export default function CigarCollectionApp() {
   }
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: '#1a120b', fontFamily: 'Georgia, serif' }}>
+    <div 
+  className="min-h-screen pb-24" 
+  style={{ background: '#1a120b', fontFamily: 'Georgia, serif' }}
+  onTouchStart={(e) => {
+    if (window.scrollY === 0) {
+      setPullStart(e.touches[0].clientY);
+    }
+  }}
+  onTouchMove={(e) => {
+    if (pullStart > 0 && window.scrollY === 0) {
+      const distance = Math.max(0, e.touches[0].clientY - pullStart);
+      setPullDistance(Math.min(distance, 150));
+    }
+  }}
+  onTouchEnd={async () => {
+    if (pullDistance > 80) {
+      setIsRefreshing(true);
+      await refreshData();
+      setIsRefreshing(false);
+    }
+    setPullStart(0);
+    setPullDistance(0);
+  }}
+>
+
+      {/* Pull to refresh indicator */}
+      {(pullDistance > 0 || isRefreshing) && (
+        <div 
+          className="flex items-center justify-center text-sm"
+          style={{ 
+            height: isRefreshing ? 50 : pullDistance,
+            color: pullDistance > 80 ? '#d4af37' : '#666',
+            transition: isRefreshing ? 'none' : 'height 0.1s'
+          }}
+        >
+          {isRefreshing ? '↻ Refreshing...' : pullDistance > 80 ? '↓ Release to refresh' : '↓ Pull to refresh'}
+        </div>
+      )}
       
       {/* Header */}
       <div className="sticky top-0 z-40 px-4 py-4" style={{ background: '#1a120b' }}>
