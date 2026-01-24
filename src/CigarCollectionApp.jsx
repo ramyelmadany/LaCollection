@@ -710,7 +710,7 @@ const CigarGroupCard = ({ group, onClick }) => {
                 const isOpen = i === fullBoxes && openBoxes > 0;
                 return <div key={i} className="flex-1 rounded-sm" style={{ 
                   height: (isFull || isOpen) ? '100%' : '20%', 
-                  background: isFull ? 'linear-gradient(90deg, #5D4037, #8D6E63, #5D4037)' : isOpen ? '#d4c4a8' : 'rgba(0,0,0,0.3)'
+                  background: isFull ? 'linear-gradient(90deg, #5D4037, #8D6E63, #5D4037)' : isOpen ? 'linear-gradient(90deg, #a89880, #d4c4a8, #a89880)' : 'rgba(0,0,0,0.3)'
                 }} />;
               })}
             </div>
