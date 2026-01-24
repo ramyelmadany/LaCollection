@@ -289,13 +289,34 @@ const appendSheetRow = async (values, accessToken) => {
   }
 };
 
-// Delete a row from Google Sheets (requires OAuth token)
-const deleteSheetRow = async (rowIndex, accessToken) => {
-  const { sheetId } = GOOGLE_SHEETS_CONFIG;
+// Delete a row from Google Sheets by finding the box number first
+const deleteSheetRow = async (boxNum, accessToken) => {
+  const { apiKey, sheetId, collectionRange } = GOOGLE_SHEETS_CONFIG;
   
   try {
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}:batchUpdate`;
-    const response = await fetch(url, {
+    // First, fetch all data to find the row with matching box number
+    const fetchUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${collectionRange}?key=${apiKey}`;
+    const fetchResponse = await fetch(fetchUrl);
+    if (!fetchResponse.ok) throw new Error('Failed to fetch sheet data');
+    const data = await fetchResponse.json();
+    const rows = data.values || [];
+    
+    // Find the row index (box number is in column B, index 1)
+    let rowIndex = -1;
+    for (let i = 0; i < rows.length; i++) {
+      if (rows[i][1] === String(boxNum) || rows[i][1] === boxNum) {
+        rowIndex = i + 1; // +1 because sheets are 1-indexed
+        break;
+      }
+    }
+    
+    if (rowIndex === -1) {
+      throw new Error(`Box number ${boxNum} not found in sheet`);
+    }
+    
+    // Now delete the row
+    const deleteUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}:batchUpdate`;
+    const response = await fetch(deleteUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -326,7 +347,6 @@ const deleteSheetRow = async (rowIndex, accessToken) => {
     return false;
   }
 };
-
 // Default exchange rate (fallback if API fails)
 const DEFAULT_FX_RATE = 0.79;
 
@@ -1886,7 +1906,7 @@ export default function CigarCollectionApp() {
       {view === 'prices' && <PricesView boxes={boxes} currency={currency} FX={FX} fmtCurrency={fmtCurrency} fmtFromGBP={fmtFromGBP} />}
       
       {/* Modals */}
-      {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} onClose={() => setSelectedGroup(null)} currency={currency} FX={FX} fmtCurrency={fmtCurrency} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.id + 2, googleAccessToken); if (success) { const data = await fetchSheetData(); if (data) { setBoxes(data.filter(row => row[0] && row[0] !== 'Date of Purchase').map(rowToBox)); } } return success; }} />}
+      {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} onClose={() => setSelectedGroup(null)} currency={currency} FX={FX} fmtCurrency={fmtCurrency} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { const data = await fetchSheetData(); if (data) { setBoxes(data.filter(row => row[0] && row[0] !== 'Date of Purchase').map(rowToBox)); } } return success; }} />}
       {showLogModal && <SmokeLogModal boxes={boxes} onClose={() => setShowLogModal(false)} onLog={handleLog} />}
       {showAddModal && <AddBoxModal boxes={boxes} onClose={() => setShowAddModal(false)} onAdd={handleAddBoxes} />}
       
