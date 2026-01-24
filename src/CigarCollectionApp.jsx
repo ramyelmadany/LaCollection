@@ -828,7 +828,7 @@ const CigarGroupCard = ({ group, onClick, maxLengths }) => {
   return (
     <div onClick={onClick} className="relative cursor-pointer active:scale-98 transition-transform">
       <div className="relative rounded-xl overflow-hidden shadow-lg" style={{
-        background: s.bg, border: '2px solid #e8e8e8', opacity: isFinished ? 0.5 : 1
+        background: s.bg, border: 'none', opacity: isFinished ? 0.5 : 1
       }}>
         <div className="p-3">
           <div className="text-center mb-1">
