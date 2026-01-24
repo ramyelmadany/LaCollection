@@ -1892,6 +1892,17 @@ export default function CigarCollectionApp() {
     return byBrand;
   }, [groups]);
   
+  // Calculate max lengths for uniform card sizing
+  const maxLengths = useMemo(() => {
+    let maxBrand = 0;
+    let maxName = 0;
+    groups.forEach(g => {
+      if (g.brand.length > maxBrand) maxBrand = g.brand.length;
+      if (g.name.length > maxName) maxName = g.name.length;
+    });
+    return { maxBrand, maxName };
+  }, [groups]);
+  
   const stats = useMemo(() => {
     const totalCigars = boxes.reduce((s, b) => s + b.remaining, 0);
     const totalBoxes = boxes.length;
