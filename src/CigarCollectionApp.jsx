@@ -1200,6 +1200,8 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
 // Box Detail Modal
 const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, onEdit, isSignedIn, availableLocations = [] }) => {
   const [selectedIdx, setSelectedIdx] = useState(0);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const box = boxes[selectedIdx];
