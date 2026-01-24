@@ -2689,18 +2689,24 @@ export default function CigarCollectionApp() {
   className="min-h-screen pb-24" 
   style={{ background: '#1a120b', fontFamily: 'Georgia, serif', overscrollBehavior: 'none' }}
   onTouchStart={(e) => {
-    if (window.scrollY === 0) {
+    if (window.scrollY <= 5) {
       setPullStart(e.touches[0].clientY);
     }
   }}
   onTouchMove={(e) => {
-    if (pullStart > 0 && window.scrollY === 0) {
-      const distance = Math.max(0, e.touches[0].clientY - pullStart);
-      setPullDistance(Math.min(distance, 150));
+    if (pullStart > 0) {
+      if (window.scrollY > 5) {
+        setPullStart(0);
+        setPullDistance(0);
+        return;
+      }
+      e.preventDefault();
+      const distance = Math.max(0, (e.touches[0].clientY - pullStart) * 0.5);
+      setPullDistance(Math.min(distance, 120));
     }
   }}
   onTouchEnd={async () => {
-    if (pullDistance > 80) {
+    if (pullDistance > 60) {
       setIsRefreshing(true);
       await refreshData();
       setIsRefreshing(false);
