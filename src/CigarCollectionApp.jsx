@@ -2554,19 +2554,71 @@ export default function CigarCollectionApp() {
     const client = window.google?.accounts?.oauth2?.initTokenClient({
       client_id: GOOGLE_SHEETS_CONFIG.clientId,
       scope: GOOGLE_SHEETS_CONFIG.scopes,
-      callback: (response) => {
+      callback: async (response) => {
         if (response.access_token) {
           setAccessToken(response.access_token);
           setIsSignedIn(true);
           googleAccessToken = response.access_token;
           // Load data after successful sign-in
-          loadAllData(response.access_token);
+          setDataLoading(true);
+          setSyncStatus('syncing');
+          
+          try {
+            const collectionRows = await fetchSheetData(response.access_token);
+            if (collectionRows) {
+              const boxData = collectionRows
+                .filter(row => {
+                  const brand = row[3]?.trim();
+                  const name = row[4]?.trim();
+                  const perBox = parseInt(row[6]);
+                  return brand && name && validBrands.some(vb => brand.includes(vb) || vb.includes(brand)) && perBox > 0;
+                })
+                .flatMap((row, idx) => expandRowToBoxesRefresh(row, idx));
+              setBoxes(boxData);
+            }
+            
+            const onwardsRows = await fetchOnwardsData(response.access_token);
+            if (onwardsRows) {
+              const onwardsData = onwardsRows
+                .filter(row => {
+                  const brand = row[2]?.trim();
+                  const name = row[3]?.trim();
+                  return brand && name && validBrands.some(vb => brand.includes(vb) || vb.includes(brand));
+                })
+                .map((row, idx) => rowToOnwards(row, idx));
+              setOnwards(onwardsData);
+            }
+            
+            const historyRows = await fetchHistoryData(response.access_token);
+            if (historyRows && historyRows.length > 1) {
+              const historyData = historyRows.slice(1).map(row => ({
+                date: row[0],
+                boxNum: row[1],
+                brand: row[2],
+                name: row[3],
+                qty: parseInt(row[4]) || 1,
+                notes: row[5] || '',
+                timestamp: Date.now()
+              }));
+              setHistory(historyData);
+            }
+            
+            const storedHighest = await fetchHighestBoxNum();
+            setHighestBoxNum(storedHighest);
+            
+            setSyncStatus('success');
+          } catch (error) {
+            console.error('Error loading data:', error);
+            setSyncStatus('error');
+          } finally {
+            setDataLoading(false);
+          }
         }
       },
     });
     
     client?.requestAccessToken();
-  }, [loadAllData]);
+  }, []);
   
   // Handle Google Sign Out
   const handleGoogleSignOut = useCallback(() => {
@@ -2646,120 +2698,6 @@ export default function CigarCollectionApp() {
       setSplashDelay(false);
       setDataLoading(false);
     }, 2000);
-  }, []);
-
-  // Load data function (called after sign-in)
-  const loadAllData = useCallback(async (token) => {
-    setDataLoading(true);
-    setSyncStatus('syncing');
-    
-    // Valid Cuban cigar brands
-    const validBrands = ['Cohiba', 'Trinidad', 'Montecristo', 'Partagas', 'Bolivar', 'Hoyo de Monterrey', 'H. Upmann', 'Ramon Allones', 'Romeo y Julieta', 'Punch', 'Cuaba', 'Diplomaticos', 'El Rey del Mundo', 'Fonseca', 'Jose L. Piedra', 'Juan Lopez', 'La Flor de Cano', 'La Gloria Cubana', 'Por Larranaga', 'Quai d\'Orsay', 'Quintero', 'Rafael Gonzalez', 'Saint Luis Rey', 'San Cristobal de la Habana', 'Sancho Panza', 'Vegas Robaina', 'Vegueros'];
-    
-    // Function to expand a row into multiple boxes based on quantity
-    const expandRowToBoxes = (row, rowIndex) => {
-      const qty = parseInt(row[5]) || 1;
-      const boxNumStr = row[1] || '';
-      const boxNums = boxNumStr.split(',').map(s => s.trim()).filter(s => s);
-      const perBox = parseInt(row[6]) || 0;
-      const totalRemaining = parseInt(row[14]) || 0;
-      const totalConsumed = parseInt(row[13]) || 0;
-      
-      // If only one box, return single box object
-      if (qty <= 1) {
-        return [rowToBox(row, rowIndex * 100)];
-      }
-      
-      // Split into multiple boxes
-      const boxes = [];
-      const remainingPerBox = Math.floor(totalRemaining / qty);
-      const consumedPerBox = Math.floor(totalConsumed / qty);
-      let remainingRemainder = totalRemaining % qty;
-      let consumedRemainder = totalConsumed % qty;
-      
-      for (let i = 0; i < qty; i++) {
-        const boxNum = boxNums[i] || `${boxNumStr}.${i + 1}`;
-        const thisRemaining = remainingPerBox + (remainingRemainder > 0 ? 1 : 0);
-        const thisConsumed = consumedPerBox + (consumedRemainder > 0 ? 1 : 0);
-        if (remainingRemainder > 0) remainingRemainder--;
-        if (consumedRemainder > 0) consumedRemainder--;
-        
-        boxes.push({
-          id: rowIndex * 100 + i + 1,
-          datePurchased: parseDate(row[0]),
-          boxNum: boxNum,
-          received: row[2] === 'TRUE',
-          brand: row[3] || '',
-          name: row[4] || '',
-          qty: 1,
-          perBox: perBox,
-          priceUSD: parseCurrency(row[7]),
-          pricePerCigar: parseCurrency(row[8]),
-          status: row[9] || 'Ageing',
-          dateOfBox: parseDate(row[10]),
-          code: row[11] || '',
-          location: row[12] || 'Cayman',
-          consumed: thisConsumed,
-          remaining: thisRemaining,
-        });
-      }
-      return boxes;
-    };
-    
-    try {
-      // Fetch collection data
-      const collectionRows = await fetchSheetData(token);
-      if (collectionRows) {
-        const boxData = collectionRows
-          .filter(row => {
-            const brand = row[3]?.trim();
-            const name = row[4]?.trim();
-            const perBox = parseInt(row[6]);
-            return brand && name && validBrands.some(vb => brand.includes(vb) || vb.includes(brand)) && perBox > 0;
-          })
-          .flatMap((row, idx) => expandRowToBoxes(row, idx));
-        setBoxes(boxData);
-      }
-      
-      // Fetch onwards data
-      const onwardsRows = await fetchOnwardsData(token);
-      if (onwardsRows) {
-        const onwardsData = onwardsRows
-          .filter(row => {
-            const brand = row[2]?.trim();
-            const name = row[3]?.trim();
-            return brand && name && validBrands.some(vb => brand.includes(vb) || vb.includes(brand));
-          })
-          .map((row, idx) => rowToOnwards(row, idx));
-        setOnwards(onwardsData);
-      }
-      
-      // Fetch history data
-      const historyRows = await fetchHistoryData(token);
-      if (historyRows && historyRows.length > 1) {
-        const historyData = historyRows.slice(1).map(row => ({
-          date: row[0],
-          boxNum: row[1],
-          brand: row[2],
-          name: row[3],
-          qty: parseInt(row[4]) || 1,
-          notes: row[5] || '',
-          timestamp: Date.now()
-        }));
-        setHistory(historyData);
-      }
-      
-      // Fetch highest box number from Settings
-      const storedHighest = await fetchHighestBoxNum();
-      setHighestBoxNum(storedHighest);
-      
-      setSyncStatus('success');
-    } catch (error) {
-      console.error('Error loading data:', error);
-      setSyncStatus('error');
-    } finally {
-      setDataLoading(false);
-    }
   }, []);
   
   // Valid Cuban cigar brands (for filtering)
