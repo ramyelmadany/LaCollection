@@ -3043,7 +3043,7 @@ export default function CigarCollectionApp() {
             <button 
               onClick={handleGoogleSignIn}
               className="mt-4 px-6 py-3 rounded-lg font-semibold"
-              style={{ background: '#d4af37', color: '#000' }}
+              style={{ background: '#d4af37', color: '#1a120b' }}
             >
               Sign In with Google
             </button>
@@ -3211,8 +3211,8 @@ export default function CigarCollectionApp() {
                 {!isSignedIn ? (
                   <button 
                     onClick={() => { handleGoogleSignIn(); setMenuOpen(false); }}
-                    className="w-full py-3 rounded-lg text-center"
-                    style={{ background: '#252525', color: '#4285f4', border: '1px solid #4285f4' }}
+                    className="w-full py-3 rounded-lg text-center font-semibold"
+                    style={{ background: '#d4af37', color: '#1a120b' }}
                   >
                     Sign In with Google
                   </button>
@@ -3733,7 +3733,7 @@ export default function CigarCollectionApp() {
       
       {/* Bottom buttons */}
       <div className="fixed bottom-4 left-4 right-4 z-30 flex gap-3">
-        <button onClick={() => isSignedIn ? setShowAddModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#252525', color: '#d4af37', border: '1px solid #d4af37' }}>
+        <button onClick={() => isSignedIn ? setShowAddModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#d4af37', border: '1px solid #d4af37' }}>
           Add Box
         </button>
         <button onClick={() => isSignedIn ? setShowLogModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#d4af37', color: '#1a1a1a' }}>
