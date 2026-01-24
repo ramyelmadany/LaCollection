@@ -1272,7 +1272,7 @@ const AddBoxModal = ({ boxes, onClose, onAdd }) => {
 };
 
 // History View
-const HistoryView = ({ history, boxes }) => {
+const HistoryView = ({ history, boxes, onUndo }) => {
   if (history.length === 0) {
     return (
       <div className="px-4 py-12 text-center">
@@ -1287,6 +1287,7 @@ const HistoryView = ({ history, boxes }) => {
     <div className="px-4 space-y-3">
       {history.slice().reverse().map((h, i) => {
         const st = brandStyles[h.brand] || brandStyles['Cohiba'];
+        const actualIndex = history.length - 1 - i;
         return (
           <div key={i} className="p-3 rounded-lg" style={{ background: '#1a1a1a', border: '1px solid #333', borderLeft: `3px solid ${st.accent}` }}>
             <div className="flex justify-between items-start">
@@ -1298,6 +1299,14 @@ const HistoryView = ({ history, boxes }) => {
               <div className="text-right">
                 <div className="text-lg font-light text-gray-300">x{h.qty}</div>
                 <div className="text-xs text-gray-500">{fmt.date(h.date)}</div>
+                {onUndo && (
+                  <button
+                    onClick={() => onUndo(actualIndex, h)}
+                    className="mt-2 px-2 py-1 text-xs rounded bg-gray-700 hover:bg-gray-600 text-gray-300"
+                  >
+                    Undo
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -1306,7 +1315,6 @@ const HistoryView = ({ history, boxes }) => {
     </div>
   );
 };
-
 // Prices View
 const PricesView = ({ boxes, currency, FX, fmtCurrency, fmtFromGBP }) => {
   // Get unique cigars from collection for comparison
