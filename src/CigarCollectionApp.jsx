@@ -2118,6 +2118,8 @@ export default function CigarCollectionApp() {
   const [accessToken, setAccessToken] = useState(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [showOpenOnly, setShowOpenOnly] = useState(false);
   const [pullStart, setPullStart] = useState(0);
   const [pullDistance, setPullDistance] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -2850,30 +2852,105 @@ export default function CigarCollectionApp() {
           </div>
         </div>
       )}
-      
-      {/* Filters - only on collection view */}
-      {view === 'collection' && (
-        <div className="px-4 mb-3 space-y-2">
-          {/* Location filter */}
-          <div className="flex gap-2 flex-wrap">
-            {['All', 'London', 'Cayman'].map(l => (
-              <button key={l} onClick={() => setLocation(l)} className="px-4 py-1.5 rounded-full text-sm" style={{
-                background: location === l ? '#d4af37' : 'transparent',
-                color: location === l ? '#000' : '#888',
-                border: location === l ? 'none' : '1px solid #444'
-              }}>{l}</button>
-            ))}
+
+{/* Filter Panel */}
+      {filterOpen && (
+        <div className="fixed inset-0 z-50 flex items-end" onClick={() => setFilterOpen(false)}>
+          <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.8)' }}></div>
+          <div 
+            className="relative w-full rounded-t-2xl p-6 max-h-[70vh] overflow-y-auto"
+            style={{ background: '#1a1a1a', border: '1px solid #333' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-6">
+              <span className="text-lg" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Filters</span>
+              <button onClick={() => setFilterOpen(false)} className="text-2xl text-gray-500">×</button>
             </div>
-          {/* Brand filter */}
-          <div className="flex gap-2 flex-wrap">
-            {availableBrands.map(brand => (
-              <button key={brand} onClick={() => setSelectedBrand(brand)} className="px-3 py-1.5 rounded-full text-sm" style={{
-                background: selectedBrand === brand ? '#d4af37' : 'transparent',
-                color: selectedBrand === brand ? '#000' : '#888',
-                border: selectedBrand === brand ? 'none' : '1px solid #444'
-              }}>{brand}</button>
-            ))}
+            
+            {/* Location Filter */}
+            <div className="mb-6">
+              <div className="text-sm text-gray-500 mb-3">Location</div>
+              <div className="flex gap-2 flex-wrap">
+                {['All', 'London', 'Cayman'].map(l => (
+                  <button 
+                    key={l} 
+                    onClick={() => setLocation(l)} 
+                    className="px-4 py-2 rounded-lg text-sm"
+                    style={{
+                      background: location === l ? '#d4af37' : '#252525',
+                      color: location === l ? '#000' : '#888',
+                      border: location === l ? 'none' : '1px solid #444'
+                    }}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Brand Filter */}
+            <div className="mb-6">
+              <div className="text-sm text-gray-500 mb-3">Brand</div>
+              <div className="flex gap-2 flex-wrap">
+                {availableBrands.map(brand => (
+                  <button 
+                    key={brand} 
+                    onClick={() => setSelectedBrand(brand)} 
+                    className="px-3 py-2 rounded-lg text-sm"
+                    style={{
+                      background: selectedBrand === brand ? '#d4af37' : '#252525',
+                      color: selectedBrand === brand ? '#000' : '#888',
+                      border: selectedBrand === brand ? 'none' : '1px solid #444'
+                    }}
+                  >
+                    {brand}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Open Boxes Toggle */}
+            <div className="mb-6">
+              <div className="text-sm text-gray-500 mb-3">Status</div>
+              <button 
+                onClick={() => setShowOpenOnly(!showOpenOnly)} 
+                className="px-4 py-2 rounded-lg text-sm"
+                style={{
+                  background: showOpenOnly ? '#d4af37' : '#252525',
+                  color: showOpenOnly ? '#000' : '#888',
+                  border: showOpenOnly ? 'none' : '1px solid #444'
+                }}
+              >
+                Open Boxes Only
+              </button>
+            </div>
+            
+            {/* Clear Filters */}
+            <button 
+              onClick={() => { setLocation('All'); setSelectedBrand('All'); setShowOpenOnly(false); }}
+              className="w-full py-3 rounded-lg text-sm"
+              style={{ background: '#252525', color: '#888', border: '1px solid #444' }}
+            >
+              Clear All Filters
+            </button>
           </div>
+        </div>
+      )}
+      
+      {/* Filter Button - only on collection view */}
+      {view === 'collection' && (
+        <div className="px-4 mb-3">
+          <button 
+            onClick={() => setFilterOpen(true)}
+            className="px-4 py-2 rounded-lg text-sm flex items-center gap-2"
+            style={{ background: '#252525', border: '1px solid #444', color: '#888' }}
+          >
+            <span>⚙</span>
+            <span>Filter</span>
+            {(location !== 'All' || selectedBrand !== 'All' || showOpenOnly) && (
+              <span className="w-2 h-2 rounded-full" style={{ background: '#d4af37' }}></span>
+            )}
+          </button>
         </div>
       )}
     
