@@ -349,6 +349,115 @@ const deleteSheetRow = async (boxNum, accessToken) => {
     return false;
   }
 };
+
+// Fetch history data from Google Sheets
+const fetchHistoryData = async () => {
+  const { apiKey, sheetId, historyRange } = GOOGLE_SHEETS_CONFIG;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${historyRange}?key=${apiKey}`;
+  
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Failed to fetch history data');
+    const data = await response.json();
+    return data.values || [];
+  } catch (error) {
+    console.error('Error fetching history data:', error);
+    return null;
+  }
+};
+
+// Add a smoke log entry to History sheet
+const addHistoryEntry = async (entry, accessToken) => {
+  const { sheetId, historyRange } = GOOGLE_SHEETS_CONFIG;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${historyRange}:append?valueInputOption=USER_ENTERED`;
+  
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        values: [[entry.date, entry.boxNum, entry.brand, entry.name, entry.qty, entry.notes || '']]
+      }),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error?.message || 'Failed to add history entry');
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error adding history entry:', error);
+    return false;
+  }
+};
+
+// Delete a history entry by finding and removing the row
+const deleteHistoryEntry = async (entry, accessToken) => {
+  const { apiKey, sheetId, historyRange, historySheetId } = GOOGLE_SHEETS_CONFIG;
+  
+  try {
+    // Fetch all history to find the matching row
+    const fetchUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${historyRange}?key=${apiKey}`;
+    const fetchResponse = await fetch(fetchUrl);
+    if (!fetchResponse.ok) throw new Error('Failed to fetch history data');
+    const data = await fetchResponse.json();
+    const rows = data.values || [];
+    
+    // Find the row (match date, boxNum, brand, name, qty)
+    let rowIndex = -1;
+    for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header
+      if (rows[i][0] === entry.date && 
+          String(rows[i][1]) === String(entry.boxNum) && 
+          rows[i][2] === entry.brand && 
+          rows[i][3] === entry.name && 
+          String(rows[i][4]) === String(entry.qty)) {
+        rowIndex = i + 1; // +1 because sheets are 1-indexed
+        break;
+      }
+    }
+    
+    if (rowIndex === -1) {
+      throw new Error('History entry not found');
+    }
+    
+    // Delete the row
+    const deleteUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}:batchUpdate`;
+    const response = await fetch(deleteUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        requests: [{
+          deleteDimension: {
+            range: {
+              sheetId: historySheetId,
+              dimension: 'ROWS',
+              startIndex: rowIndex - 1,
+              endIndex: rowIndex
+            }
+          }
+        }]
+      }),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error?.message || 'Failed to delete history entry');
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error deleting history entry:', error);
+    return false;
+  }
+};
+
 // Default exchange rate (fallback if API fails)
 const DEFAULT_FX_RATE = 0.79;
 
