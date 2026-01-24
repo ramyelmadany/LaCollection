@@ -275,7 +275,7 @@ const appendSheetRow = async (values, accessToken) => {
     }
     
     // Now write the data to that row
-    const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'Cigar Inventory'!A${insertRowIndex}:O${insertRowIndex}?valueInputOption=USER_ENTERED`;
+    const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'Cigar Inventory'!A${insertRowIndex}:R${insertRowIndex}?valueInputOption=USER_ENTERED`;
     const writeResponse = await fetch(writeUrl, {
       method: 'PUT',
       headers: {
@@ -283,7 +283,7 @@ const appendSheetRow = async (values, accessToken) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        range: `'Cigar Inventory'!A${insertRowIndex}:O${insertRowIndex}`,
+        range: `'Cigar Inventory'!A${insertRowIndex}:R${insertRowIndex}`,
         values: [values],
       }),
     });
