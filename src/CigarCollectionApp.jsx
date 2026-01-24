@@ -5,7 +5,7 @@ const GOOGLE_SHEETS_CONFIG = {
   apiKey: 'AIzaSyCGwQ71BGsiWWWJjX10_teVe3zQAmu9ZDk',
   clientId: '945855470299-l1is4q9t6lb1ak8v5n0871hsk6kt8ihl.apps.googleusercontent.com',
   sheetId: '10A_FMj8eotx-xlzAlCNFxjOr3xEOuO4p5GxAZjHC86A',
-  collectionRange: 'A:O',
+  collectionRange: 'A:R',
   onwardsRange: 'Onwards!A:L',
   onwardsSheetId: 1785734797,
   historyRange: 'History!A:F',
@@ -95,7 +95,7 @@ const fetchOnwardsData = async () => {
 
 // Transform sheet row to box object
 const rowToBox = (row, index) => {
-  // Columns: Date of Purchase | Box Number | Received | Brand | Name | Quantity Purchased | Number / Box | Price / Box | Price / Cigar | Ageing / Immediate | Date of Box | Code | Location | Number Consumed | Number Remaining
+  // Columns: Date of Purchase | Box Number | Received | Brand | Name | Quantity Purchased | Number / Box | Price / Box | Price / Cigar | Ageing / Immediate | Date of Box | Code | Location | Number Consumed | Number Remaining | Ring Gauge | Length | Notes
   return {
     id: index + 1,
     datePurchased: parseDate(row[0]),
@@ -113,6 +113,9 @@ const rowToBox = (row, index) => {
     location: row[12] || 'Cayman',
     consumed: parseInt(row[13]) || 0,
     remaining: parseInt(row[14]) || 0,
+    ringGauge: row[15] || '',
+    length: row[16] || '',
+    notes: row[17] || '',
   };
 };
 
@@ -141,7 +144,7 @@ const rowToOnwards = (row, index) => {
 
 // Transform box object to sheet row
 const boxToRow = (box) => {
-  // Columns: Date of Purchase | Box Number | Received | Brand | Name | Quantity Purchased | Number / Box | Price / Box | Price / Cigar | Ageing / Immediate | Date of Box | Code | Location | Number Consumed | Number Remaining
+  // Columns: Date of Purchase | Box Number | Received | Brand | Name | Quantity Purchased | Number / Box | Price / Box | Price / Cigar | Ageing / Immediate | Date of Box | Code | Location | Number Consumed | Number Remaining | Ring Gauge | Length | Notes
   const pricePerCigar = box.perBox > 0 ? box.priceUSD / box.perBox : 0;
   return [
     formatDateForSheet(box.datePurchased),
@@ -159,6 +162,9 @@ const boxToRow = (box) => {
     box.location,
     box.consumed,
     box.remaining,
+    box.ringGauge || '',
+    box.length || '',
+    box.notes || '',
   ];
 };
 
@@ -1274,35 +1280,374 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
   );
 };
 
-// Complete Habanos S.A. Cuban Cigar Catalog
+// Complete Habanos S.A. Cuban Cigar Catalog - Ring Gauge and Length (in inches)
 const habanosCatalog = {
-  'Bolivar': ['Belicosos Finos', 'Royal Coronas', 'Petit Coronas', 'Coronas Junior', 'Coronas Extra', 'Coronas Gigantes', 'Gold Medal', 'New Gold Medal', 'Libertador'],
-  'Cohiba': ['Siglo I', 'Siglo II', 'Siglo III', 'Siglo IV', 'Siglo V', 'Siglo VI', 'Esplendidos', 'Robustos', 'Exquisitos', 'Lanceros', 'Coronas Especiales', 'Medio Siglo', 'Piramides Extra', 'Maduro 5 Secretos', 'Maduro 5 Magicos', 'Maduro 5 Genios', 'Behike 52', 'Behike 54', 'Behike 56', 'Behike 58', 'Vistosos', 'Ideales', 'Ambar', 'Talisman'],
-  'Cuaba': ['Divinos', 'Tradicionales', 'Generosos', 'Exclusivos', 'Salomones'],
-  'Diplomaticos': ['No. 2', 'No. 4', 'No. 5', 'No. 6', 'No. 7', 'Cancilleres'],
-  'El Rey del Mundo': ['Choix Supreme', 'Demi Tasse', 'Gran Corona', 'Lunch Club', 'Petit Corona'],
-  'Fonseca': ['Cosacos', 'Delicias', 'No. 1', 'Cadetes', 'KDT'],
-  'H. Upmann': ['No. 2', 'Magnum 46', 'Magnum 48', 'Magnum 50', 'Magnum 52', 'Magnum 54', 'Magnum 56', 'Half Corona', 'Petit Upmann', 'Connoisseur No. 1', 'Connoisseur A', 'Connoisseur B', 'Connoisseur No. 2', 'Sir Winston', 'Royal Robusto', 'Regalias', 'Majestic', 'Coronas Major', 'Coronas Minor', 'Epicures'],
-  'Hoyo de Monterrey': ['Epicure No. 1', 'Epicure No. 2', 'Epicure Especial', 'Double Corona', 'Le Hoyo de Rio Seco', 'Le Hoyo de San Juan', 'Le Hoyo de San Luis', 'Petit Robustos', 'Coronas', 'Palmas Extra', 'Du Depute', 'Du Maire', 'Du Prince', 'Du Roi', 'Destinos', 'Short Hoyo Piramides'],
-  'Jose L. Piedra': ['Brevas', 'Cazadores', 'Conservas', 'Cremas', 'Petit Caballeros', 'Petit Cazadores', 'Petit Cetros'],
-  'Juan Lopez': ['Seleccion No. 1', 'Seleccion No. 2', 'Petit Coronas', 'Coronas'],
-  'La Flor de Cano': ['Petit Coronas', 'Selectos', 'Short Churchills'],
-  'La Gloria Cubana': ['Medaille d\'Or No. 1', 'Medaille d\'Or No. 2', 'Medaille d\'Or No. 3', 'Medaille d\'Or No. 4', 'Glorias', 'Orgullosos', '35 Aniversario'],
-  'Montecristo': ['No. 1', 'No. 2', 'No. 3', 'No. 4', 'No. 5', 'Petit No. 2', 'Especial', 'Especial No. 2', 'Open Master', 'Open Eagle', 'Open Regata', 'Open Junior', 'Edmundo', 'Double Edmundo', 'Petit Edmundo', 'Media Corona', 'Supremos', 'Grand Edmundo', 'Brilllantes', 'Leyendas', 'Linea 1935', 'Elba'],
-  'Partagas': ['Serie D No. 4', 'Serie D No. 5', 'Serie D No. 6', 'Serie P No. 2', 'Serie E No. 2', 'Lusitinas', 'Shorts', 'Coronas Senior', 'Mille Fleurs', '8-9-8', 'Presidentes', 'Aristocrats', 'Culebras', 'Habaneros', 'Petit Coronas Especiales', 'Super Partagas', 'Linea Maestra Maestros'],
-  'Por Larranaga': ['Petit Coronas', 'Panetelas', 'Montecarlo', 'Picadores'],
-  'Punch': ['Punch Punch', 'Double Coronas', 'Petit Coronas del Punch', 'Royal Coronations', 'Coronations', 'Super Selection No. 1', 'Super Selection No. 2', 'Short de Punch', 'Princesas'],
-  'Quai d\'Orsay': ['No. 50', 'No. 54', 'Senadores', 'Coronas Claro', 'Especial d\'Orsay'],
-  'Quintero': ['Favoritos', 'Nacionales', 'Petit Quinteros', 'Panetelas', 'Brevas', 'Londres Extra', 'Tubulares'],
-  'Rafael Gonzalez': ['Petit Coronas', 'Panetelas Extra', 'Perlas', 'Coronas Extra', 'Lonsdales'],
-  'Ramon Allones': ['Specially Selected', 'Small Club Coronas', 'Allones Extra', 'Gigantes', 'Club Allones', 'No. 2', 'Superiores', 'Absolutos'],
-  'Romeo y Julieta': ['Churchills', 'Wide Churchills', 'Short Churchills', 'Petit Churchills', 'Coronitas en Cedro', 'Petit Royales', 'No. 1', 'No. 2', 'No. 3', 'Belicosos', 'Cedros de Luxe No. 1', 'Cedros de Luxe No. 2', 'Cedros de Luxe No. 3', 'Cazadores', 'Exhibicion No. 4', 'Mille Fleurs', 'Romeo No. 1', 'Romeo No. 2', 'Romeo No. 3', 'Sport Largos', 'Cupidos', 'Amantes'],
-  'Saint Luis Rey': ['Serie A', 'Regios', 'Churchill', 'Petit Coronas', 'Marquez'],
-  'San Cristobal de la Habana': ['La Fuerza', 'El Morro', 'La Punta', 'El Principe', 'Oficios', 'Mercaderes', 'Muralla', 'Prado', 'O\'Reilly', '25 Aniversario', 'Reinas'],
-  'Sancho Panza': ['Belicosos', 'Molinos', 'Non Plus', 'Sanchos', 'Bachilleres', 'Coronas Gigantes'],
-  'Trinidad': ['Reyes', 'Coloniales', 'Robusto Extra', 'Vigia', 'Fundadores', 'Topes', 'Media Luna', 'Esmeralda', 'La Trova', 'Cabildos'],
-  'Vegas Robaina': ['Clasicos', 'Don Alejandro', 'Famosos', 'Familiar', 'Unicos'],
-  'Vegueros': ['Tapados', 'Especiales No. 1', 'Especiales No. 2', 'Entretiempos', 'Mananitas', 'Centrofinos', 'Seoane']
+
+  // ==================== BOLIVAR ====================
+  'Bolivar': {
+    'Belicosos Finos': { ring: 52, length: '5 1/2', notes: 'Campanas' },
+    'Royal Coronas': { ring: 50, length: '4 7/8', notes: 'Robusto - 2006 Cigar of the Year' },
+    'Petit Coronas': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Coronas Junior': { ring: 42, length: '4 3/8', notes: 'Minutos' },
+    'Coronas Extra': { ring: 44, length: '5 5/8', notes: 'Coronas Extra - Discontinued 2012' },
+    'Coronas Gigantes': { ring: 47, length: '7', notes: 'Julieta No.2 / Churchill' },
+    'Gold Medal': { ring: 42, length: '6 1/2', notes: 'Cervantes - Discontinued 2011' },
+    'New Gold Medal': { ring: 48, length: '6 1/2', notes: 'Corona Extra - LCDH Exclusive' },
+    'Libertador': { ring: 54, length: '6 1/2', notes: 'Sublimes - LCDH (originally RE France 2007)' },
+  },
+
+  // ==================== COHIBA ====================
+  'Cohiba': {
+    'Siglo I': { ring: 40, length: '4', notes: 'Perlas / Tres Petit Corona' },
+    'Siglo II': { ring: 42, length: '5 1/8', notes: 'Mareva / Petit Corona' },
+    'Siglo III': { ring: 42, length: '6 1/8', notes: 'Corona Grande' },
+    'Siglo IV': { ring: 46, length: '5 5/8', notes: 'Corona Gorda' },
+    'Siglo V': { ring: 43, length: '6 3/4', notes: 'Dalia / Lonsdale (8-9-8)' },
+    'Siglo VI': { ring: 52, length: '5 7/8', notes: 'Cañonazo / Robusto Extra' },
+    'Medio Siglo': { ring: 52, length: '4', notes: 'Medio Robusto - Released 2016' },
+    'Lanceros': { ring: 38, length: '7 1/2', notes: 'Laguito No.1 (original Cohiba 1966)' },
+    'Coronas Especiales': { ring: 38, length: '6', notes: 'Laguito No.2' },
+    'Panetelas': { ring: 26, length: '4 1/2', notes: 'Laguito No.3' },
+    'Esplendidos': { ring: 47, length: '7', notes: 'Julieta No.2 / Churchill' },
+    'Robustos': { ring: 50, length: '4 7/8', notes: 'Robusto' },
+    'Exquisitos': { ring: 36, length: '5', notes: 'Seoane (some sources: 33 ring)' },
+    'Piramides Extra': { ring: 54, length: '6 1/4', notes: 'Pirámides Extra - Released 2012' },
+    'Ambar': { ring: 53, length: '5 1/4', notes: 'Placeres - Released 2021' },
+    'Maduro 5 Secretos': { ring: 40, length: '4 1/3', notes: 'Petit Corona' },
+    'Maduro 5 Magicos': { ring: 52, length: '4 1/2', notes: 'Petit Robusto' },
+    'Maduro 5 Genios': { ring: 52, length: '5 1/2', notes: 'Genios / Robusto Extra' },
+    'Behike 52': { ring: 52, length: '4 3/4', notes: 'Laguito No.4' },
+    'Behike 54': { ring: 54, length: '5 3/4', notes: 'Laguito No.5' },
+    'Behike 56': { ring: 56, length: '6 1/2', notes: 'Laguito No.6' },
+    'Behike 58': { ring: 58, length: '7', notes: 'Laguito No.7 - Released 2025' },
+    'Talisman': { ring: 54, length: '6 1/8', notes: 'Cañonazo Doble - Edición Limitada 2017' },
+    'Vistosos': { ring: 53, length: '5 3/4', notes: 'Dinoras - Travel Retail Exclusive 2024' },
+    'Ideales': { ring: 56, length: '6 7/8', notes: 'Modernas - Colección Habanos 2021' },
+  },
+
+  // ==================== CUABA ====================
+  'Cuaba': {
+    'Divinos': { ring: 43, length: '4', notes: 'Petit Perfecto' },
+    'Tradicionales': { ring: 42, length: '4 7/8', notes: 'Perfecto' },
+    'Generosos': { ring: 42, length: '5 1/8', notes: 'Double Figurado' },
+    'Exclusivos': { ring: 46, length: '5 3/4', notes: 'Double Figurado' },
+    'Salomones': { ring: 57, length: '7 1/4', notes: 'Double Figurado' },
+  },
+
+  // ==================== DIPLOMATICOS ====================
+  'Diplomaticos': {
+    'No. 2': { ring: 52, length: '6 1/8', notes: 'Pirámides' },
+    'No. 4': { ring: 42, length: '5 1/8', notes: 'Mareva / Petit Corona' },
+    'No. 5': { ring: 40, length: '4', notes: 'Perla' },
+    'No. 6': { ring: 34, length: '5 7/8', notes: 'Eminentes' },
+    'No. 7': { ring: 38, length: '6', notes: 'Laguito No.2' },
+    'Cancilleres': { ring: 52, length: '5 5/8', notes: 'Sublime - 2025 release' },
+  },
+
+  // ==================== EL REY DEL MUNDO ====================
+  'El Rey del Mundo': {
+    'Choix Supreme': { ring: 48, length: '5', notes: 'Hermoso No.4' },
+    'Demi Tasse': { ring: 30, length: '3 7/8', notes: 'Entreacto' },
+    'Gran Corona': { ring: 42, length: '5 1/2', notes: 'Corona Grande' },
+    'Lunch Club': { ring: 42, length: '4 3/8', notes: 'Minutos' },
+    'Petit Corona': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+  },
+
+  // ==================== FONSECA ====================
+  'Fonseca': {
+    'Cosacos': { ring: 42, length: '5 3/8', notes: 'Cosaco' },
+    'Delicias': { ring: 25, length: '4 7/8', notes: 'Seoane Delgado' },
+    'No. 1': { ring: 44, length: '6 1/2', notes: 'Cervantes' },
+    'Cadetes': { ring: 36, length: '4 1/2', notes: 'Cadete' },
+    'KDT': { ring: 36, length: '4 1/2', notes: 'Cadete' },
+  },
+
+  // ==================== H. UPMANN ====================
+  'H. Upmann': {
+    'No. 2': { ring: 52, length: '6 1/8', notes: 'Pirámides' },
+    'Magnum 46': { ring: 46, length: '5 5/8', notes: 'Corona Gorda' },
+    'Magnum 48': { ring: 48, length: '5 1/4', notes: 'Hermoso No.4 Extra - Edición Limitada 2009' },
+    'Magnum 50': { ring: 50, length: '6 1/4', notes: 'Doble Robusto' },
+    'Magnum 52': { ring: 52, length: '5 1/4', notes: 'Venerables' },
+    'Magnum 54': { ring: 54, length: '4 3/4', notes: 'Petit Edmundo Extra' },
+    'Magnum 56': { ring: 56, length: '6', notes: 'Cañonazo Extra' },
+    'Half Corona': { ring: 44, length: '3 1/2', notes: 'Minutos' },
+    'Petit Upmann': { ring: 36, length: '4 1/2', notes: 'Cadete' },
+    'Connoisseur No. 1': { ring: 48, length: '5', notes: 'Hermoso No.4' },
+    'Connoisseur A': { ring: 52, length: '5 1/2', notes: 'Genios - LCDH exclusive' },
+    'Connoisseur B': { ring: 54, length: '5', notes: 'Edmundo Extra' },
+    'Connoisseur No. 2': { ring: 52, length: '5 3/8', notes: 'Robusto Extra - LCDH exclusive' },
+    'Sir Winston': { ring: 47, length: '7', notes: 'Julieta No.2 / Churchill' },
+    'Royal Robusto': { ring: 52, length: '5 3/8', notes: 'Robusto Extra' },
+    'Regalias': { ring: 42, length: '4 1/2', notes: 'Mareva Corta' },
+    'Majestic': { ring: 42, length: '5 7/8', notes: 'Corona Grande' },
+    'Coronas Major': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Coronas Minor': { ring: 40, length: '4 5/8', notes: 'Petit Corona' },
+    'Epicures': { ring: 50, length: '5', notes: 'Hermoso No.4' },
+  },
+
+  // ==================== HOYO DE MONTERREY ====================
+  'Hoyo de Monterrey': {
+    'Epicure No. 1': { ring: 46, length: '5 5/8', notes: 'Corona Gorda' },
+    'Epicure No. 2': { ring: 50, length: '4 7/8', notes: 'Robusto' },
+    'Epicure Especial': { ring: 50, length: '5 5/8', notes: 'Gordito / Double Robusto' },
+    'Double Corona': { ring: 49, length: '7 5/8', notes: 'Prominentes' },
+    'Le Hoyo de Rio Seco': { ring: 56, length: '5 1/2', notes: 'Aromosos - LCDH exclusive 2018' },
+    'Le Hoyo de San Juan': { ring: 54, length: '5 7/8', notes: 'Geniales - LCDH exclusive 2014' },
+    'Le Hoyo de San Luis': { ring: 54, length: '6 1/4', notes: 'Geniales Extra - LCDH exclusive' },
+    'Petit Robustos': { ring: 50, length: '4', notes: 'Petit Robusto' },
+    'Coronas': { ring: 42, length: '5 5/8', notes: 'Corona Grande' },
+    'Palmas Extra': { ring: 35, length: '5 5/8', notes: 'Palma' },
+    'Du Depute': { ring: 38, length: '4 3/8', notes: 'Small Panetela' },
+    'Du Maire': { ring: 42, length: '5 7/8', notes: 'Corona' },
+    'Du Prince': { ring: 40, length: '5', notes: 'Crema' },
+    'Du Roi': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Destinos': { ring: 52, length: '5 5/8', notes: 'Cañonazo - Edición Limitada' },
+    'Short Hoyo Piramides': { ring: 46, length: '5', notes: 'Petit Pirámides - LCDH exclusive' },
+  },
+
+  // ==================== JOSE L. PIEDRA ====================
+  'Jose L. Piedra': {
+    'Brevas': { ring: 38, length: '5', notes: 'Small Panetela' },
+    'Cazadores': { ring: 43, length: '6 1/8', notes: 'Cazador' },
+    'Conservas': { ring: 42, length: '5 5/8', notes: 'Corona Grande' },
+    'Cremas': { ring: 40, length: '5', notes: 'Crema' },
+    'Petit Caballeros': { ring: 40, length: '4 7/8', notes: 'Petit Crema' },
+    'Petit Cazadores': { ring: 40, length: '4 3/8', notes: 'Perla Fina' },
+    'Petit Cetros': { ring: 26, length: '4 1/2', notes: 'Laguito No.3' },
+  },
+
+  // ==================== JUAN LOPEZ ====================
+  'Juan Lopez': {
+    'Seleccion No. 1': { ring: 46, length: '6 1/2', notes: 'Dalias' },
+    'Seleccion No. 2': { ring: 50, length: '4 7/8', notes: 'Robusto' },
+    'Petit Coronas': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Coronas': { ring: 42, length: '5 5/8', notes: 'Corona Grande' },
+  },
+
+  // ==================== LA FLOR DE CANO ====================
+  'La Flor de Cano': {
+    'Petit Coronas': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Selectos': { ring: 50, length: '4 7/8', notes: 'Robusto' },
+    'Short Churchills': { ring: 50, length: '4 7/8', notes: 'Robusto' },
+  },
+
+  // ==================== LA GLORIA CUBANA ====================
+  'La Gloria Cubana': {
+    'Medaille d\'Or No. 1': { ring: 36, length: '7 1/4', notes: 'Delicado Extra' },
+    'Medaille d\'Or No. 2': { ring: 43, length: '6 7/8', notes: 'Gran Corona' },
+    'Medaille d\'Or No. 3': { ring: 28, length: '7', notes: 'Gran Panetela' },
+    'Medaille d\'Or No. 4': { ring: 32, length: '6', notes: 'Panetela Largo' },
+    'Glorias': { ring: 53, length: '5 1/4', notes: 'Placeres' },
+    'Orgullosos': { ring: 56, length: '5 5/8', notes: 'Robusto Gordo - LCDH exclusive' },
+    '35 Aniversario': { ring: 52, length: '4 7/8', notes: 'Robusto - Commemorative' },
+  },
+
+  // ==================== MONTECRISTO ====================
+  'Montecristo': {
+    'No. 1': { ring: 42, length: '6 1/2', notes: 'Cervantes / Lonsdale' },
+    'No. 2': { ring: 52, length: '6 1/8', notes: 'Pirámides / Torpedo' },
+    'No. 3': { ring: 42, length: '5 5/8', notes: 'Corona Grande' },
+    'No. 4': { ring: 42, length: '5 1/8', notes: 'Mareva / Petit Corona' },
+    'No. 5': { ring: 40, length: '4', notes: 'Perlas' },
+    'Petit No. 2': { ring: 52, length: '4 7/8', notes: 'Pirámides Corto' },
+    'Especial': { ring: 38, length: '7 1/2', notes: 'Laguito No.1' },
+    'Especial No. 2': { ring: 38, length: '6', notes: 'Laguito No.2' },
+    'Open Master': { ring: 50, length: '5 1/4', notes: 'Robusto Extra' },
+    'Open Eagle': { ring: 54, length: '5 7/8', notes: 'Duke' },
+    'Open Regata': { ring: 46, length: '5 3/8', notes: 'Corona Gorda Extra' },
+    'Open Junior': { ring: 40, length: '4', notes: 'Perla' },
+    'Edmundo': { ring: 52, length: '5 3/8', notes: 'Edmundo' },
+    'Double Edmundo': { ring: 50, length: '6 1/8', notes: 'Dobles' },
+    'Petit Edmundo': { ring: 52, length: '4 3/8', notes: 'Petit Edmundo' },
+    'Media Corona': { ring: 44, length: '3 1/2', notes: 'Half Corona' },
+    'Supremos': { ring: 55, length: '5 1/8', notes: 'Montesco - Edición Limitada 2019' },
+    'Grand Edmundo': { ring: 52, length: '6 1/4', notes: 'Edmundo Extra - Edición Limitada' },
+    'Leyendas': { ring: 53, length: '6 1/8', notes: 'Colección Habanos' },
+    'Brillantes': { ring: 53, length: '5', notes: 'Venerables - Year of the Dragon 2024' },
+    'Linea 1935 Dumas': { ring: 49, length: '5 1/8', notes: 'Prominente Corto' },
+    'Linea 1935 Maltes': { ring: 53, length: '6', notes: 'Sobresalientes' },
+    'Linea 1935 Leyenda': { ring: 55, length: '6 1/2', notes: 'Maravillas No.2' },
+    'Elba': { ring: 50, length: '5', notes: 'Hermoso No.4 - LCDH exclusive' },
+  },
+
+  // ==================== PARTAGAS ====================
+  'Partagas': {
+    'Serie D No. 4': { ring: 50, length: '4 7/8', notes: 'Robusto - most popular Cuban' },
+    'Serie D No. 5': { ring: 50, length: '4 3/8', notes: 'Petit Robusto' },
+    'Serie D No. 6': { ring: 50, length: '3 1/2', notes: 'Petit Robusto' },
+    'Serie P No. 2': { ring: 52, length: '6 1/8', notes: 'Pirámides' },
+    'Serie E No. 2': { ring: 54, length: '5 1/2', notes: 'Duke' },
+    'Lusitanias': { ring: 49, length: '7 5/8', notes: 'Prominentes / Double Corona' },
+    'Shorts': { ring: 42, length: '4 3/8', notes: 'Minutos' },
+    'Coronas Senior': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Mille Fleurs': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    '8-9-8': { ring: 43, length: '6 7/8', notes: 'Dalias' },
+    'Presidentes': { ring: 47, length: '6 1/4', notes: 'Prominentes' },
+    'Aristocrats': { ring: 43, length: '5 1/8', notes: 'Cazador' },
+    'Culebras': { ring: 39, length: '5 3/4', notes: 'Culebra (3 braided)' },
+    'Habaneros': { ring: 47, length: '5 1/8', notes: 'Petit Cetros' },
+    'Petit Coronas Especiales': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Super Partagas': { ring: 40, length: '5 5/8', notes: 'Corona Grande' },
+    'Linea Maestra Maestros': { ring: 47, length: '6 1/4', notes: 'Gran Corona' },
+  },
+
+  // ==================== POR LARRANAGA ====================
+  'Por Larranaga': {
+    'Petit Coronas': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Panetelas': { ring: 33, length: '4 1/2', notes: 'Panetela Corta' },
+    'Montecarlo': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Picadores': { ring: 38, length: '4 3/8', notes: 'Short Panetela' },
+  },
+
+  // ==================== PUNCH ====================
+  'Punch': {
+    'Punch Punch': { ring: 46, length: '5 5/8', notes: 'Corona Gorda' },
+    'Double Coronas': { ring: 49, length: '7 5/8', notes: 'Prominentes' },
+    'Petit Coronas del Punch': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Royal Coronations': { ring: 44, length: '5 1/2', notes: 'Coronation' },
+    'Coronations': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Super Selection No. 1': { ring: 46, length: '5 1/2', notes: 'Corona Extra' },
+    'Super Selection No. 2': { ring: 42, length: '5 5/8', notes: 'Corona Grande' },
+    'Short de Punch': { ring: 42, length: '4 3/8', notes: 'Minutos' },
+    'Princesas': { ring: 30, length: '4 7/8', notes: 'Small Panetela' },
+  },
+
+  // ==================== QUAI D'ORSAY ====================
+  'Quai d\'Orsay': {
+    'No. 50': { ring: 50, length: '4 7/8', notes: 'Robusto' },
+    'No. 54': { ring: 54, length: '6 1/8', notes: 'Sublime' },
+    'Senadores': { ring: 48, length: '5', notes: '' },
+    'Coronas Claro': { ring: 42, length: '5 5/8', notes: 'Corona Grande' },
+    'Especial d\'Orsay': { ring: 54, length: '7 3/4', notes: 'Gran Prominentes' },
+  },
+
+  // ==================== QUINTERO ====================
+  'Quintero': {
+    'Favoritos': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Nacionales': { ring: 40, length: '5 5/8', notes: 'Corona Grande' },
+    'Petit Quinteros': { ring: 40, length: '4 3/8', notes: 'Perla Fina' },
+    'Panetelas': { ring: 37, length: '5', notes: 'Panetela Corta' },
+    'Brevas': { ring: 42, length: '5 5/8', notes: 'Corona Grande' },
+    'Londres Extra': { ring: 40, length: '4 7/8', notes: 'Mareva Chica' },
+    'Tubulares': { ring: 42, length: '6', notes: 'Corona Tubos' },
+  },
+
+  // ==================== RAFAEL GONZALEZ ====================
+  'Rafael Gonzalez': {
+    'Petit Coronas': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Panetelas Extra': { ring: 37, length: '5', notes: 'Panetela Corta' },
+    'Perlas': { ring: 40, length: '4', notes: 'Perla' },
+    'Coronas Extra': { ring: 46, length: '5 5/8', notes: 'Corona Gorda' },
+    'Lonsdales': { ring: 42, length: '6 1/2', notes: 'Cervantes' },
+  },
+
+  // ==================== RAMON ALLONES ====================
+  'Ramon Allones': {
+    'Specially Selected': { ring: 50, length: '4 7/8', notes: 'Robusto' },
+    'Small Club Coronas': { ring: 42, length: '4 3/8', notes: 'Minutos' },
+    'Allones Extra': { ring: 44, length: '5 1/2', notes: 'Coronation' },
+    'Gigantes': { ring: 49, length: '7 5/8', notes: 'Prominentes' },
+    'Club Allones': { ring: 53, length: '5', notes: 'Dinoras - LCDH exclusive' },
+    'No. 2': { ring: 52, length: '5 1/2', notes: 'Campanas - Edición Limitada 2019' },
+    'Superiores': { ring: 46, length: '5 5/8', notes: 'Corona Gorda - LCDH exclusive 2010' },
+    'Absolutos': { ring: 54, length: '5 5/8', notes: 'Duke - Edición Limitada' },
+  },
+
+  // ==================== ROMEO Y JULIETA ====================
+  'Romeo y Julieta': {
+    'Churchills': { ring: 47, length: '7', notes: 'Julieta No.2' },
+    'Wide Churchills': { ring: 55, length: '5 1/8', notes: 'Montesco' },
+    'Short Churchills': { ring: 50, length: '4 7/8', notes: 'Robusto' },
+    'Petit Churchills': { ring: 50, length: '4', notes: 'Petit Robusto' },
+    'Coronitas en Cedro': { ring: 40, length: '5', notes: 'Coronita' },
+    'Petit Royales': { ring: 47, length: '4 7/8', notes: 'Petit Robusto' },
+    'No. 1': { ring: 40, length: '5 5/8', notes: 'Mareva Gorda' },
+    'No. 2': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'No. 3': { ring: 40, length: '4 5/8', notes: 'Petit Corona' },
+    'Belicosos': { ring: 52, length: '5 1/2', notes: 'Campana' },
+    'Cedros de Luxe No. 1': { ring: 42, length: '6 1/2', notes: 'Cervantes (cedar wrapped)' },
+    'Cedros de Luxe No. 2': { ring: 42, length: '5 5/8', notes: 'Corona Grande (cedar)' },
+    'Cedros de Luxe No. 3': { ring: 42, length: '5 1/8', notes: 'Mareva (cedar)' },
+    'Cazadores': { ring: 44, length: '6 3/8', notes: 'Cazador' },
+    'Exhibicion No. 4': { ring: 48, length: '5', notes: 'Hermoso No.4' },
+    'Mille Fleurs': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Romeo No. 1': { ring: 40, length: '5 5/8', notes: 'Crema' },
+    'Romeo No. 2': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Romeo No. 3': { ring: 40, length: '4 5/8', notes: 'Petit Corona' },
+    'Sport Largos': { ring: 35, length: '6 1/4', notes: 'Panetela Larga' },
+    'Cupidos': { ring: 50, length: '5 1/8', notes: 'Campana Corta' },
+    'Amantes': { ring: 53, length: '5', notes: 'Dinoras - LCDH exclusive' },
+  },
+
+  // ==================== SAINT LUIS REY ====================
+  'Saint Luis Rey': {
+    'Serie A': { ring: 54, length: '5 5/8', notes: 'Duke' },
+    'Regios': { ring: 48, length: '5', notes: 'Hermoso No.4' },
+    'Churchill': { ring: 47, length: '7', notes: 'Julieta No.2' },
+    'Petit Coronas': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Marquez': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+  },
+
+  // ==================== SAN CRISTOBAL DE LA HABANA ====================
+  'San Cristobal de la Habana': {
+    'La Fuerza': { ring: 50, length: '4 7/8', notes: 'Robusto' },
+    'El Morro': { ring: 52, length: '5 1/2', notes: 'Campana' },
+    'La Punta': { ring: 52, length: '5 7/8', notes: 'Cañonazo' },
+    'El Principe': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Oficios': { ring: 52, length: '5 1/2', notes: 'Genios' },
+    'Mercaderes': { ring: 48, length: '6 5/8', notes: 'Hermoso No.1 - LCDH (discontinued)' },
+    'Muralla': { ring: 54, length: '7 1/8', notes: 'Rudolfo - LCDH (discontinued)' },
+    'Prado': { ring: 50, length: '5', notes: 'Petit Pirámides - LCDH exclusive 2019' },
+    'O\'Reilly': { ring: 40, length: '4 3/8', notes: 'Minutos' },
+    '20 Aniversario': { ring: 52, length: '6 3/8', notes: 'Capuleto / Double Robusto - LCDH 2020' },
+    'Reinas': { ring: 55, length: '6 7/8', notes: 'Maravillas No.5 - Colección Habanos 2024' },
+  },
+
+  // ==================== SANCHO PANZA ====================
+  'Sancho Panza': {
+    'Belicosos': { ring: 52, length: '5 1/2', notes: 'Campana' },
+    'Molinos': { ring: 42, length: '6 1/2', notes: 'Cervantes' },
+    'Non Plus': { ring: 42, length: '5 1/8', notes: 'Mareva' },
+    'Sanchos': { ring: 47, length: '9 1/4', notes: 'Gran Corona' },
+    'Bachilleres': { ring: 40, length: '4 5/8', notes: 'Petit Corona' },
+    'Coronas Gigantes': { ring: 42, length: '7', notes: 'Lonsdale Grande' },
+  },
+
+  // ==================== TRINIDAD ====================
+  'Trinidad': {
+    'Reyes': { ring: 40, length: '4 3/8', notes: 'Minutos' },
+    'Coloniales': { ring: 44, length: '5 1/2', notes: 'Coronation' },
+    'Robusto Extra': { ring: 50, length: '6 1/8', notes: 'Dobles' },
+    'Vigia': { ring: 54, length: '4 3/8', notes: 'Medio Robusto' },
+    'Fundadores': { ring: 40, length: '7 1/2', notes: 'Laguito No.1' },
+    'Topes': { ring: 56, length: '4 7/8', notes: 'Topes - Edición Limitada 2016, now regular production' },
+    'Media Luna': { ring: 50, length: '4 1/2', notes: 'Marinas' },
+    'Esmeralda': { ring: 53, length: '5 3/4', notes: 'Dinoras' },
+    'La Trova': { ring: 54, length: '6 1/2', notes: 'Cañonazo Especial - LCDH exclusive 2017' },
+    'Cabildos': { ring: 54, length: '4 3/8', notes: 'Medio Robusto' },
+  },
+
+  // ==================== VEGAS ROBAINA ====================
+  'Vegas Robaina': {
+    'Clasicos': { ring: 42, length: '6 1/2', notes: 'Cervantes / Lonsdale' },
+    'Don Alejandro': { ring: 49, length: '7 5/8', notes: 'Prominentes / Double Corona' },
+    'Famosos': { ring: 48, length: '5', notes: 'Hermoso No.4 / Corona Extra' },
+    'Familiar': { ring: 42, length: '5 5/8', notes: 'Corona Grande' },
+    'Unicos': { ring: 52, length: '6 1/8', notes: 'Pirámides / Torpedo' },
+  },
+
+  // ==================== VEGUEROS ====================
+  'Vegueros': {
+    'Tapados': { ring: 46, length: '6', notes: 'Gran Corona' },
+    'Especiales No. 1': { ring: 38, length: '7 1/2', notes: 'Laguito No.1 (discontinued)' },
+    'Especiales No. 2': { ring: 38, length: '6', notes: 'Laguito No.2 (discontinued)' },
+    'Entretiempos': { ring: 52, length: '4 3/8', notes: 'Petit Edmundo' },
+    'Mananitas': { ring: 46, length: '4', notes: 'Petit' },
+    'Centrofinos': { ring: 44, length: '5 5/8', notes: 'Corona Gorda' },
+    'Seoane': { ring: 33, length: '5', notes: 'Small Panetela (discontinued)' },
+  },
+
 };
 
 // Add Box Modal
