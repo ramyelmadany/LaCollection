@@ -2687,7 +2687,7 @@ export default function CigarCollectionApp() {
   return (
     <div 
   className="min-h-screen pb-24" 
-  style={{ background: '#1a120b', fontFamily: 'Georgia, serif' }}
+  style={{ background: '#1a120b', fontFamily: 'Georgia, serif', overscrollBehavior: 'none' }}
   onTouchStart={(e) => {
     if (window.scrollY === 0) {
       setPullStart(e.touches[0].clientY);
@@ -2713,14 +2713,37 @@ export default function CigarCollectionApp() {
       {/* Pull to refresh indicator */}
       {(pullDistance > 0 || isRefreshing) && (
         <div 
-          className="flex items-center justify-center text-sm"
+          className="flex flex-col items-center justify-center"
           style={{ 
-            height: isRefreshing ? 50 : pullDistance,
-            color: pullDistance > 80 ? '#d4af37' : '#666',
+            height: isRefreshing ? 60 : pullDistance,
+            background: '#1a120b',
             transition: isRefreshing ? 'none' : 'height 0.1s'
           }}
         >
-          {isRefreshing ? '↻ Refreshing...' : pullDistance > 80 ? '↓ Release to refresh' : '↓ Pull to refresh'}
+          <div 
+            className="w-8 h-8 rounded-full border-2 flex items-center justify-center"
+            style={{ 
+              borderColor: pullDistance > 80 || isRefreshing ? '#d4af37' : '#444',
+              transform: `rotate(${pullDistance * 2}deg)`,
+              transition: 'border-color 0.2s'
+            }}
+          >
+            <div 
+              className="text-lg"
+              style={{ 
+                color: pullDistance > 80 || isRefreshing ? '#d4af37' : '#666',
+                animation: isRefreshing ? 'spin 1s linear infinite' : 'none'
+              }}
+            >
+              ↓
+            </div>
+          </div>
+          <div 
+            className="text-xs mt-2"
+            style={{ color: pullDistance > 80 || isRefreshing ? '#d4af37' : '#666' }}
+          >
+            {isRefreshing ? 'Refreshing...' : pullDistance > 80 ? 'Release to refresh' : 'Pull to refresh'}
+          </div>
         </div>
       )}
       
