@@ -61,13 +61,17 @@ const formatCurrencyForSheet = (num) => {
   return `US$${num.toFixed(2)}`;
 };
 
-// Fetch data from Google Sheets (read - uses API key)
-const fetchSheetData = async () => {
-  const { apiKey, sheetId, collectionRange } = GOOGLE_SHEETS_CONFIG;
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${collectionRange}?key=${apiKey}`;
+// Fetch data from Google Sheets (requires OAuth token)
+const fetchSheetData = async (accessToken) => {
+  const { sheetId, collectionRange } = GOOGLE_SHEETS_CONFIG;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${collectionRange}`;
   
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
     if (!response.ok) throw new Error('Failed to fetch sheet data');
     const data = await response.json();
     return data.values || [];
@@ -76,14 +80,17 @@ const fetchSheetData = async () => {
     return null;
   }
 };
-
-// Fetch onwards data from Google Sheets
-const fetchOnwardsData = async () => {
-  const { apiKey, sheetId, onwardsRange } = GOOGLE_SHEETS_CONFIG;
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${onwardsRange}?key=${apiKey}`;
+// Fetch onwards data from Google Sheets (requires OAuth token)
+const fetchOnwardsData = async (accessToken) => {
+  const { sheetId, onwardsRange } = GOOGLE_SHEETS_CONFIG;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${onwardsRange}`;
   
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
     if (!response.ok) throw new Error('Failed to fetch onwards data');
     const data = await response.json();
     return data.values || [];
@@ -431,13 +438,17 @@ const updateBoxInSheet = async (boxNum, updatedData, accessToken) => {
   }
 };
 
-// Fetch history data from Google Sheets
-const fetchHistoryData = async () => {
-  const { apiKey, sheetId, historyRange } = GOOGLE_SHEETS_CONFIG;
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${historyRange}?key=${apiKey}`;
+// Fetch history data from Google Sheets (requires OAuth token)
+const fetchHistoryData = async (accessToken) => {
+  const { sheetId, historyRange } = GOOGLE_SHEETS_CONFIG;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${historyRange}`;
   
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
     if (!response.ok) throw new Error('Failed to fetch history data');
     const data = await response.json();
     return data.values || [];
@@ -2548,12 +2559,14 @@ export default function CigarCollectionApp() {
           setAccessToken(response.access_token);
           setIsSignedIn(true);
           googleAccessToken = response.access_token;
+          // Load data after successful sign-in
+          loadAllData(response.access_token);
         }
       },
     });
     
     client?.requestAccessToken();
-  }, []);
+  }, [loadAllData]);
   
   // Handle Google Sign Out
   const handleGoogleSignOut = useCallback(() => {
@@ -2626,127 +2639,127 @@ export default function CigarCollectionApp() {
     }
   }, [accessToken]);
   
-  // Fetch data from Google Sheets on mount
+  // Show splash screen, but don't load data until signed in
   useEffect(() => {
-    const loadData = async () => {
-      setDataLoading(true);
-      setSyncStatus('syncing');
+    // Just show splash screen for minimum duration
+    setTimeout(() => {
+      setSplashDelay(false);
+      setDataLoading(false);
+    }, 2000);
+  }, []);
+
+  // Load data function (called after sign-in)
+  const loadAllData = useCallback(async (token) => {
+    setDataLoading(true);
+    setSyncStatus('syncing');
+    
+    // Valid Cuban cigar brands
+    const validBrands = ['Cohiba', 'Trinidad', 'Montecristo', 'Partagas', 'Bolivar', 'Hoyo de Monterrey', 'H. Upmann', 'Ramon Allones', 'Romeo y Julieta', 'Punch', 'Cuaba', 'Diplomaticos', 'El Rey del Mundo', 'Fonseca', 'Jose L. Piedra', 'Juan Lopez', 'La Flor de Cano', 'La Gloria Cubana', 'Por Larranaga', 'Quai d\'Orsay', 'Quintero', 'Rafael Gonzalez', 'Saint Luis Rey', 'San Cristobal de la Habana', 'Sancho Panza', 'Vegas Robaina', 'Vegueros'];
+    
+    // Function to expand a row into multiple boxes based on quantity
+    const expandRowToBoxes = (row, rowIndex) => {
+      const qty = parseInt(row[5]) || 1;
+      const boxNumStr = row[1] || '';
+      const boxNums = boxNumStr.split(',').map(s => s.trim()).filter(s => s);
+      const perBox = parseInt(row[6]) || 0;
+      const totalRemaining = parseInt(row[14]) || 0;
+      const totalConsumed = parseInt(row[13]) || 0;
       
-      // Valid Cuban cigar brands
-      const validBrands = ['Cohiba', 'Trinidad', 'Montecristo', 'Partagas', 'Bolivar', 'Hoyo de Monterrey', 'H. Upmann', 'Ramon Allones', 'Romeo y Julieta', 'Punch', 'Cuaba', 'Diplomaticos', 'El Rey del Mundo', 'Fonseca', 'Jose L. Piedra', 'Juan Lopez', 'La Flor de Cano', 'La Gloria Cubana', 'Por Larranaga', 'Quai d\'Orsay', 'Quintero', 'Rafael Gonzalez', 'Saint Luis Rey', 'San Cristobal de la Habana', 'Sancho Panza', 'Vegas Robaina', 'Vegueros'];
-      
-      // Function to expand a row into multiple boxes based on quantity
-      const expandRowToBoxes = (row, rowIndex) => {
-        const qty = parseInt(row[5]) || 1;
-        const boxNumStr = row[1] || '';
-        const boxNums = boxNumStr.split(',').map(s => s.trim()).filter(s => s);
-        const perBox = parseInt(row[6]) || 0;
-        const totalRemaining = parseInt(row[14]) || 0;
-        const totalConsumed = parseInt(row[13]) || 0;
-        
-        // If only one box, return single box object
-        if (qty <= 1) {
-          return [rowToBox(row, rowIndex * 100)];
-        }
-        
-        // Split into multiple boxes
-        const boxes = [];
-        const remainingPerBox = Math.floor(totalRemaining / qty);
-        const consumedPerBox = Math.floor(totalConsumed / qty);
-        let remainingRemainder = totalRemaining % qty;
-        let consumedRemainder = totalConsumed % qty;
-        
-        for (let i = 0; i < qty; i++) {
-          const boxNum = boxNums[i] || `${boxNumStr}.${i + 1}`;
-          // Distribute remainder to first boxes
-          const thisRemaining = remainingPerBox + (remainingRemainder > 0 ? 1 : 0);
-          const thisConsumed = consumedPerBox + (consumedRemainder > 0 ? 1 : 0);
-          if (remainingRemainder > 0) remainingRemainder--;
-          if (consumedRemainder > 0) consumedRemainder--;
-          
-          boxes.push({
-            id: rowIndex * 100 + i + 1,
-            datePurchased: parseDate(row[0]),
-            boxNum: boxNum,
-            received: row[2] === 'TRUE',
-            brand: row[3] || '',
-            name: row[4] || '',
-            qty: 1,
-            perBox: perBox,
-            priceUSD: parseCurrency(row[7]), // Price per box (not multiplied)
-            pricePerCigar: parseCurrency(row[8]),
-            status: row[9] || 'Ageing',
-            dateOfBox: parseDate(row[10]),
-            code: row[11] || '',
-            location: row[12] || 'Cayman',
-            consumed: thisConsumed,
-            remaining: thisRemaining,
-          });
-        }
-        return boxes;
-      };
-      
-      try {
-        // Fetch collection data
-        const collectionRows = await fetchSheetData();
-        if (collectionRows) {
-          const boxData = collectionRows
-            .filter(row => {
-              const brand = row[3]?.trim();
-              const name = row[4]?.trim();
-              const perBox = parseInt(row[6]);
-              // Must have valid brand, name, and perBox > 0
-              return brand && name && validBrands.some(vb => brand.includes(vb) || vb.includes(brand)) && perBox > 0;
-            })
-            .flatMap((row, idx) => expandRowToBoxes(row, idx));
-          setBoxes(boxData);
-        }
-        
-        // Fetch onwards data
-        const onwardsRows = await fetchOnwardsData();
-        if (onwardsRows) {
-          const onwardsData = onwardsRows
-            .filter(row => {
-              const brand = row[2]?.trim();
-              const name = row[3]?.trim();
-              return brand && name && validBrands.some(vb => brand.includes(vb) || vb.includes(brand));
-            })
-            .map((row, idx) => rowToOnwards(row, idx));
-          setOnwards(onwardsData);
-        }
-        
-        // Fetch history data
-        const historyRows = await fetchHistoryData();
-        if (historyRows && historyRows.length > 1) {
-          const historyData = historyRows.slice(1).map(row => ({
-            date: row[0],
-            boxNum: row[1],
-            brand: row[2],
-            name: row[3],
-            qty: parseInt(row[4]) || 1,
-            notes: row[5] || '',
-            timestamp: Date.now()
-          }));
-          setHistory(historyData);
-        }
-        
-        // Fetch highest box number from Settings
-        const storedHighest = await fetchHighestBoxNum();
-        setHighestBoxNum(storedHighest);
-        
-        setSyncStatus('success');
-      } catch (error) {
-        console.error('Error loading data:', error);
-        setSyncStatus('error');
-      } finally {
-        setDataLoading(false);
+      // If only one box, return single box object
+      if (qty <= 1) {
+        return [rowToBox(row, rowIndex * 100)];
       }
+      
+      // Split into multiple boxes
+      const boxes = [];
+      const remainingPerBox = Math.floor(totalRemaining / qty);
+      const consumedPerBox = Math.floor(totalConsumed / qty);
+      let remainingRemainder = totalRemaining % qty;
+      let consumedRemainder = totalConsumed % qty;
+      
+      for (let i = 0; i < qty; i++) {
+        const boxNum = boxNums[i] || `${boxNumStr}.${i + 1}`;
+        const thisRemaining = remainingPerBox + (remainingRemainder > 0 ? 1 : 0);
+        const thisConsumed = consumedPerBox + (consumedRemainder > 0 ? 1 : 0);
+        if (remainingRemainder > 0) remainingRemainder--;
+        if (consumedRemainder > 0) consumedRemainder--;
+        
+        boxes.push({
+          id: rowIndex * 100 + i + 1,
+          datePurchased: parseDate(row[0]),
+          boxNum: boxNum,
+          received: row[2] === 'TRUE',
+          brand: row[3] || '',
+          name: row[4] || '',
+          qty: 1,
+          perBox: perBox,
+          priceUSD: parseCurrency(row[7]),
+          pricePerCigar: parseCurrency(row[8]),
+          status: row[9] || 'Ageing',
+          dateOfBox: parseDate(row[10]),
+          code: row[11] || '',
+          location: row[12] || 'Cayman',
+          consumed: thisConsumed,
+          remaining: thisRemaining,
+        });
+      }
+      return boxes;
     };
     
-    loadData();
-    
-    // Minimum splash screen duration
-    setTimeout(() => setSplashDelay(false), 2000);
+    try {
+      // Fetch collection data
+      const collectionRows = await fetchSheetData(token);
+      if (collectionRows) {
+        const boxData = collectionRows
+          .filter(row => {
+            const brand = row[3]?.trim();
+            const name = row[4]?.trim();
+            const perBox = parseInt(row[6]);
+            return brand && name && validBrands.some(vb => brand.includes(vb) || vb.includes(brand)) && perBox > 0;
+          })
+          .flatMap((row, idx) => expandRowToBoxes(row, idx));
+        setBoxes(boxData);
+      }
+      
+      // Fetch onwards data
+      const onwardsRows = await fetchOnwardsData(token);
+      if (onwardsRows) {
+        const onwardsData = onwardsRows
+          .filter(row => {
+            const brand = row[2]?.trim();
+            const name = row[3]?.trim();
+            return brand && name && validBrands.some(vb => brand.includes(vb) || vb.includes(brand));
+          })
+          .map((row, idx) => rowToOnwards(row, idx));
+        setOnwards(onwardsData);
+      }
+      
+      // Fetch history data
+      const historyRows = await fetchHistoryData(token);
+      if (historyRows && historyRows.length > 1) {
+        const historyData = historyRows.slice(1).map(row => ({
+          date: row[0],
+          boxNum: row[1],
+          brand: row[2],
+          name: row[3],
+          qty: parseInt(row[4]) || 1,
+          notes: row[5] || '',
+          timestamp: Date.now()
+        }));
+        setHistory(historyData);
+      }
+      
+      // Fetch highest box number from Settings
+      const storedHighest = await fetchHighestBoxNum();
+      setHighestBoxNum(storedHighest);
+      
+      setSyncStatus('success');
+    } catch (error) {
+      console.error('Error loading data:', error);
+      setSyncStatus('error');
+    } finally {
+      setDataLoading(false);
+    }
   }, []);
   
   // Valid Cuban cigar brands (for filtering)
@@ -2802,9 +2815,11 @@ export default function CigarCollectionApp() {
   
   // Refresh data from Google Sheets
   const refreshData = async () => {
+    if (!googleAccessToken) return;
+    
     setSyncStatus('syncing');
     try {
-      const collectionRows = await fetchSheetData();
+      const collectionRows = await fetchSheetData(googleAccessToken);
       if (collectionRows) {
         const boxData = collectionRows
           .filter(row => {
@@ -2817,7 +2832,7 @@ export default function CigarCollectionApp() {
         setBoxes(boxData);
       }
       
-      const onwardsRows = await fetchOnwardsData();
+      const onwardsRows = await fetchOnwardsData(googleAccessToken);
       if (onwardsRows) {
         const onwardsData = onwardsRows
           .filter(row => {
@@ -2830,7 +2845,7 @@ export default function CigarCollectionApp() {
       }
       
       // Refresh history data
-      const historyRows = await fetchHistoryData();
+      const historyRows = await fetchHistoryData(googleAccessToken);
       if (historyRows && historyRows.length > 1) {
         const historyData = historyRows.slice(1).map(row => ({
           date: row[0],
@@ -3074,14 +3089,26 @@ export default function CigarCollectionApp() {
     return { totalCigars, totalBoxes, consumed, totalCostUSD, remainingCostUSD, totalMarketUSD, remainingMarketUSD, totalSavingsUSD, remainingSavingsUSD, onwardsProfit, onwardsCost, onwardsBoxes: onwards.length };
   }, [boxes, onwards, FX]);
 
-  // Show loading screen while fetching data
-  if (dataLoading || splashDelay) {
+  // Show loading/sign-in screen
+  if (dataLoading || splashDelay || !isSignedIn) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#1a120b' }}>
         <div className="text-center">
           <h1 className="text-2xl tracking-widest font-semibold mb-2" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>LA COLECCIÓN</h1>
           <div className="text-sm text-gray-500 mb-4">by Ramy El-Madany</div>
-          <div className="text-gray-400">Loading from Google Sheets...</div>
+          {splashDelay ? (
+            <div className="text-gray-400">Loading...</div>
+          ) : dataLoading ? (
+            <div className="text-gray-400">Loading from Google Sheets...</div>
+          ) : (
+            <button 
+              onClick={handleGoogleSignIn}
+              className="mt-4 px-6 py-3 rounded-lg font-semibold"
+              style={{ background: '#d4af37', color: '#000' }}
+            >
+              Sign In with Google
+            </button>
+          )}
         </div>
       </div>
     );
@@ -3701,7 +3728,7 @@ export default function CigarCollectionApp() {
       {view === 'prices' && <PricesView boxes={boxes} currency={currency} FX={FX} fmtCurrency={fmtCurrency} fmtFromGBP={fmtFromGBP} />}
       
       {/* Modals */}
-      {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} onClose={() => setSelectedGroup(null)} currency={currency} FX={FX} fmtCurrency={fmtCurrency} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { const data = await fetchSheetData(); if (data) { setBoxes(data.filter(row => row[0] && row[0] !== 'Date of Purchase' && !row[3]?.includes('Subtotal')).map(rowToBox)); } } return success; }} onEdit={async (box, updatedData) => { if (!googleAccessToken) return false; const success = await updateBoxInSheet(box.boxNum, updatedData, googleAccessToken); if (success) { await refreshData(); } return success; }} availableLocations={availableLocations} />}
+      {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} onClose={() => setSelectedGroup(null)} currency={currency} FX={FX} fmtCurrency={fmtCurrency} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { const data = await fetchSheetData(googleAccessToken); if (data) { setBoxes(data.filter(row => row[0] && row[0] !== 'Date of Purchase' && !row[3]?.includes('Subtotal')).map(rowToBox)); } } return success; }} onEdit={async (box, updatedData) => { if (!googleAccessToken) return false; const success = await updateBoxInSheet(box.boxNum, updatedData, googleAccessToken); if (success) { await refreshData(); } return success; }} availableLocations={availableLocations} />}
       {showLogModal && <SmokeLogModal boxes={boxes} onClose={() => setShowLogModal(false)} onLog={handleLog} />}
       {showAddModal && <AddBoxModal boxes={boxes} onClose={() => setShowAddModal(false)} onAdd={handleAddBoxes} highestBoxNum={highestBoxNum} />}
       {showSignInPrompt && (
