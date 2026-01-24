@@ -708,9 +708,9 @@ const CigarGroupCard = ({ group, onClick }) => {
                 const openBoxes = boxes.filter(b => b.remaining > 0 && b.remaining < b.perBox).length;
                 const isFull = i < fullBoxes;
                 const isOpen = i === fullBoxes && openBoxes > 0;
-                return <div key={i} className="flex-1 rounded-sm" style={{ 
+                return <div key={i} className="rounded-sm" style={{ 
                   height: (isFull || isOpen) ? '100%' : '20%', 
-                  width: isOpen ? '50%' : '100%',
+                  flex: isOpen ? '0.5' : '1',
                   background: (isFull || isOpen) ? 'linear-gradient(90deg, #5D4037, #8D6E63, #5D4037)' : 'rgba(0,0,0,0.3)'
                 }} />;
               })}
