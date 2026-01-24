@@ -2778,7 +2778,7 @@ export default function CigarCollectionApp() {
         <div className="fixed inset-0 z-50" onClick={() => setMenuOpen(false)}>
           <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.8)' }}></div>
           <div 
-            className="absolute top-0 right-0 h-full w-72 p-6"
+            className="absolute top-0 right-0 h-full w-72 p-6 overflow-y-auto"
             style={{ background: '#1a1a1a', borderLeft: '1px solid #333' }}
             onClick={e => e.stopPropagation()}
           >
@@ -2787,7 +2787,8 @@ export default function CigarCollectionApp() {
               <button onClick={() => setMenuOpen(false)} className="text-2xl text-gray-500">×</button>
             </div>
             
-            <div className="space-y-2 mb-8">
+            {/* Navigation */}
+            <div className="space-y-2 mb-6">
               {['collection', 'onwards', 'history', 'prices'].map(v => (
                 <button 
                   key={v} 
@@ -2803,6 +2804,42 @@ export default function CigarCollectionApp() {
               ))}
             </div>
             
+            {/* Value Section */}
+            <div className="border-t border-gray-700 pt-6 mb-6">
+              <div className="text-sm text-gray-500 mb-4" style={{ fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Value</div>
+              
+              {/* Current Collection */}
+              <div className="mb-4">
+                <div className="text-xs text-gray-500 mb-2">Current Collection</div>
+                <div className="rounded-lg p-3" style={{ background: '#252525' }}>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs text-gray-500">Your Cost</span>
+                    <span className="text-sm text-green-400">{fmtCurrency(stats.remainingCostUSD)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500">UK Market</span>
+                    <span className="text-sm text-blue-400">{fmtCurrency(stats.remainingMarketUSD)}</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Historical Collection */}
+              <div>
+                <div className="text-xs text-gray-500 mb-2">Historical Collection</div>
+                <div className="rounded-lg p-3" style={{ background: '#252525' }}>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs text-gray-500">Your Cost</span>
+                    <span className="text-sm text-green-400">{fmtCurrency(stats.totalCostUSD)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500">UK Market</span>
+                    <span className="text-sm text-blue-400">{fmtCurrency(stats.totalMarketUSD)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Settings */}
             <div className="border-t border-gray-700 pt-6 space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-gray-400">Currency</span>
@@ -2845,40 +2882,6 @@ export default function CigarCollectionApp() {
                 )}
               </div>
             </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Stats - only show on collection view */}
-      {view === 'collection' && (
-        <div className="px-4 mb-4">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-gray-400">{statsMode === 'total' ? 'Total Invested' : 'Remaining Value'}</span>
-            <button onClick={() => setStatsMode(statsMode === 'total' ? 'remaining' : 'total')} className="text-xs px-3 py-1 rounded" style={{ background: '#252525', color: '#d4af37' }}>
-              {statsMode === 'total' ? 'Show Remaining' : 'Show Total'}
-            </button>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <div className="rounded-lg p-3" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-              <div className="text-3xl font-light" style={{ color: '#d4af37' }}>{stats.totalCigars}</div>
-              <div className="text-sm text-gray-500">Cigars in {stats.totalBoxes} boxes</div>
-            </div>
-            <div className="rounded-lg p-3" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-              <div className="text-3xl font-light" style={{ color: '#ff9999' }}>{stats.consumed}</div>
-              <div className="text-sm text-gray-500">Enjoyed</div>
-            </div>
-            <div className="rounded-lg p-3" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-              <div className="text-xl font-light text-green-400">{fmtCurrency(statsMode === 'total' ? stats.totalCostUSD : stats.remainingCostUSD)}</div>
-              <div className="text-sm text-gray-500">Your Cost</div>
-            </div>
-            <div className="rounded-lg p-3" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-              <div className="text-xl font-light text-blue-400">{fmtCurrency(statsMode === 'total' ? stats.totalMarketUSD : stats.remainingMarketUSD)}</div>
-              <div className="text-sm text-gray-500">UK Market Value</div>
-            </div>
-          </div>
-          <div className="mt-2 rounded-lg p-3 flex justify-between items-center" style={{ background: '#143d14', border: '1px solid #1c5a1c' }}>
-            <span className="text-sm text-green-300">Total Savings vs UK Market</span>
-            <span className="text-lg font-semibold text-green-400">{fmtCurrency(statsMode === 'total' ? stats.totalSavingsUSD : stats.remainingSavingsUSD)}</span>
           </div>
         </div>
       )}
