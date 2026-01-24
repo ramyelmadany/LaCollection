@@ -1771,6 +1771,7 @@ export default function CigarCollectionApp() {
     // Write to Google Sheets if signed in
     if (isSignedIn && accessToken) {
       await updateBoxInSheet({ ...updatedBox, remaining: newRemaining, consumed: newConsumed });
+      await addHistoryEntry(logEntry, accessToken);
     }
   };
   
