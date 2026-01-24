@@ -2789,7 +2789,7 @@ export default function CigarCollectionApp() {
             
             {/* Navigation */}
             <div className="space-y-2 mb-6">
-              {['collection', 'value', 'onwards', 'history', 'prices'].map(v => (
+              {['collection', 'onwards', 'history', 'prices'].map(v => (
                 <button 
                   key={v} 
                   onClick={() => { setView(v); setMenuOpen(false); }}
@@ -2802,6 +2802,41 @@ export default function CigarCollectionApp() {
                   {v}
                 </button>
               ))}
+            </div>
+            
+            {/* Value Section */}
+            <div className="border-t border-gray-700 pt-6 mb-6">
+              <div className="text-sm text-gray-500 mb-4" style={{ fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Value</div>
+              
+              {/* Current Collection */}
+              <div className="mb-4">
+                <div className="text-xs text-gray-500 mb-2">Current Collection</div>
+                <div className="rounded-lg p-3" style={{ background: '#252525' }}>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs text-gray-500">Your Cost</span>
+                    <span className="text-sm text-green-400">{fmtCurrency(stats.remainingCostUSD)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500">UK Market</span>
+                    <span className="text-sm text-blue-400">{fmtCurrency(stats.remainingMarketUSD)}</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Historical Collection */}
+              <div>
+                <div className="text-xs text-gray-500 mb-2">Historical Collection</div>
+                <div className="rounded-lg p-3" style={{ background: '#252525' }}>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs text-gray-500">Your Cost</span>
+                    <span className="text-sm text-green-400">{fmtCurrency(stats.totalCostUSD)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500">UK Market</span>
+                    <span className="text-sm text-blue-400">{fmtCurrency(stats.totalMarketUSD)}</span>
+                  </div>
+                </div>
+              </div>
             </div>
             
             {/* Settings */}
@@ -2850,323 +2885,73 @@ export default function CigarCollectionApp() {
           </div>
         </div>
       )}
-
-      {/* Value View */}
-      {view === 'value' && (
-        <div className="px-4 pb-8">
-          {(() => {
-            // Calculate all value stats
-            const remainingBoxes = boxes.filter(b => b.remaining > 0);
-            
-            // Get market value for a box
-            const getBoxMarket = (b) => {
-              const m = getMarket(b.brand, b.name, b.perBox);
-              const marketGBP = m ? m.gbp : FX.toGBP(b.priceUSD) * 1.15;
-              return FX.toUSD(marketGBP);
-            };
-            
-            // Group boxes by vitola (brand + name)
-            const groupByVitola = (boxList) => {
-              const groups = {};
-              boxList.forEach(b => {
-                const key = `${b.brand}|${b.name}`;
-                if (!groups[key]) {
-                  groups[key] = { brand: b.brand, name: b.name, boxes: [] };
-                }
-                groups[key].boxes.push(b);
-              });
-              return Object.values(groups);
-            };
-            
-            // Most Valuable Box (full boxes only)
-            const fullBoxes = remainingBoxes.filter(b => b.remaining === b.perBox);
-            const fullBoxVitolas = groupByVitola(fullBoxes);
-            const mostValuableBox = fullBoxVitolas
-              .map(v => ({
-                ...v,
-                marketValue: getBoxMarket(v.boxes[0]),
-                boxIds: v.boxes.map(b => b.boxNum)
-              }))
-              .sort((a, b) => b.marketValue - a.marketValue)
-              .slice(0, 3);
-            
-            // Most Valuable Cigar (all remaining boxes)
-            const allVitolas = groupByVitola(remainingBoxes);
-            const mostValuableCigar = allVitolas
-              .map(v => {
-                const boxMarket = getBoxMarket(v.boxes[0]);
-                const perBox = v.boxes[0].perBox;
-                return {
-                  ...v,
-                  cigarValue: perBox > 0 ? boxMarket / perBox : 0,
-                  boxIds: v.boxes.map(b => b.boxNum)
-                };
-              })
-              .sort((a, b) => b.cigarValue - a.cigarValue)
-              .slice(0, 3);
-            
-            // Best Performer (highest return %)
-            const bestPerformer = allVitolas
-              .map(v => {
-                const avgPurchase = v.boxes.reduce((s, b) => s + b.priceUSD, 0) / v.boxes.length;
-                const marketValue = getBoxMarket(v.boxes[0]);
-                const returnPct = avgPurchase > 0 ? ((marketValue - avgPurchase) / avgPurchase) * 100 : 0;
-                return {
-                  ...v,
-                  purchasePrice: avgPurchase,
-                  marketValue,
-                  returnPct,
-                  boxIds: v.boxes.map(b => b.boxNum)
-                };
-              })
-              .sort((a, b) => b.returnPct - a.returnPct)
-              .slice(0, 3);
-            
-            // Worst Performer (lowest return %)
-            const worstPerformer = allVitolas
-              .map(v => {
-                const avgPurchase = v.boxes.reduce((s, b) => s + b.priceUSD, 0) / v.boxes.length;
-                const marketValue = getBoxMarket(v.boxes[0]);
-                const returnPct = avgPurchase > 0 ? ((marketValue - avgPurchase) / avgPurchase) * 100 : 0;
-                return {
-                  ...v,
-                  purchasePrice: avgPurchase,
-                  marketValue,
-                  returnPct,
-                  boxIds: v.boxes.map(b => b.boxNum)
-                };
-              })
-              .sort((a, b) => a.returnPct - b.returnPct)
-              .slice(0, 3);
-            
-            // Average Cigar Value
-            const totalCigarsRemaining = remainingBoxes.reduce((s, b) => s + b.remaining, 0);
-            const totalMarketRemaining = remainingBoxes.reduce((s, b) => s + getBoxMarket(b) * (b.remaining / b.perBox), 0);
-            const avgCigarValue = totalCigarsRemaining > 0 ? totalMarketRemaining / totalCigarsRemaining : 0;
-            
-            // Cigars Enjoyed
-            const totalSmoked = boxes.reduce((s, b) => s + b.consumed, 0);
-            const valueEnjoyed = boxes.reduce((s, b) => {
-              if (b.perBox === 0) return s;
-              const boxMarket = getBoxMarket(b);
-              return s + (boxMarket / b.perBox) * b.consumed;
-            }, 0);
-            
-            // Oldest Box (by release date)
-            const boxesWithRelease = remainingBoxes.filter(b => b.dateOfBox);
-            const oldestBox = boxesWithRelease.length > 0 
-              ? boxesWithRelease.sort((a, b) => new Date(a.dateOfBox) - new Date(b.dateOfBox))[0]
-              : null;
-            
-            // Newest Addition (by purchase date)
-            const boxesWithPurchase = remainingBoxes.filter(b => b.datePurchased);
-            const newestAddition = boxesWithPurchase.length > 0
-              ? boxesWithPurchase.sort((a, b) => new Date(b.datePurchased) - new Date(a.datePurchased))[0]
-              : null;
-            
-            return (
-              <>
-                {/* Collection Summary */}
-                <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Collection Summary</h2>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="rounded-lg p-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-                      <div className="text-xs text-gray-500 mb-2">Current Collection</div>
-                      <div className="space-y-1">
-                        <div className="flex justify-between">
-                          <span className="text-xs text-gray-500">Your Cost</span>
-                          <span className="text-sm text-green-400">{fmtCurrency(stats.remainingCostUSD)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-xs text-gray-500">UK Market</span>
-                          <span className="text-sm text-blue-400">{fmtCurrency(stats.remainingMarketUSD)}</span>
-                        </div>
-                        <div className="flex justify-between pt-1 border-t border-gray-700">
-                          <span className="text-xs text-gray-500">Savings</span>
-                          <span className="text-sm text-green-400">{fmtCurrency(stats.remainingSavingsUSD)}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="rounded-lg p-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-                      <div className="text-xs text-gray-500 mb-2">Historical Collection</div>
-                      <div className="space-y-1">
-                        <div className="flex justify-between">
-                          <span className="text-xs text-gray-500">Your Cost</span>
-                          <span className="text-sm text-green-400">{fmtCurrency(stats.totalCostUSD)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-xs text-gray-500">UK Market</span>
-                          <span className="text-sm text-blue-400">{fmtCurrency(stats.totalMarketUSD)}</span>
-                        </div>
-                        <div className="flex justify-between pt-1 border-t border-gray-700">
-                          <span className="text-xs text-gray-500">Savings</span>
-                          <span className="text-sm text-green-400">{fmtCurrency(stats.totalSavingsUSD)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Most Valuable Box */}
-                <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Most Valuable Box</h2>
-                  <div className="space-y-2">
-                    {mostValuableBox.map((v, i) => (
-                      <div key={i} className="rounded-lg p-3 flex justify-between items-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-                        <div>
-                          <div className="text-sm font-semibold" style={{ color: '#d4af37' }}>{v.brand}</div>
-                          <div className="text-sm text-gray-300">{v.name}</div>
-                          <div className="text-xs text-gray-500">Box {v.boxIds.join(', ')}</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-lg text-green-400">{fmtCurrency(v.marketValue)}</div>
-                        </div>
-                      </div>
-                    ))}
-                    {mostValuableBox.length === 0 && <div className="text-sm text-gray-500">No full boxes in collection</div>}
-                  </div>
-                </div>
-                
-                {/* Most Valuable Cigar */}
-                <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Most Valuable Cigar</h2>
-                  <div className="space-y-2">
-                    {mostValuableCigar.map((v, i) => (
-                      <div key={i} className="rounded-lg p-3 flex justify-between items-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-                        <div>
-                          <div className="text-sm font-semibold" style={{ color: '#d4af37' }}>{v.brand}</div>
-                          <div className="text-sm text-gray-300">{v.name}</div>
-                          <div className="text-xs text-gray-500">Box {v.boxIds.join(', ')}</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-lg text-green-400">{fmtCurrency(v.cigarValue)}</div>
-                          <div className="text-xs text-gray-500">per cigar</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Best Performer */}
-                <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Best Performer</h2>
-                  <div className="space-y-2">
-                    {bestPerformer.map((v, i) => (
-                      <div key={i} className="rounded-lg p-3 flex justify-between items-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-                        <div>
-                          <div className="text-sm font-semibold" style={{ color: '#d4af37' }}>{v.brand}</div>
-                          <div className="text-sm text-gray-300">{v.name}</div>
-                          <div className="text-xs text-gray-500">Box {v.boxIds.join(', ')}</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-lg" style={{ color: v.returnPct >= 0 ? '#4ade80' : '#f87171' }}>
-                            {v.returnPct >= 0 ? '+' : ''}{v.returnPct.toFixed(1)}%
-                          </div>
-                          <div className="text-xs text-gray-500">{fmtCurrency(v.purchasePrice)} → {fmtCurrency(v.marketValue)}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Worst Performer */}
-                <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Worst Performer</h2>
-                  <div className="space-y-2">
-                    {worstPerformer.map((v, i) => (
-                      <div key={i} className="rounded-lg p-3 flex justify-between items-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-                        <div>
-                          <div className="text-sm font-semibold" style={{ color: '#d4af37' }}>{v.brand}</div>
-                          <div className="text-sm text-gray-300">{v.name}</div>
-                          <div className="text-xs text-gray-500">Box {v.boxIds.join(', ')}</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-lg" style={{ color: v.returnPct >= 0 ? '#4ade80' : '#f87171' }}>
-                            {v.returnPct >= 0 ? '+' : ''}{v.returnPct.toFixed(1)}%
-                          </div>
-                          <div className="text-xs text-gray-500">{fmtCurrency(v.purchasePrice)} → {fmtCurrency(v.marketValue)}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Average Cigar Value */}
-                <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Average Cigar Value</h2>
-                  <div className="rounded-lg p-4 text-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-                    <div className="text-3xl font-light text-green-400">{fmtCurrency(avgCigarValue)}</div>
-                    <div className="text-sm text-gray-500">per cigar (market value)</div>
-                  </div>
-                </div>
-                
-                {/* Cigars Enjoyed */}
-                <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Cigars Enjoyed</h2>
-                  <div className="rounded-lg p-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <div className="text-3xl font-light" style={{ color: '#ff9999' }}>{totalSmoked}</div>
-                        <div className="text-sm text-gray-500">cigars smoked</div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xl font-light text-blue-400">{fmtCurrency(valueEnjoyed)}</div>
-                        <div className="text-sm text-gray-500">estimated value</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Oldest Box */}
-                <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Oldest Box</h2>
-                  {oldestBox ? (
-                    <div className="rounded-lg p-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <div className="text-sm font-semibold" style={{ color: '#d4af37' }}>{oldestBox.brand}</div>
-                          <div className="text-sm text-gray-300">{oldestBox.name}</div>
-                          <div className="text-xs text-gray-500">Box {oldestBox.boxNum}</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-lg text-gray-300">{fmt.date(oldestBox.dateOfBox)}</div>
-                          <div className="text-xs text-gray-500">release date</div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-sm text-gray-500">No release dates recorded</div>
-                  )}
-                </div>
-                
-                {/* Newest Addition */}
-                <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Newest Addition</h2>
-                  {newestAddition ? (
-                    <div className="rounded-lg p-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <div className="text-sm font-semibold" style={{ color: '#d4af37' }}>{newestAddition.brand}</div>
-                          <div className="text-sm text-gray-300">{newestAddition.name}</div>
-                          <div className="text-xs text-gray-500">Box {newestAddition.boxNum}</div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-lg text-gray-300">{fmt.date(newestAddition.datePurchased)}</div>
-                          <div className="text-xs text-gray-500">purchased</div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-sm text-gray-500">No purchase dates recorded</div>
-                  )}
-                </div>
-              </>
-            );
-          })()}
+      
+      {/* Filters - only on collection view */}
+      {view === 'collection' && (
+        <div className="px-4 mb-3 space-y-2">
+          {/* Location filter */}
+          <div className="flex gap-2 flex-wrap">
+            {['All', 'London', 'Cayman'].map(l => (
+              <button key={l} onClick={() => setLocation(l)} className="px-4 py-1.5 rounded-full text-sm" style={{
+                background: location === l ? '#d4af37' : 'transparent',
+                color: location === l ? '#000' : '#888',
+                border: location === l ? 'none' : '1px solid #444'
+              }}>{l}</button>
+            ))}
+            </div>
+          {/* Brand filter */}
+          <div className="flex gap-2 flex-wrap">
+            {availableBrands.map(brand => (
+              <button key={brand} onClick={() => setSelectedBrand(brand)} className="px-3 py-1.5 rounded-full text-sm" style={{
+                background: selectedBrand === brand ? '#d4af37' : 'transparent',
+                color: selectedBrand === brand ? '#000' : '#888',
+                border: selectedBrand === brand ? 'none' : '1px solid #444'
+              }}>{brand}</button>
+            ))}
+          </div>
         </div>
       )}
-
-      {/* History View */}
+    
+      {/* Collection View */}
+      {view === 'collection' && (
+        <div className="px-4">
+          {Object.entries(groupsByBrand).map(([brand, brandGroups]) => (
+            <div key={brand} className="mb-6">
+              {/* Brand Header */}
+              <div className="mb-3 pb-2" style={{ borderBottom: '2px solid #d4af37' }}>
+                <h2 className="text-2xl font-bold tracking-wide" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{brand}</h2>
+              </div>
+              {/* Cigar cards for this brand */}
+              <div className="grid grid-cols-2 gap-3">
+                {brandGroups.map(g => <CigarGroupCard key={`${g.brand}|${g.name}`} group={g} onClick={() => setSelectedGroup(g)} maxLengths={maxLengths} />)}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {/* Onwards View */}
+      {view === 'onwards' && (
+        <div className="px-4">
+          <div className="grid grid-cols-3 gap-2 mb-4">
+            <div className="rounded-lg p-3 text-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+              <div className="text-2xl font-light" style={{ color: '#d4af37' }}>{stats.onwardsBoxes}</div>
+              <div className="text-xs text-gray-500">Boxes</div>
+            </div>
+            <div className="rounded-lg p-3 text-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+              <div className="text-lg font-light text-gray-400">{fmtCurrency(stats.onwardsCost)}</div>
+              <div className="text-xs text-gray-500">Cost</div>
+            </div>
+            <div className="rounded-lg p-3 text-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+              <div className="text-lg font-light text-green-400">+{fmtCurrency(stats.onwardsProfit)}</div>
+              <div className="text-xs text-gray-500">Profit</div>
+            </div>
+          </div>
+          <div className="space-y-3">
+            {onwards.map(o => <OnwardsCard key={o.id} item={o} fmtCurrency={fmtCurrency} />)}
+          </div>
+        </div>
+      )}
       
       {/* History View */}
       {view === 'history' && <HistoryView history={history} boxes={boxes} onDelete={isSignedIn ? handleDeleteHistory : () => setShowSignInPrompt(true)} onEdit={isSignedIn ? handleEditHistory : () => setShowSignInPrompt(true)} />}
