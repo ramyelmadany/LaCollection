@@ -1798,6 +1798,32 @@ export default function CigarCollectionApp() {
     }
   };
   
+  // Handle undo smoke log - reverses the smoke and updates Google Sheets
+  const handleUndo = async (index, entry) => {
+    // Find the box and reverse the consumed/remaining
+    const box = boxes.find(b => b.boxNum === entry.boxNum);
+    if (!box) return;
+    
+    const newRemaining = box.remaining + entry.qty;
+    const newConsumed = box.consumed - entry.qty;
+    
+    // Update local state
+    setBoxes(prev => prev.map(b => 
+      b.boxNum === entry.boxNum 
+        ? { ...b, remaining: newRemaining, consumed: newConsumed }
+        : b
+    ));
+    setHistory(prev => prev.filter((_, i) => i !== index));
+    
+    // Update Google Sheets if signed in
+    if (isSignedIn && accessToken) {
+      await updateBoxInSheet({ ...box, remaining: newRemaining, consumed: newConsumed });
+      await deleteHistoryEntry(entry, accessToken);
+    }
+  };
+  
+  // Handle adding new boxesClaude is AI and can make mistakes. Please double-check responses.
+  
   // Handle adding new boxes - updates local state AND Google Sheets
   const handleAddBoxes = async (newBoxes) => {
     // Update local state first for instant UI feedback
