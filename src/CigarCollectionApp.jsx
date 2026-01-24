@@ -956,7 +956,7 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
             }}>{box.received ? 'Received' : 'Pending'}</span>
             </div>
           
-          {true && !showDeleteConfirm && (
+          {isSignedIn && !showDeleteConfirm && (
             <button
               onClick={() => setShowDeleteConfirm(true)}
               className="w-full mt-3 py-2 rounded-lg text-sm bg-red-900 hover:bg-red-800 text-red-200"
@@ -1588,6 +1588,7 @@ export default function CigarCollectionApp() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [history, setHistory] = useState([]);
   const [editingHistory, setEditingHistory] = useState(null);
+  const [showSignInPrompt, setShowSignInPrompt] = useState(false);
   const [currency, setCurrency] = useState('USD');
   const [fxRate, setFxRate] = useState(DEFAULT_FX_RATE);
   const [fxUpdated, setFxUpdated] = useState(null);
@@ -2331,7 +2332,7 @@ export default function CigarCollectionApp() {
       )}
       
       {/* History View */}
-      {view === 'history' && <HistoryView history={history} boxes={boxes} onDelete={handleDeleteHistory} onEdit={handleEditHistory} />}
+      {view === 'history' && <HistoryView history={history} boxes={boxes} onDelete={isSignedIn ? handleDeleteHistory : () => setShowSignInPrompt(true)} onEdit={isSignedIn ? handleEditHistory : () => setShowSignInPrompt(true)} />}
       
       {/* Prices View */}
       {view === 'prices' && <PricesView boxes={boxes} currency={currency} FX={FX} fmtCurrency={fmtCurrency} fmtFromGBP={fmtFromGBP} />}
@@ -2340,6 +2341,31 @@ export default function CigarCollectionApp() {
       {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} onClose={() => setSelectedGroup(null)} currency={currency} FX={FX} fmtCurrency={fmtCurrency} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { const data = await fetchSheetData(); if (data) { setBoxes(data.filter(row => row[0] && row[0] !== 'Date of Purchase' && !row[3]?.includes('Subtotal')).map(rowToBox)); } } return success; }} />}
       {showLogModal && <SmokeLogModal boxes={boxes} onClose={() => setShowLogModal(false)} onLog={handleLog} />}
       {showAddModal && <AddBoxModal boxes={boxes} onClose={() => setShowAddModal(false)} onAdd={handleAddBoxes} />}
+      {showSignInPrompt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.9)' }}>
+          <div className="w-full max-w-sm rounded-xl p-6 text-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+            <div className="text-4xl mb-4">🔐</div>
+            <h3 className="text-xl font-semibold mb-2" style={{ color: '#d4af37' }}>Sign In Required</h3>
+            <p className="text-gray-400 mb-6">Please sign in with Google to make changes. This ensures your data is saved to your collection.</p>
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setShowSignInPrompt(false)} 
+                className="flex-1 py-3 rounded-lg font-semibold"
+                style={{ background: '#333', color: '#888' }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => { setShowSignInPrompt(false); handleGoogleSignIn(); }} 
+                className="flex-1 py-3 rounded-lg font-semibold"
+                style={{ background: '#d4af37', color: '#000' }}
+              >
+                Sign In
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {editingHistory && <EditHistoryModal 
         entry={editingHistory.entry} 
         index={editingHistory.index}
@@ -2378,10 +2404,10 @@ export default function CigarCollectionApp() {
       
       {/* Bottom buttons */}
       <div className="fixed bottom-4 left-4 right-4 z-30 flex gap-3">
-        <button onClick={() => setShowAddModal(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#252525', color: '#d4af37', border: '2px solid #d4af37' }}>
+        <button onClick={() => isSignedIn ? setShowAddModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#252525', color: '#d4af37', border: '2px solid #d4af37' }}>
           Add Box
         </button>
-        <button onClick={() => setShowLogModal(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#d4af37', color: '#000' }}>
+        <button onClick={() => isSignedIn ? setShowLogModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#d4af37', color: '#000' }}>
           Log Smoke
         </button>
       </div>
