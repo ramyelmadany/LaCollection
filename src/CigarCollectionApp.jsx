@@ -1933,7 +1933,8 @@ export default function CigarCollectionApp() {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#1a120b' }}>
         <div className="text-center">
-          <h1 className="text-2xl tracking-widest font-semibold mb-4" style={{ color: '#d4af37' }}>LA COLECCIÓN</h1>
+          <h1 className="text-2xl tracking-widest font-semibold mb-2" style={{ color: '#d4af37' }}>LA COLECCIÓN</h1>
+          <div className="text-sm text-gray-500 mb-4">by Ramy El-Madany</div>
           <div className="text-gray-400">Loading from Google Sheets...</div>
         </div>
       </div>
