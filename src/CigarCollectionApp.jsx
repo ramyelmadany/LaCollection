@@ -2689,24 +2689,27 @@ export default function CigarCollectionApp() {
   className="min-h-screen pb-24" 
   style={{ background: '#1a120b', fontFamily: 'Georgia, serif', overscrollBehavior: 'none' }}
   onTouchStart={(e) => {
-    if (window.scrollY <= 5) {
+    if (window.scrollY <= 2 && !isRefreshing) {
       setPullStart(e.touches[0].clientY);
     }
   }}
   onTouchMove={(e) => {
-    if (pullStart > 0) {
-      if (window.scrollY > 5) {
+    if (pullStart > 0 && !isRefreshing) {
+      if (window.scrollY > 2) {
         setPullStart(0);
         setPullDistance(0);
         return;
       }
-      e.preventDefault();
-      const distance = Math.max(0, (e.touches[0].clientY - pullStart) * 0.5);
-      setPullDistance(Math.min(distance, 120));
+      const currentY = e.touches[0].clientY;
+      const distance = currentY - pullStart;
+      if (distance > 0) {
+        e.preventDefault();
+        setPullDistance(Math.min(distance * 0.4, 100));
+      }
     }
   }}
   onTouchEnd={async () => {
-    if (pullDistance > 60) {
+    if (pullDistance > 50 && !isRefreshing) {
       setIsRefreshing(true);
       await refreshData();
       setIsRefreshing(false);
@@ -2717,41 +2720,43 @@ export default function CigarCollectionApp() {
 >
 
       {/* Pull to refresh indicator */}
-      {(pullDistance > 0 || isRefreshing) && (
-        <div 
-          className="flex flex-col items-center justify-center"
-          style={{ 
-            height: isRefreshing ? 60 : pullDistance,
-            background: '#1a120b',
-            transition: isRefreshing ? 'none' : 'height 0.1s'
-          }}
-        >
-          <div 
-            className="w-8 h-8 rounded-full border-2 flex items-center justify-center"
-            style={{ 
-              borderColor: pullDistance > 80 || isRefreshing ? '#d4af37' : '#444',
-              transform: `rotate(${pullDistance * 2}deg)`,
-              transition: 'border-color 0.2s'
-            }}
-          >
+      <div 
+        className="flex flex-col items-center justify-center overflow-hidden"
+        style={{ 
+          height: isRefreshing ? 60 : pullDistance,
+          background: '#1a120b',
+          transition: pullDistance === 0 ? 'height 0.3s ease-out' : 'none'
+        }}
+      >
+        {(pullDistance > 0 || isRefreshing) && (
+          <>
             <div 
-              className="text-lg"
+              className="w-8 h-8 rounded-full border-2 flex items-center justify-center"
               style={{ 
-                color: pullDistance > 80 || isRefreshing ? '#d4af37' : '#666',
-                animation: isRefreshing ? 'spin 1s linear infinite' : 'none'
+                borderColor: pullDistance > 60 || isRefreshing ? '#d4af37' : '#444',
+                transform: isRefreshing ? 'none' : `rotate(${pullDistance * 3}deg)`,
+                transition: 'border-color 0.2s',
+                animation: isRefreshing ? 'spin 0.8s linear infinite' : 'none'
               }}
             >
-              ↓
+              <div 
+                className="text-lg"
+                style={{ 
+                  color: pullDistance > 60 || isRefreshing ? '#d4af37' : '#666'
+                }}
+              >
+                ↓
+              </div>
             </div>
-          </div>
-          <div 
-            className="text-xs mt-2"
-            style={{ color: pullDistance > 80 || isRefreshing ? '#d4af37' : '#666' }}
-          >
-            {isRefreshing ? 'Refreshing...' : pullDistance > 80 ? 'Release to refresh' : 'Pull to refresh'}
-          </div>
-        </div>
-      )}
+            <div 
+              className="text-xs mt-2"
+              style={{ color: pullDistance > 60 || isRefreshing ? '#d4af37' : '#666' }}
+            >
+              {isRefreshing ? 'Refreshing...' : pullDistance > 60 ? 'Release' : 'Pull to refresh'}
+            </div>
+          </>
+        )}
+      </div>
       
       {/* Header */}
       <div className="sticky top-0 z-40 px-4 py-4" style={{ background: '#1a120b' }}>
