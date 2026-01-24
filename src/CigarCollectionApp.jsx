@@ -1319,6 +1319,8 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
   const [code, setCode] = useState('');
   const [dateOfBox, setDateOfBox] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const [customBrand, setCustomBrand] = useState('');
+  const [customName, setCustomName] = useState('');
   
   // Calculate suggested box number from Settings
   const suggestedBoxNum = useMemo(() => {
@@ -1351,7 +1353,10 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
   }, [boxes, brand]);
   
   const handleSubmit = () => {
-    if (!brand || !name || !perBox || !priceUSD) return;
+    const finalBrand = brand === '__custom__' ? customBrand : brand;
+    const finalName = (brand === '__custom__' || name === '__custom__') ? customName : name;
+    
+    if (!finalBrand || !finalName || !perBox || !priceUSD) return;
     
     const newBoxes = [];
     const baseNum = boxNum;
@@ -1363,8 +1368,8 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
       newBoxes.push({
         id: newId,
         boxNum: newBoxNum,
-        brand,
-        name,
+        brand: finalBrand,
+        name: finalName,
         datePurchased,
         received,
         perBox: parseInt(perBox),
@@ -1394,19 +1399,54 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
           {/* Brand */}
           <div>
             <label className="text-xs text-gray-500 block mb-2">Brand *</label>
-            <select value={brand} onChange={e => { setBrand(e.target.value); setName(''); }} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
+            <select value={brand} onChange={e => { setBrand(e.target.value); setName(''); setCustomBrand(''); setCustomName(''); }} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
               <option value="">Select brand...</option>
               {allBrands.map(b => <option key={b} value={b}>{b}</option>)}
+              <option value="__custom__">— Custom Brand —</option>
             </select>
+            {brand === '__custom__' && (
+              <input 
+                type="text" 
+                value={customBrand} 
+                onChange={e => setCustomBrand(e.target.value)} 
+                placeholder="Enter custom brand name..." 
+                className="w-full px-3 py-2 rounded-lg text-base mt-2" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+              />
+            )}
           </div>
           
           {/* Cigar Name */}
           <div>
             <label className="text-xs text-gray-500 block mb-2">Cigar Name *</label>
-            <select value={name} onChange={e => setName(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} disabled={!brand}>
-              <option value="">{brand ? 'Select cigar...' : 'Select brand first'}</option>
-              {availableNames.map(n => <option key={n} value={n}>{n}</option>)}
-            </select>
+            {brand === '__custom__' ? (
+              <input 
+                type="text" 
+                value={customName} 
+                onChange={e => setCustomName(e.target.value)} 
+                placeholder="Enter cigar name..." 
+                className="w-full px-3 py-2 rounded-lg text-base" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+              />
+            ) : (
+              <>
+                <select value={name} onChange={e => { setName(e.target.value); setCustomName(''); }} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} disabled={!brand}>
+                  <option value="">{brand ? 'Select cigar...' : 'Select brand first'}</option>
+                  {availableNames.map(n => <option key={n} value={n}>{n}</option>)}
+                  {brand && <option value="__custom__">— Custom Cigar —</option>}
+                </select>
+                {name === '__custom__' && (
+                  <input 
+                    type="text" 
+                    value={customName} 
+                    onChange={e => setCustomName(e.target.value)} 
+                    placeholder="Enter custom cigar name..." 
+                    className="w-full px-3 py-2 rounded-lg text-base mt-2" 
+                    style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+                  />
+                )}
+              </>
+            )}
           </div>
           
           {/* Box Number and Quantity */}
@@ -1418,7 +1458,7 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
             <div>
               <label className="text-xs text-gray-500 block mb-2">Quantity</label>
               <select value={quantity} onChange={e => setQuantity(parseInt(e.target.value))} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
-                {[1,2,3,4,5].map(n => <option key={n} value={n}>{n} box{n > 1 ? 'es' : ''}</option>)}
+                {[1,2,3,4,5,6,7,8,9,10].map(n => <option key={n} value={n}>{n} box{n > 1 ? 'es' : ''}</option>)}
               </select>
             </div>
           </div>
