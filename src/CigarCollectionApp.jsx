@@ -887,12 +887,19 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
     <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
       <div className="w-full max-w-md rounded-t-2xl max-h-[90vh] overflow-y-auto" style={{ background: '#1a1a1a', border: '1px solid #333' }} onClick={e => e.stopPropagation()}>
         <div className="sticky top-0 z-10 p-4 flex justify-between items-start" style={{ background: '#1a1a1a', borderBottom: '1px solid #333' }}>
-          <div>
-            <h3 className="text-4xl font-bold" style={{ color: '#d4af37' }}>{box.brand}</h3>
-            <p className="text-2xl text-gray-300">{box.name}</p>
-          </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center text-lg" style={{ background: '#333', color: '#888' }}>x</button>
-        </div>
+  <div>
+    <h3 className="text-4xl font-bold" style={{ color: '#d4af37' }}>{box.brand}</h3>
+    <p className="text-2xl text-gray-300">{box.name}</p>
+    {(box.ringGauge || box.length) && (
+      <p className="text-sm text-gray-500 mt-1">
+        {box.ringGauge && <span>Ring Gauge {box.ringGauge}</span>}
+        {box.ringGauge && box.length && <span className="mx-2">•</span>}
+        {box.length && <span>Length {box.length}"</span>}
+      </p>
+    )}
+  </div>
+  <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center text-lg" style={{ background: '#333', color: '#888' }}>x</button>
+</div>
         
         {boxes.length > 1 && (
           <div className="px-4 py-2 flex gap-2 overflow-x-auto">
@@ -972,9 +979,8 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
           </div>
           
           <div className="rounded-lg p-4" style={{ background: '#252525' }}>
-            <div className="text-xs text-gray-500 mb-3">Box</div>
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div><div className="text-xs text-gray-500">Box Number</div><div className="text-gray-300">{box.boxNum}</div></div>
+              <div><div className="text-xs text-gray-500">Box ID</div><div className="text-gray-300">{box.boxNum}</div></div>
               <div><div className="text-xs text-gray-500">Location</div><div className="text-gray-300">{box.location}</div></div>
               <div><div className="text-xs text-gray-500">Purchased</div><div className="text-gray-300">{fmt.date(box.datePurchased)}</div></div>
               <div><div className="text-xs text-gray-500">Status</div><div style={{ color: box.status === 'Ageing' ? '#ff9999' : box.status === 'Immediate' ? '#99ff99' : '#ffff99' }}>{box.status}</div></div>
@@ -984,17 +990,10 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
           </div>
 
           {/* Vitola */}
-          {(box.ringGauge || box.length || box.notes) && (
+          {box.notes && (
             <div className="rounded-lg p-4" style={{ background: '#252525' }}>
-              <div className="text-xs text-gray-500 mb-3">Vitola</div>
-              <div className="text-sm text-gray-300">
-                {box.ringGauge && <span>Ring {box.ringGauge}</span>}
-                {box.ringGauge && box.length && <span className="mx-2 text-gray-600">•</span>}
-                {box.length && <span>Length {box.length}"</span>}
-              </div>
-              {box.notes && (
-                <div className="text-xs text-gray-500 mt-2">{box.notes}</div>
-              )}
+              <div className="text-xs text-gray-500 mb-2">Vitola</div>
+              <div className="text-sm text-gray-300">{box.notes}</div>
             </div>
           )}
           
