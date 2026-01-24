@@ -680,7 +680,7 @@ const groupBoxes = (boxes) => {
 };
 
 // Cigar Group Card
-const CigarGroupCard = ({ group, onClick }) => {
+const CigarGroupCard = ({ group, onClick, maxLengths }) => {
   const { brand, name, boxes } = group;
   const s = brandStyles[brand] || brandStyles['Cohiba'];
   const totalRemaining = boxes.reduce((sum, b) => sum + b.remaining, 0);
@@ -689,6 +689,10 @@ const CigarGroupCard = ({ group, onClick }) => {
   const nonEmptyBoxes = boxes.filter(b => b.remaining > 0).length;
   const isFinished = totalRemaining === 0;
   
+  // Calculate font sizes based on max lengths
+  const brandSize = maxLengths?.maxBrand > 18 ? '0.9rem' : maxLengths?.maxBrand > 12 ? '1.1rem' : '1.25rem';
+  const nameSize = maxLengths?.maxName > 25 ? '0.85rem' : maxLengths?.maxName > 18 ? '1rem' : '1.125rem';
+  
   return (
     <div onClick={onClick} className="relative cursor-pointer active:scale-98 transition-transform">
       <div className="relative rounded-xl overflow-hidden shadow-lg" style={{
@@ -696,18 +700,10 @@ const CigarGroupCard = ({ group, onClick }) => {
       }}>
         <div className="p-3">
           <div className="text-center mb-1">
-            <div className="font-bold tracking-wide" style={{ 
-              color: s.text, 
-              fontFamily: 'Georgia, serif',
-              fontSize: brand.length > 15 ? '1.25rem' : brand.length > 10 ? '1.5rem' : '1.875rem'
-            }}>{brand}</div>
+            <div className="font-bold tracking-wide" style={{ color: s.text, fontFamily: 'Georgia, serif', fontSize: brandSize }}>{brand}</div>
           </div>
           <div className="text-center mb-3">
-            <div className="font-medium" style={{ 
-              color: s.text, 
-              opacity: 0.9,
-              fontSize: name.length > 20 ? '1rem' : name.length > 12 ? '1.25rem' : '1.5rem'
-            }}>{name}</div>
+            <div className="font-medium" style={{ color: s.text, opacity: 0.9, fontSize: nameSize }}>{name}</div>
           </div>
           <div className="h-5 rounded overflow-hidden mb-2" style={{ background: 'rgba(0,0,0,0.3)' }}>
             <div className="h-full flex gap-0.5 p-1 items-end">
@@ -2094,7 +2090,7 @@ export default function CigarCollectionApp() {
               </div>
               {/* Cigar cards for this brand */}
               <div className="grid grid-cols-2 gap-3">
-                {brandGroups.map(g => <CigarGroupCard key={`${g.brand}|${g.name}`} group={g} onClick={() => setSelectedGroup(g)} />)}
+                {brandGroups.map(g => <CigarGroupCard key={`${g.brand}|${g.name}`} group={g} onClick={() => setSelectedGroup(g)} maxLengths={maxLengths} />)}
               </div>
             </div>
           ))}
