@@ -620,7 +620,7 @@ const brandImages = {
 
 // Brand styling - based on authentic cigar band colors
 const brandStyles = {
-  'Cohiba': { bg: 'linear-gradient(145deg, #1a1a1a, #2d2d2d)', text: '#FFD700', accent: '#FFD700', border: '#FFD700' }, // Black & gold
+  'Cohiba': { bg: '#D4A84B', text: '#1a1a1a', accent: '#FFD700', border: '#FFD700', checkerboard: true }, // Checkerboard & gold
   'Trinidad': { bg: 'linear-gradient(145deg, #4A0E0E, #722F37)', text: '#D4AF37', accent: '#D4AF37', border: '#D4AF37' }, // Burgundy & gold
   'Montecristo': { bg: 'linear-gradient(145deg, #8B0000, #A52A2A)', text: '#FFD700', accent: '#FFD700', border: '#FFD700' }, // Red & gold
   'Hoyo de Monterrey': { bg: 'linear-gradient(145deg, #2F4F4F, #3D5C5C)', text: '#F5DEB3', accent: '#C9A227', border: '#C9A227' }, // Dark green & cream
@@ -825,17 +825,55 @@ const CigarGroupCard = ({ group, onClick, maxLengths }) => {
   const brandSize = maxLengths?.maxBrand > 18 ? '0.9rem' : maxLengths?.maxBrand > 12 ? '1.1rem' : '1.25rem';
   const nameSize = maxLengths?.maxName > 25 ? '0.85rem' : maxLengths?.maxName > 18 ? '1rem' : '1.125rem';
   
+  // Cohiba special styling with checkerboard
+  const isCohiba = brand === 'Cohiba';
+  
   return (
     <div onClick={onClick} className="relative cursor-pointer active:scale-98 transition-transform">
       <div className="relative rounded-xl overflow-hidden shadow-lg" style={{
-        background: s.bg, border: 'none', opacity: isFinished ? 0.5 : 1
+        background: isCohiba ? '#D4A84B' : s.bg, 
+        border: 'none', 
+        opacity: isFinished ? 0.5 : 1
       }}>
-        <div className="p-3">
+        {/* Cohiba checkerboard top section */}
+        {isCohiba && (
+          <>
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '45%',
+              backgroundImage: `
+                repeating-conic-gradient(#000 0% 25%, #fff 0% 50%)
+              `,
+              backgroundSize: '12px 12px',
+            }} />
+            <div style={{
+              position: 'absolute',
+              top: '45%',
+              left: 0,
+              right: 0,
+              height: '4px',
+              background: '#FFD700',
+            }} />
+          </>
+        )}
+        <div className="p-3 relative" style={{ zIndex: 1 }}>
           <div className="text-center mb-1">
-            <div className="font-bold tracking-wide" style={{ color: s.text, fontFamily: 'tt-ricordi-allegria, Georgia, serif', fontSize: brandSize }}>{brand}</div>
+            <div className="font-bold tracking-wide" style={{ 
+              color: isCohiba ? '#1a1a1a' : s.text, 
+              fontFamily: 'tt-ricordi-allegria, Georgia, serif', 
+              fontSize: brandSize,
+              textShadow: isCohiba ? '0 0 4px rgba(255,255,255,0.8)' : 'none'
+            }}>{brand}</div>
           </div>
           <div className="text-center mb-3">
-            <div className="font-medium" style={{ color: s.text, opacity: 0.9, fontSize: nameSize }}>{name}</div>
+            <div className="font-medium" style={{ 
+              color: isCohiba ? '#1a1a1a' : s.text, 
+              opacity: 0.9, 
+              fontSize: nameSize 
+            }}>{name}</div>
           </div>
           <div className="rounded overflow-hidden mb-2" style={{ background: 'rgba(0,0,0,0.3)' }}>
             {[...Array(Math.ceil(boxes.length / 6) || 1)].map((_, rowIdx) => {
@@ -859,8 +897,8 @@ const CigarGroupCard = ({ group, onClick, maxLengths }) => {
             })}
           </div>
           <div className="flex justify-between items-center text-sm">
-            <span className="font-bold" style={{ color: s.text }}>{totalRemaining} left</span>
-            <span style={{ color: s.text, opacity: 0.7 }}>{nonEmptyBoxes} box{nonEmptyBoxes !== 1 ? 'es' : ''}</span>
+            <span className="font-bold" style={{ color: isCohiba ? '#1a1a1a' : s.text }}>{totalRemaining} left</span>
+            <span style={{ color: isCohiba ? '#1a1a1a' : s.text, opacity: 0.7 }}>{nonEmptyBoxes} box{nonEmptyBoxes !== 1 ? 'es' : ''}</span>
           </div>
         </div>
         {(() => {
