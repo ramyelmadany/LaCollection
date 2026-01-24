@@ -885,8 +885,8 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
   
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
-      <div className="w-full max-w-md rounded-t-2xl max-h-[90vh] overflow-y-auto" style={{ background: '#6B2D2D', border: '1px solid #333' }} onClick={e => e.stopPropagation()}>
-        <div className="sticky top-0 z-10 p-4 flex justify-between items-start" style={{ background: '#6B2D2D', borderBottom: '1px solid #8B4040' }}>
+      <div className="w-full max-w-md rounded-t-2xl max-h-[90vh] overflow-y-auto" style={{ background: '#4A1F1F', border: '1px solid #333' }} onClick={e => e.stopPropagation()}>
+        <div className="sticky top-0 z-10 p-4 flex justify-between items-start" style={{ background: '#4A1F1F', borderBottom: '1px solid #6B3030' }}>
   <div>
     <h3 className="text-4xl font-bold" style={{ color: '#d4af37' }}>{box.brand}</h3>
     <p className="text-2xl text-gray-300">{box.name}</p>
