@@ -718,10 +718,14 @@ const CigarGroupCard = ({ group, onClick }) => {
             <span style={{ color: s.text, opacity: 0.7 }}>{nonEmptyBoxes} box{nonEmptyBoxes !== 1 ? 'es' : ''}</span>
           </div>
         </div>
-        {nonEmptyBoxes > 1 && (
-          <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center font-bold shadow-lg" 
-            style={{ background: s.accent, color: '#000', fontSize: 11 }}>{nonEmptyBoxes}</div>
-        )}
+        {(() => {
+          const openBoxes = boxes.filter(b => b.remaining > 0 && b.remaining < b.perBox);
+          const openCount = openBoxes.reduce((sum, b) => sum + b.remaining, 0);
+          return openBoxes.length > 0 ? (
+            <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center font-bold shadow-lg" 
+              style={{ background: s.accent, color: '#000', fontSize: 11 }}>{openCount}</div>
+          ) : null;
+        })()}
         {isFinished && (
           <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.7)' }}>
             <span className="text-sm px-3 py-1 rounded" style={{ background: '#333', color: '#888' }}>Finished</span>
