@@ -133,7 +133,7 @@ const rowToOnwards = (row, index) => {
     salePriceUSD: salePrice || null,
     profitUSD: profit || 0,
     soldTo: row[11] || '',
-    type: salePrice > 0 ? (profit > 0 ? 'sold' : 'sold-at-cost') : 'pending',
+    type: salePrice > 0 ? (profit > 0 ? 'sold' : profit < 0 ? 'sold-at-loss' : 'sold-at-cost') : 'pending',
   };
 };
 
@@ -747,6 +747,7 @@ const OnwardsCard = ({ item, fmtCurrency }) => {
   const s = brandStyles[item.brand] || brandStyles['Cohiba'];
   const isSold = item.type === 'sold';
   const isSoldAtCost = item.type === 'sold-at-cost';
+  const isSoldAtLoss = item.type === 'sold-at-loss';
   const isPending = item.type === 'pending';
   
   return (
@@ -759,6 +760,7 @@ const OnwardsCard = ({ item, fmtCurrency }) => {
           </div>
           <div className="text-right">
             {isSold && <div className="text-green-400 font-semibold">+{fmtCurrency(item.profitUSD)}</div>}
+            {isSoldAtLoss && <div className="text-red-400 font-semibold">{fmtCurrency(item.profitUSD)}</div>}
             {isSoldAtCost && <div className="text-gray-400 text-sm">At cost</div>}
             {isPending && <div className="text-yellow-400 text-sm">Pending</div>}
           </div>
