@@ -982,6 +982,33 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
               <div><div className="text-xs text-gray-500">Release Date</div><div className="text-gray-300">{box.dateOfBox ? fmt.date(box.dateOfBox) : 'Unknown'}</div></div>
             </div>
           </div>
+
+          {/* Vitola Information */}
+          {(box.ringGauge || box.length || box.notes) && (
+            <div className="rounded-lg p-4" style={{ background: '#252525' }}>
+              <div className="text-xs text-gray-500 mb-3">Vitola Information</div>
+              <div className="flex items-center gap-4 mb-3">
+                {box.ringGauge && (
+                  <div className="text-center">
+                    <div className="text-2xl font-light" style={{ color: '#d4af37' }}>{box.ringGauge}</div>
+                    <div className="text-xs text-gray-500">Ring Gauge</div>
+                  </div>
+                )}
+                {box.ringGauge && box.length && (
+                  <div className="text-2xl text-gray-600">×</div>
+                )}
+                {box.length && (
+                  <div className="text-center">
+                    <div className="text-2xl font-light" style={{ color: '#d4af37' }}>{box.length}"</div>
+                    <div className="text-xs text-gray-500">Length</div>
+                  </div>
+                )}
+              </div>
+              {box.notes && (
+                <div className="text-sm text-gray-400 italic border-t border-gray-700 pt-2">{box.notes}</div>
+              )}
+            </div>
+          )}
           
           {/* Age Information */}
           {(boxAge || purchaseAge) && (
@@ -1666,6 +1693,9 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
   const [quantity, setQuantity] = useState(1);
   const [customBrand, setCustomBrand] = useState('');
   const [customName, setCustomName] = useState('');
+  const [ringGauge, setRingGauge] = useState('');
+  const [length, setLength] = useState('');
+  const [notes, setNotes] = useState('');
   
   // Calculate suggested box number from Settings
   const suggestedBoxNum = useMemo(() => {
@@ -1674,7 +1704,6 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
       return match ? parseInt(match[1]) : 0;
     });
     const maxInSheet = Math.max(...nums, 0);
-    // Use the higher of: sheet max or stored highest
     return String(Math.max(maxInSheet, highestBoxNum || 0) + 1);
   }, [boxes, highestBoxNum]);
   
@@ -1690,12 +1719,35 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
   
   // Get cigar names for selected brand from catalog and existing collection
   const availableNames = useMemo(() => {
-    if (!brand) return [];
-    const catalogNames = habanosCatalog[brand] || [];
+    if (!brand || brand === '__custom__') return [];
+    const catalogData = habanosCatalog[brand] || {};
+    const catalogNames = Object.keys(catalogData);
     const collectionNames = boxes.filter(b => b.brand === brand).map(b => b.name);
     const allNames = [...new Set([...catalogNames, ...collectionNames])];
     return allNames.sort();
   }, [boxes, brand]);
+  
+  // Auto-populate ring gauge, length, and notes when vitola is selected
+  useEffect(() => {
+    if (brand && brand !== '__custom__' && name && name !== '__custom__') {
+      const catalogData = habanosCatalog[brand]?.[name];
+      if (catalogData) {
+        setRingGauge(String(catalogData.ring || ''));
+        setLength(catalogData.length || '');
+        setNotes(catalogData.notes || '');
+      } else {
+        // Cigar not in catalog (maybe from collection), clear fields
+        setRingGauge('');
+        setLength('');
+        setNotes('');
+      }
+    } else {
+      // Custom brand/name, clear fields
+      setRingGauge('');
+      setLength('');
+      setNotes('');
+    }
+  }, [brand, name]);
   
   const handleSubmit = () => {
     const finalBrand = brand === '__custom__' ? customBrand : brand;
@@ -1724,7 +1776,10 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
         code: code || '',
         location,
         consumed: 0,
-        remaining: parseInt(perBox)
+        remaining: parseInt(perBox),
+        ringGauge: ringGauge,
+        length: length,
+        notes: notes,
       });
     }
     
@@ -1792,6 +1847,45 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
                 )}
               </>
             )}
+          </div>
+          
+          {/* Ring Gauge and Length - Auto-populated but editable */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs text-gray-500 block mb-2">Ring Gauge</label>
+              <input 
+                type="text" 
+                value={ringGauge} 
+                onChange={e => setRingGauge(e.target.value)} 
+                placeholder="e.g. 52" 
+                className="w-full px-3 py-2 rounded-lg text-base" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+              />
+            </div>
+            <div>
+              <label className="text-xs text-gray-500 block mb-2">Length (inches)</label>
+              <input 
+                type="text" 
+                value={length} 
+                onChange={e => setLength(e.target.value)} 
+                placeholder="e.g. 6 1/8" 
+                className="w-full px-3 py-2 rounded-lg text-base" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+              />
+            </div>
+          </div>
+          
+          {/* Vitola Notes - Auto-populated but editable */}
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Vitola Notes</label>
+            <input 
+              type="text" 
+              value={notes} 
+              onChange={e => setNotes(e.target.value)} 
+              placeholder="e.g. Robusto, LCDH exclusive" 
+              className="w-full px-3 py-2 rounded-lg text-base" 
+              style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+            />
           </div>
           
           {/* Box Number and Quantity */}
