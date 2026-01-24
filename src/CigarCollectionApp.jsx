@@ -1628,7 +1628,6 @@ export default function CigarCollectionApp() {
   const [selectedBrand, setSelectedBrand] = useState('All');
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [view, setView] = useState('collection');
-  const [showFinished, setShowFinished] = useState(true);
   const [statsMode, setStatsMode] = useState('total');
   const [showLogModal, setShowLogModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -2138,20 +2137,12 @@ export default function CigarCollectionApp() {
   
   const groups = useMemo(() => {
     const g = groupBoxes(filtered);
-    if (!showFinished) {
-      const filteredGroups = g.filter(grp => grp.boxes.some(b => b.remaining > 0));
-      // Sort by brand, then alphabetically by name within brand
-      return filteredGroups.sort((a, b) => {
-        if (a.brand !== b.brand) return a.brand.localeCompare(b.brand);
-        return a.name.localeCompare(b.name);
-      });
-    }
     // Sort by brand, then alphabetically by name within brand
     return g.sort((a, b) => {
       if (a.brand !== b.brand) return a.brand.localeCompare(b.brand);
       return a.name.localeCompare(b.name);
     });
-  }, [filtered, showFinished]);
+  }, [filtered]);
   
   // Group the sorted groups by brand for display
   const groupsByBrand = useMemo(() => {
@@ -2325,11 +2316,7 @@ export default function CigarCollectionApp() {
                 border: location === l ? 'none' : '1px solid #444'
               }}>{l}</button>
             ))}
-            <div className="flex-1" />
-            <button onClick={() => setShowFinished(!showFinished)} className="px-3 py-1.5 rounded-full text-sm" style={{
-              background: '#252525', color: '#888', border: '1px solid #444'
-            }}>{showFinished ? 'Hide finished' : 'Show finished'}</button>
-          </div>
+            </div>
           {/* Brand filter */}
           <div className="flex gap-2 flex-wrap">
             {availableBrands.map(brand => (
