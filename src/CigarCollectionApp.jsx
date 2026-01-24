@@ -817,15 +817,13 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
             >
               Delete
             </button>
-          )}
-          </div>
-          </div>
-          
-          
+         </div>
         </div>
-      );
-    };
-
+      </div>
+    </div>
+  );
+};
+            
 // Smoke Log Modal
 const SmokeLogModal = ({ boxes, onClose, onLog }) => {
   const [selectedBox, setSelectedBox] = useState(null);
