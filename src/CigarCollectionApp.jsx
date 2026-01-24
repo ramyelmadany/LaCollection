@@ -972,7 +972,7 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
           </div>
           
           <div className="rounded-lg p-4" style={{ background: '#252525' }}>
-            <div className="text-xs text-gray-500 mb-3">Box Details</div>
+            <div className="text-xs text-gray-500 mb-3">Box</div>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div><div className="text-xs text-gray-500">Box Number</div><div className="text-gray-300">{box.boxNum}</div></div>
               <div><div className="text-xs text-gray-500">Location</div><div className="text-gray-300">{box.location}</div></div>
@@ -983,29 +983,17 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
             </div>
           </div>
 
-          {/* Vitola Information */}
+          {/* Vitola */}
           {(box.ringGauge || box.length || box.notes) && (
             <div className="rounded-lg p-4" style={{ background: '#252525' }}>
-              <div className="text-xs text-gray-500 mb-3">Vitola Information</div>
-              <div className="flex items-center gap-4 mb-3">
-                {box.ringGauge && (
-                  <div className="text-center">
-                    <div className="text-2xl font-light" style={{ color: '#d4af37' }}>{box.ringGauge}</div>
-                    <div className="text-xs text-gray-500">Ring Gauge</div>
-                  </div>
-                )}
-                {box.ringGauge && box.length && (
-                  <div className="text-2xl text-gray-600">×</div>
-                )}
-                {box.length && (
-                  <div className="text-center">
-                    <div className="text-2xl font-light" style={{ color: '#d4af37' }}>{box.length}"</div>
-                    <div className="text-xs text-gray-500">Length</div>
-                  </div>
-                )}
+              <div className="text-xs text-gray-500 mb-3">Vitola</div>
+              <div className="text-sm text-gray-300">
+                {box.ringGauge && <span>Ring {box.ringGauge}</span>}
+                {box.ringGauge && box.length && <span className="mx-2 text-gray-600">•</span>}
+                {box.length && <span>Length {box.length}"</span>}
               </div>
               {box.notes && (
-                <div className="text-sm text-gray-400 italic border-t border-gray-700 pt-2">{box.notes}</div>
+                <div className="text-xs text-gray-500 mt-2">{box.notes}</div>
               )}
             </div>
           )}
@@ -1013,7 +1001,7 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
           {/* Age Information */}
           {(boxAge || purchaseAge) && (
             <div className="rounded-lg p-4" style={{ background: '#252525' }}>
-              <div className="text-xs text-gray-500 mb-3">Age Information</div>
+              <div className="text-xs text-gray-500 mb-3">Age</div>
               <div className="grid grid-cols-2 gap-4">
                 {boxAge && (
                   <div className="text-center">
