@@ -991,16 +991,22 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
             
 // Smoke Log Modal
 const SmokeLogModal = ({ boxes, onClose, onLog }) => {
+  const [source, setSource] = useState(null); // 'collection' or 'external'
   const [selectedBox, setSelectedBox] = useState(null);
   const [qty, setQty] = useState(1);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [notes, setNotes] = useState('');
+  const [externalBrand, setExternalBrand] = useState('');
+  const [externalName, setExternalName] = useState('');
   
   const available = boxes.filter(b => b.remaining > 0);
   
   const handleSubmit = () => {
-    if (selectedBox) {
-      onLog({ boxId: selectedBox.id, qty, date, notes, brand: selectedBox.brand, name: selectedBox.name, boxNum: selectedBox.boxNum });
+    if (source === 'collection' && selectedBox) {
+      onLog({ boxId: selectedBox.id, qty, date, notes, brand: selectedBox.brand, name: selectedBox.name, boxNum: selectedBox.boxNum, source: 'collection' });
+      onClose();
+    } else if (source === 'external' && externalBrand && externalName) {
+      onLog({ qty, date, notes, brand: externalBrand, name: externalName, boxNum: 'EXT', source: 'external' });
       onClose();
     }
   };
@@ -1014,42 +1020,110 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
         </div>
         
         <div className="p-4 space-y-4">
-          <div>
-            <label className="text-xs text-gray-500 block mb-2">Date</label>
-            <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
-          </div>
+          {/* Source Selection */}
+          {!source && (
+            <div className="space-y-3">
+              <label className="text-xs text-gray-500 block mb-2">Where is this cigar from?</label>
+              <button 
+                onClick={() => setSource('collection')} 
+                className="w-full py-4 rounded-lg text-lg font-semibold"
+                style={{ background: '#252525', border: '2px solid #d4af37', color: '#d4af37' }}
+              >
+                My Collection
+              </button>
+              <button 
+                onClick={() => setSource('external')} 
+                className="w-full py-4 rounded-lg text-lg font-semibold"
+                style={{ background: '#252525', border: '2px solid #666', color: '#888' }}
+              >
+                External
+              </button>
+            </div>
+          )}
           
-          <div>
-            <label className="text-xs text-gray-500 block mb-2">Select Cigar</label>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
-              {available.map(b => {
-                const st = brandStyles[b.brand];
-                return (
-                  <div key={b.id} onClick={() => { setSelectedBox(b); setQty(1); }} className="p-3 rounded-lg cursor-pointer" style={{ 
-                    background: selectedBox?.id === b.id ? `${st.accent}20` : '#252525',
-                    border: `1px solid ${selectedBox?.id === b.id ? st.accent : '#333'}`
-                  }}>
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <div className="text-sm font-medium" style={{ color: st.accent }}>{b.brand} {b.name}</div>
-                        <div className="text-xs text-gray-500">Box {b.boxNum} | {b.location}</div>
+          {/* Collection Flow */}
+          {source === 'collection' && (
+            <>
+              <button onClick={() => setSource(null)} className="text-sm text-gray-500 mb-2">← Back</button>
+              
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Date</label>
+                <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+              </div>
+              
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Select Cigar</label>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {available.map(b => {
+                    const st = brandStyles[b.brand] || brandStyles['Cohiba'];
+                    return (
+                      <div key={b.id} onClick={() => { setSelectedBox(b); setQty(1); }} className="p-3 rounded-lg cursor-pointer" style={{ 
+                        background: selectedBox?.id === b.id ? `${st.accent}20` : '#252525',
+                        border: `1px solid ${selectedBox?.id === b.id ? st.accent : '#333'}`
+                      }}>
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <div className="text-sm font-medium" style={{ color: st.accent }}>{b.brand} {b.name}</div>
+                            <div className="text-xs text-gray-500">Box {b.boxNum} | {b.location}</div>
+                          </div>
+                          <div className="text-sm text-gray-300">{b.remaining} left</div>
+                        </div>
                       </div>
-                      <div className="text-sm text-gray-300">{b.remaining} left</div>
+                    );
+                  })}
+                </div>
+              </div>
+              
+              {selectedBox && (
+                <>
+                  <div>
+                    <label className="text-xs text-gray-500 block mb-2">Quantity</label>
+                    <div className="flex items-center gap-4">
+                      <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-10 h-10 rounded-lg text-lg" style={{ background: '#252525', border: '1px solid #333', color: '#d4af37' }}>-</button>
+                      <span className="text-2xl font-light" style={{ color: '#d4af37', minWidth: 40, textAlign: 'center' }}>{qty}</span>
+                      <button onClick={() => setQty(Math.min(selectedBox.remaining, qty + 1))} className="w-10 h-10 rounded-lg text-lg" style={{ background: '#252525', border: '1px solid #333', color: '#d4af37' }}>+</button>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </div>
+                  
+                  <div>
+                    <label className="text-xs text-gray-500 block mb-2">Notes (optional)</label>
+                    <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Tasting notes, occasion..." className="w-full px-3 py-2 rounded-lg text-sm resize-none" rows={2} style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+                  </div>
+                  
+                  <button onClick={handleSubmit} className="w-full py-3 rounded-lg font-semibold" style={{ background: '#d4af37', color: '#000' }}>
+                    Log {qty} Cigar{qty > 1 ? 's' : ''}
+                  </button>
+                </>
+              )}
+            </>
+          )}
           
-          {selectedBox && (
+          {/* External Flow */}
+          {source === 'external' && (
             <>
+              <button onClick={() => setSource(null)} className="text-sm text-gray-500 mb-2">← Back</button>
+              
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Date</label>
+                <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+              </div>
+              
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Brand</label>
+                <input type="text" value={externalBrand} onChange={e => setExternalBrand(e.target.value)} placeholder="e.g. Cohiba" className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+              </div>
+              
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Cigar Name</label>
+                <input type="text" value={externalName} onChange={e => setExternalName(e.target.value)} placeholder="e.g. Siglo VI" className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+              </div>
+              
               <div>
                 <label className="text-xs text-gray-500 block mb-2">Quantity</label>
                 <div className="flex items-center gap-4">
                   <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-10 h-10 rounded-lg text-lg" style={{ background: '#252525', border: '1px solid #333', color: '#d4af37' }}>-</button>
                   <span className="text-2xl font-light" style={{ color: '#d4af37', minWidth: 40, textAlign: 'center' }}>{qty}</span>
-                  <button onClick={() => setQty(Math.min(selectedBox.remaining, qty + 1))} className="w-10 h-10 rounded-lg text-lg" style={{ background: '#252525', border: '1px solid #333', color: '#d4af37' }}>+</button>
+                  <button onClick={() => setQty(qty + 1)} className="w-10 h-10 rounded-lg text-lg" style={{ background: '#252525', border: '1px solid #333', color: '#d4af37' }}>+</button>
                 </div>
               </div>
               
@@ -1058,9 +1132,11 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
                 <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Tasting notes, occasion..." className="w-full px-3 py-2 rounded-lg text-sm resize-none" rows={2} style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
               </div>
               
-              <button onClick={handleSubmit} className="w-full py-3 rounded-lg font-semibold" style={{ background: '#d4af37', color: '#000' }}>
-                Log {qty} Cigar{qty > 1 ? 's' : ''}
-              </button>
+              {externalBrand && externalName && (
+                <button onClick={handleSubmit} className="w-full py-3 rounded-lg font-semibold" style={{ background: '#d4af37', color: '#000' }}>
+                  Log {qty} Cigar{qty > 1 ? 's' : ''}
+                </button>
+              )}
             </>
           )}
         </div>
@@ -1794,7 +1870,16 @@ export default function CigarCollectionApp() {
   
   // Handle smoke logging - updates local state AND Google Sheets
   const handleLog = async (logEntry) => {
-    // Update local state first for instant UI feedback
+    // For external cigars, just log to history
+    if (logEntry.source === 'external') {
+      setHistory(prev => [...prev, { ...logEntry, timestamp: Date.now() }]);
+      if (isSignedIn && accessToken) {
+        await addHistoryEntry(logEntry, accessToken);
+      }
+      return;
+    }
+    
+    // For collection cigars, update box counts
     const updatedBox = boxes.find(b => b.boxNum === logEntry.boxNum);
     if (!updatedBox) return;
     
@@ -1817,7 +1902,16 @@ export default function CigarCollectionApp() {
   
   // Handle undo smoke log - reverses the smoke and updates Google Sheets
   const handleUndo = async (index, entry) => {
-    // Find the box and reverse the consumed/remaining
+    // For external cigars, just remove from history
+    if (entry.source === 'external' || entry.boxNum === 'EXT') {
+      setHistory(prev => prev.filter((_, i) => i !== index));
+      if (isSignedIn && accessToken) {
+        await deleteHistoryEntry(entry, accessToken);
+      }
+      return;
+    }
+    
+    // For collection cigars, reverse the consumed/remaining
     const box = boxes.find(b => b.boxNum === entry.boxNum);
     if (!box) return;
     
@@ -1839,7 +1933,7 @@ export default function CigarCollectionApp() {
     }
   };
   
-  // Handle adding new boxesClaude is AI and can make mistakes. Please double-check responses.
+  // Handle adding new boxes
   
   // Handle adding new boxes - updates local state AND Google Sheets
   const handleAddBoxes = async (newBoxes) => {
