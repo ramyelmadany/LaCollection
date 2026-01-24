@@ -1608,6 +1608,21 @@ export default function CigarCollectionApp() {
           setOnwards(onwardsData);
         }
         
+        // Fetch history data
+        const historyRows = await fetchHistoryData();
+        if (historyRows && historyRows.length > 1) {
+          const historyData = historyRows.slice(1).map(row => ({
+            date: row[0],
+            boxNum: row[1],
+            brand: row[2],
+            name: row[3],
+            qty: parseInt(row[4]) || 1,
+            notes: row[5] || '',
+            timestamp: Date.now()
+          }));
+          setHistory(historyData);
+        }
+        
         setSyncStatus('success');
       } catch (error) {
         console.error('Error loading data:', error);
