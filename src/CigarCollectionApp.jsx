@@ -704,11 +704,13 @@ const CigarGroupCard = ({ group, onClick }) => {
           <div className="h-5 rounded overflow-hidden mb-2" style={{ background: 'rgba(0,0,0,0.3)' }}>
             <div className="h-full flex gap-0.5 p-1 items-end">
               {[...Array(6)].map((_, i) => {
-                const pct = totalRemaining / totalOriginal;
-                const filled = i < Math.ceil(pct * 6);
+                const fullBoxes = boxes.filter(b => b.remaining === b.perBox).length;
+                const openBoxes = boxes.filter(b => b.remaining > 0 && b.remaining < b.perBox).length;
+                const isFull = i < fullBoxes;
+                const isOpen = i === fullBoxes && openBoxes > 0;
                 return <div key={i} className="flex-1 rounded-sm" style={{ 
-                  height: filled ? '100%' : '20%', 
-                  background: filled ? 'linear-gradient(90deg, #5D4037, #8D6E63, #5D4037)' : 'rgba(0,0,0,0.3)'
+                  height: isFull ? '100%' : isOpen ? '50%' : '20%', 
+                  background: (isFull || isOpen) ? 'linear-gradient(90deg, #5D4037, #8D6E63, #5D4037)' : 'rgba(0,0,0,0.3)'
                 }} />;
               })}
             </div>
