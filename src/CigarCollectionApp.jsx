@@ -745,7 +745,7 @@ const CigarGroupCard = ({ group, onClick, maxLengths }) => {
   return (
     <div onClick={onClick} className="relative cursor-pointer active:scale-98 transition-transform">
       <div className="relative rounded-xl overflow-hidden shadow-lg" style={{
-        background: s.bg, border: `2px solid ${s.border}`, opacity: isFinished ? 0.5 : 1
+        background: s.bg, border: '2px solid #f5f5f0', opacity: isFinished ? 0.5 : 1
       }}>
         <div className="p-3">
           <div className="text-center mb-1">
@@ -785,7 +785,7 @@ const CigarGroupCard = ({ group, onClick, maxLengths }) => {
           const openCount = openBoxes.reduce((sum, b) => sum + b.remaining, 0);
           return openBoxes.length > 0 ? (
             <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center font-bold shadow-lg" 
-              style={{ background: s.accent, color: '#000', fontSize: 11 }}>{openCount}</div>
+              style={{ background: '#f5f5f0', color: '#000', fontSize: 11 }}>{openCount}</div>
           ) : null;
         })()}
         {isFinished && (
@@ -2769,7 +2769,7 @@ export default function CigarCollectionApp() {
       {/* Header */}
       <div className="sticky top-0 z-40 px-4 py-4" style={{ background: '#1a120b' }}>
         <div className="flex items-center justify-between">
-          <h1 className="text-xl tracking-widest font-semibold" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>LA COLECCIÓN</h1>
+          <h1 className="text-2xl tracking-widest font-semibold" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>LA COLECCIÓN</h1>
           <div className="flex items-center gap-3">
             {view === 'collection' && (
               <button 
