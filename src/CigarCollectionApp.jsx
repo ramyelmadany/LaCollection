@@ -709,7 +709,8 @@ const CigarGroupCard = ({ group, onClick }) => {
                 const isFull = i < fullBoxes;
                 const isOpen = i === fullBoxes && openBoxes > 0;
                 return <div key={i} className="flex-1 rounded-sm" style={{ 
-                  height: isFull ? '100%' : isOpen ? '50%' : '20%', 
+                  height: (isFull || isOpen) ? '100%' : '20%', 
+                  width: isOpen ? '50%' : '100%',
                   background: (isFull || isOpen) ? 'linear-gradient(90deg, #5D4037, #8D6E63, #5D4037)' : 'rgba(0,0,0,0.3)'
                 }} />;
               })}
