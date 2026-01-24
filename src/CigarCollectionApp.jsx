@@ -1996,7 +1996,7 @@ export default function CigarCollectionApp() {
               <span style={{ color: currency === 'GBP' ? '#d4af37' : '#666' }}>£</span>
             </button>
             <div className="text-gray-500">
-              {fxLoading ? 'Loading FX...' : `$1 = £${FX.rate.toFixed(3)}`}
+              {fxLoading ? 'Loading FX...' : `£1 = $${(1 / FX.rate).toFixed(2)}`}
             </div>
             {fxUpdated && <div className="text-gray-600">FX: {fxUpdated}</div>}
           </div>
