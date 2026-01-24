@@ -830,15 +830,16 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
             <span className="px-3 py-1 rounded-full text-sm" style={{ 
               background: box.received ? '#1c3a1c' : '#3a3a1c', color: box.received ? '#99ff99' : '#ffff99'
             }}>{box.received ? 'Received' : 'Pending'}</span>
-            {true && (
-<button
+            </div>
+          
+          {true && (
+            <button
               onClick={handleDelete}
-              className="px-3 py-1 rounded-full text-sm bg-red-900 hover:bg-red-800 text-red-200"
+              className="w-full mt-3 py-2 rounded-lg text-sm bg-red-900 hover:bg-red-800 text-red-200"
             >
-              Delete
+              Delete Box
             </button>
           )}
-         </div>
         </div>
       </div>
     </div>
