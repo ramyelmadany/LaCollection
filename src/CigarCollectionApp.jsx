@@ -2097,7 +2097,7 @@ const PricesView = ({ boxes, currency, FX, fmtCurrency, fmtFromGBP }) => {
 export default function CigarCollectionApp() {
   const [boxes, setBoxes] = useState([]);
   const [onwards, setOnwards] = useState([]);
-  const [location, setLocation] = useState('All');
+  const [location, setLocation] = useState([]);
   const [selectedBrand, setSelectedBrand] = useState('All');
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [view, setView] = useState('collection');
@@ -2603,10 +2603,16 @@ export default function CigarCollectionApp() {
   
   const filtered = useMemo(() => {
     let result = boxes;
-    if (location !== 'All') result = result.filter(b => b.location === location);
+    if (location.length > 0) result = result.filter(b => location.includes(b.location));
     if (selectedBrand !== 'All') result = result.filter(b => b.brand === selectedBrand);
+    if (showOpenOnly) result = result.filter(b => b.remaining > 0 && b.remaining < b.perBox);
     return result;
-  }, [boxes, location, selectedBrand]);
+  }, [boxes, location, selectedBrand, showOpenOnly]);
+  
+  // Get unique locations for the location selector
+  const availableLocations = useMemo(() => {
+    return [...new Set(boxes.map(b => b.location).filter(Boolean))].sort();
+  }, [boxes]);
   
   // Get unique brands for the brand selector
   const availableBrands = useMemo(() => {
@@ -2764,14 +2770,28 @@ export default function CigarCollectionApp() {
       <div className="sticky top-0 z-40 px-4 py-4" style={{ background: '#1a120b' }}>
         <div className="flex items-center justify-between">
           <h1 className="text-xl tracking-widest font-semibold" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>LA COLECCIÓN</h1>
-          <button 
-            onClick={() => setMenuOpen(true)}
-            className="w-10 h-10 flex flex-col items-center justify-center gap-1.5"
-          >
-            <div className="w-6 h-0.5" style={{ background: '#d4af37' }}></div>
-            <div className="w-6 h-0.5" style={{ background: '#d4af37' }}></div>
-            <div className="w-6 h-0.5" style={{ background: '#d4af37' }}></div>
-          </button>
+          <div className="flex items-center gap-3">
+            {view === 'collection' && (
+              <button 
+                onClick={() => setFilterOpen(true)}
+                className="relative px-3 py-1.5 rounded text-sm"
+                style={{ color: '#d4af37', border: '1px solid #d4af37' }}
+              >
+                Filter
+                {(location.length > 0 && !location.includes('All') || selectedBrand !== 'All' || showOpenOnly) && (
+                  <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full" style={{ background: '#d4af37' }}></span>
+                )}
+              </button>
+            )}
+            <button 
+              onClick={() => setMenuOpen(true)}
+              className="w-10 h-10 flex flex-col items-center justify-center gap-1.5"
+            >
+              <div className="w-6 h-0.5" style={{ background: '#d4af37' }}></div>
+              <div className="w-6 h-0.5" style={{ background: '#d4af37' }}></div>
+              <div className="w-6 h-0.5" style={{ background: '#d4af37' }}></div>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -2871,15 +2891,21 @@ export default function CigarCollectionApp() {
             <div className="mb-6">
               <div className="text-sm text-gray-500 mb-3">Location</div>
               <div className="flex gap-2 flex-wrap">
-                {['All', 'London', 'Cayman'].map(l => (
+                {availableLocations.map(l => (
                   <button 
                     key={l} 
-                    onClick={() => setLocation(l)} 
+                    onClick={() => {
+                      if (location.includes(l)) {
+                        setLocation(location.filter(loc => loc !== l));
+                      } else {
+                        setLocation([...location, l]);
+                      }
+                    }} 
                     className="px-4 py-2 rounded-lg text-sm"
                     style={{
-                      background: location === l ? '#d4af37' : '#252525',
-                      color: location === l ? '#000' : '#888',
-                      border: location === l ? 'none' : '1px solid #444'
+                      background: location.includes(l) ? '#d4af37' : '#252525',
+                      color: location.includes(l) ? '#000' : '#888',
+                      border: location.includes(l) ? 'none' : '1px solid #444'
                     }}
                   >
                     {l}
@@ -2927,30 +2953,13 @@ export default function CigarCollectionApp() {
             
             {/* Clear Filters */}
             <button 
-              onClick={() => { setLocation('All'); setSelectedBrand('All'); setShowOpenOnly(false); }}
+              onClick={() => { setLocation([]); setSelectedBrand('All'); setShowOpenOnly(false); }}
               className="w-full py-3 rounded-lg text-sm"
               style={{ background: '#252525', color: '#888', border: '1px solid #444' }}
             >
               Clear All Filters
             </button>
           </div>
-        </div>
-      )}
-      
-      {/* Filter Button - only on collection view */}
-      {view === 'collection' && (
-        <div className="px-4 mb-3">
-          <button 
-            onClick={() => setFilterOpen(true)}
-            className="px-4 py-2 rounded-lg text-sm flex items-center gap-2"
-            style={{ background: '#252525', border: '1px solid #444', color: '#888' }}
-          >
-            <span>⚙</span>
-            <span>Filter</span>
-            {(location !== 'All' || selectedBrand !== 'All' || showOpenOnly) && (
-              <span className="w-2 h-2 rounded-full" style={{ background: '#d4af37' }}></span>
-            )}
-          </button>
         </div>
       )}
     
