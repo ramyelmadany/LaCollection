@@ -3,13 +3,15 @@ import { ukMarketPrices } from './uk_market_prices.js';
 // Google Sheets Configuration
 const GOOGLE_SHEETS_CONFIG = {
   apiKey: 'AIzaSyCGwQ71BGsiWWWJjX10_teVe3zQAmu9ZDk',
-  clientId: '945855470299-l1is4q9t6lb1ak8v5n0871hsk6kt8ihl.apps.googleusercontent.com', // Add your OAuth Client ID from Google Cloud Console to enable write access
+  clientId: '945855470299-l1is4q9t6lb1ak8v5n0871hsk6kt8ihl.apps.googleusercontent.com',
   sheetId: '10A_FMj8eotx-xlzAlCNFxjOr3xEOuO4p5GxAZjHC86A',
-  collectionRange: 'A:O', // All rows - filtering handles invalid/empty rows
-  onwardsRange: 'Onwards!A:L', // Onwards tab
-  onwardsSheetId: 1785734797, // Sheet ID for Onwards tab
-  historyRange: 'History!A:F', // History tab for smoke logs
-  historySheetId: 563552694, // Sheet ID for History tab
+  collectionRange: 'A:O',
+  onwardsRange: 'Onwards!A:L',
+  onwardsSheetId: 1785734797,
+  historyRange: 'History!A:F',
+  historySheetId: 563552694,
+  settingsRange: 'Settings!B2',
+  settingsSheetId: 1098381136,
   scopes: 'https://www.googleapis.com/auth/spreadsheets',
 };
 
@@ -455,6 +457,47 @@ const deleteHistoryEntry = async (entry, accessToken) => {
     return true;
   } catch (error) {
     console.error('Error deleting history entry:', error);
+    return false;
+  }
+};
+
+// Fetch highest box number from Settings
+const fetchHighestBoxNum = async () => {
+  const { apiKey, sheetId, settingsRange } = GOOGLE_SHEETS_CONFIG;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${settingsRange}?key=${apiKey}`;
+  
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Failed to fetch settings');
+    const data = await response.json();
+    return parseInt(data.values?.[0]?.[0]) || 0;
+  } catch (error) {
+    console.error('Error fetching highest box num:', error);
+    return 0;
+  }
+};
+
+// Update highest box number in Settings
+const updateHighestBoxNum = async (num, accessToken) => {
+  const { sheetId, settingsRange } = GOOGLE_SHEETS_CONFIG;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${settingsRange}?valueInputOption=USER_ENTERED`;
+  
+  try {
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        values: [[num]]
+      }),
+    });
+    
+    if (!response.ok) throw new Error('Failed to update settings');
+    return true;
+  } catch (error) {
+    console.error('Error updating highest box num:', error);
     return false;
   }
 };
@@ -1256,7 +1299,7 @@ const habanosCatalog = {
 };
 
 // Add Box Modal
-const AddBoxModal = ({ boxes, onClose, onAdd }) => {
+const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
   const [brand, setBrand] = useState('');
   const [name, setName] = useState('');
   const [boxNum, setBoxNum] = useState('');
@@ -1270,15 +1313,16 @@ const AddBoxModal = ({ boxes, onClose, onAdd }) => {
   const [dateOfBox, setDateOfBox] = useState('');
   const [quantity, setQuantity] = useState(1);
   
-  // Calculate suggested box number
+  // Calculate suggested box number from Settings
   const suggestedBoxNum = useMemo(() => {
     const nums = boxes.map(b => {
       const match = b.boxNum.match(/^(\d+)/);
       return match ? parseInt(match[1]) : 0;
     });
-    const maxNum = Math.max(...nums, 0);
-    return String(maxNum + 1);
-  }, [boxes]);
+    const maxInSheet = Math.max(...nums, 0);
+    // Use the higher of: sheet max or stored highest
+    return String(Math.max(maxInSheet, highestBoxNum || 0) + 1);
+  }, [boxes, highestBoxNum]);
   
   // Set initial box number
   useEffect(() => {
@@ -1591,6 +1635,7 @@ export default function CigarCollectionApp() {
   const [history, setHistory] = useState([]);
   const [editingHistory, setEditingHistory] = useState(null);
   const [showSignInPrompt, setShowSignInPrompt] = useState(false);
+  const [highestBoxNum, setHighestBoxNum] = useState(0);
   const [currency, setCurrency] = useState('USD');
   const [fxRate, setFxRate] = useState(DEFAULT_FX_RATE);
   const [fxUpdated, setFxUpdated] = useState(null);
@@ -1811,6 +1856,10 @@ export default function CigarCollectionApp() {
           }));
           setHistory(historyData);
         }
+        
+        // Fetch highest box number from Settings
+        const storedHighest = await fetchHighestBoxNum();
+        setHighestBoxNum(storedHighest);
         
         setSyncStatus('success');
       } catch (error) {
@@ -2045,17 +2094,31 @@ export default function CigarCollectionApp() {
     setEditingHistory({ index, entry });
   };
   
-  // Handle adding new boxes
-  
   // Handle adding new boxes - updates local state AND Google Sheets
   const handleAddBoxes = async (newBoxes) => {
     // Update local state first for instant UI feedback
     setBoxes(prev => [...prev, ...newBoxes]);
     
+    // Find the highest box number from the new boxes
+    const newHighest = Math.max(...newBoxes.map(b => {
+      const match = b.boxNum.match(/^(\d+)/);
+      return match ? parseInt(match[1]) : 0;
+    }));
+    
+    // Update local state for highest box num
+    if (newHighest > highestBoxNum) {
+      setHighestBoxNum(newHighest);
+    }
+    
     // Write to Google Sheets if signed in
     if (isSignedIn && accessToken) {
       for (const box of newBoxes) {
         await addBoxToSheet(box);
+      }
+      
+      // Update highest box number in Settings
+      if (newHighest > highestBoxNum) {
+        await updateHighestBoxNum(newHighest, accessToken);
       }
     }
   };
@@ -2342,7 +2405,7 @@ export default function CigarCollectionApp() {
       {/* Modals */}
       {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} onClose={() => setSelectedGroup(null)} currency={currency} FX={FX} fmtCurrency={fmtCurrency} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { const data = await fetchSheetData(); if (data) { setBoxes(data.filter(row => row[0] && row[0] !== 'Date of Purchase' && !row[3]?.includes('Subtotal')).map(rowToBox)); } } return success; }} />}
       {showLogModal && <SmokeLogModal boxes={boxes} onClose={() => setShowLogModal(false)} onLog={handleLog} />}
-      {showAddModal && <AddBoxModal boxes={boxes} onClose={() => setShowAddModal(false)} onAdd={handleAddBoxes} />}
+      {showAddModal && <AddBoxModal boxes={boxes} onClose={() => setShowAddModal(false)} onAdd={handleAddBoxes} highestBoxNum={highestBoxNum} />}
       {showSignInPrompt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.9)' }}>
           <div className="w-full max-w-sm rounded-xl p-6 text-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
