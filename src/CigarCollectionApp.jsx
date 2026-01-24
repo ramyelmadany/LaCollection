@@ -832,13 +832,32 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, i
             }}>{box.received ? 'Received' : 'Pending'}</span>
             </div>
           
-          {true && (
+          {true && !showDeleteConfirm && (
             <button
-              onClick={handleDelete}
+              onClick={() => setShowDeleteConfirm(true)}
               className="w-full mt-3 py-2 rounded-lg text-sm bg-red-900 hover:bg-red-800 text-red-200"
             >
               Delete Box
             </button>
+          )}
+          {showDeleteConfirm && (
+            <div className="mt-3 p-3 rounded-lg" style={{ background: '#3a1c1c', border: '1px solid #ff6666' }}>
+              <p className="text-sm text-red-200 mb-3">Are you sure you want to delete this box?</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1 py-2 rounded-lg text-sm bg-gray-700 hover:bg-gray-600 text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="flex-1 py-2 rounded-lg text-sm bg-red-700 hover:bg-red-600 text-white"
+                >
+                  {isDeleting ? 'Deleting...' : 'Yes, Delete'}
+                </button>
+              </div>
+            </div>
           )}
         </div>
       </div>
