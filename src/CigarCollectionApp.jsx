@@ -2850,6 +2850,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
             }
             
             setSyncStatus('success');
+            setView('collection'); // Always start on collection page
           } catch (error) {
             console.error('Error loading data:', error);
             setSyncStatus('error');
