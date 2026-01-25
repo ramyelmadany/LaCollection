@@ -3,7 +3,6 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { ukMarketPrices } from './uk_market_prices.js';
 // Google Sheets Configuration
 const GOOGLE_SHEETS_CONFIG = {
-  apiKey: 'AIzaSyCGwQ71BGsiWWWJjX10_teVe3zQAmu9ZDk',
   clientId: '945855470299-l1is4q9t6lb1ak8v5n0871hsk6kt8ihl.apps.googleusercontent.com',
   sheetId: '10A_FMj8eotx-xlzAlCNFxjOr3xEOuO4p5GxAZjHC86A',
   collectionRange: 'A:S',
@@ -2877,8 +2876,11 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
       }
       
       if (rowIndex === -1) {
-        throw new Error(`Box number ${box.boxNum} not found in sheet`);
-      }
+      throw new Error(`Box number ${boxNum} not found in sheet`);
+    }
+    
+    console.log('Found row at index:', rowIndex);
+    console.log('Updated data:', updatedData);
       
       // Update columns N (consumed) and O (remaining)
       const consumedCell = `N${rowIndex}`;
