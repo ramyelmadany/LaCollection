@@ -636,13 +636,17 @@ const deleteHistoryEntry = async (entry, accessToken) => {
   }
 };
 
-// Fetch highest box number from Settings
-const fetchHighestBoxNum = async () => {
-  const { apiKey, sheetId, settingsRange } = GOOGLE_SHEETS_CONFIG;
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${settingsRange}?key=${apiKey}`;
+// Fetch highest box number from Settings (requires OAuth token)
+const fetchHighestBoxNum = async (accessToken) => {
+  const { sheetId, settingsRange } = GOOGLE_SHEETS_CONFIG;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${settingsRange}`;
   
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
     if (!response.ok) throw new Error('Failed to fetch settings');
     const data = await response.json();
     return parseInt(data.values?.[0]?.[0]) || 0;
@@ -2698,7 +2702,7 @@ export default function CigarCollectionApp() {
               setHistory(historyData);
             }
             
-            const storedHighest = await fetchHighestBoxNum();
+            const storedHighest = await fetchHighestBoxNum(response.access_token);
             setHighestBoxNum(storedHighest);
             
             // Load settings from Sheets
