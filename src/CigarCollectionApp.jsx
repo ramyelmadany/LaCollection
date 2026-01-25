@@ -3793,14 +3793,7 @@ export default function CigarCollectionApp() {
                   <div className="text-xs text-gray-500">Display cigar count and box count below indicator</div>
                 </div>
                 <button 
-                  onClick={() => {
-                  const newValue = !showCigarCount;
-                  setShowCigarCount(newValue);
-                  localStorage.setItem('showCigarCount', JSON.stringify(newValue));
-                  if (googleAccessToken) {
-                    saveSetting('showCigarCount', newValue, googleAccessToken);
-                  }
-                }}
+                  onClick={() => setShowCigarCount(!showCigarCount)}
                   className="w-12 h-6 rounded-full relative"
                   style={{ background: showCigarCount ? '#d4af37' : '#333' }}
                 >
@@ -3815,6 +3808,21 @@ export default function CigarCollectionApp() {
               </div>
             </div>
           </div>
+          
+          {/* Save Settings Button */}
+          <button 
+            onClick={() => {
+              localStorage.setItem('showCigarCount', JSON.stringify(showCigarCount));
+              if (googleAccessToken) {
+                saveSetting('showCigarCount', showCigarCount, googleAccessToken);
+              }
+              setView('collection');
+            }}
+            className="w-full py-3 rounded-lg font-semibold"
+            style={{ background: '#d4af37', color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}
+          >
+            Save Settings
+          </button>
         </div>
       )}
       
