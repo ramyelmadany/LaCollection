@@ -621,16 +621,16 @@ const brandImages = {
 
 // Brand styling - based on authentic cigar band colors
 const brandStyles = {
-  'Cohiba': { bg: 'linear-gradient(145deg, #1a1a1a, #2d2d2d)', text: '#FFD700', accent: '#FFD700', border: '#FFD700' }, // Black & gold
+  'Cohiba': { bg: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', text: '#1a1a1a', accent: '#1a1a1a', border: '#1a1a1a' }, // Wheat & black
   'Trinidad': { bg: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', text: '#1a1a1a', accent: '#1a1a1a', border: '#1a1a1a' }, // Wheat & black
-  'Montecristo': { bg: 'linear-gradient(145deg, #FFD700, #E5C100)', text: '#8B0000', accent: '#8B0000', border: '#8B0000' }, // Gold & red (inverted)
-  'Hoyo de Monterrey': { bg: 'linear-gradient(145deg, #F5F5F0, #E8E8E3)', text: '#8B0000', accent: '#A52A2A', border: '#A52A2A' }, // Off-white & red
-  'Ramon Allones': { bg: 'linear-gradient(145deg, #228B22, #2E8B2E)', text: '#FFFFFF', accent: '#DC143C', border: '#DC143C' }, // Green & white
-  'Bolivar': { bg: 'linear-gradient(145deg, #DAA520, #B8860B)', text: '#1a1a1a', accent: '#1a1a1a', border: '#8B4513' }, // Gold & black
-  'Partagas': { bg: 'linear-gradient(145deg, #8B0000, #A52A2A)', text: '#FFD700', accent: '#FFD700', border: '#FFD700' }, // Crimson & gold
-  'H. Upmann': { bg: 'linear-gradient(145deg, #8B4513, #A0522D)', text: '#FFD700', accent: '#FFD700', border: '#FFD700' }, // Brown & gold
-  'Punch': { bg: 'linear-gradient(145deg, #B22222, #CD5C5C)', text: '#FFD700', accent: '#FFD700', border: '#FFD700' }, // Red & gold
-  'Romeo y Julieta': { bg: 'linear-gradient(145deg, #8B0000, #A52A2A)', text: '#FFD700', accent: '#FFD700', border: '#FFD700' } // Red & gold
+  'Montecristo': { bg: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', text: '#1a1a1a', accent: '#1a1a1a', border: '#1a1a1a' }, // Wheat & black
+  'Hoyo de Monterrey': { bg: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', text: '#1a1a1a', accent: '#1a1a1a', border: '#1a1a1a' }, // Wheat & black
+  'Ramon Allones': { bg: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', text: '#1a1a1a', accent: '#1a1a1a', border: '#1a1a1a' }, // Wheat & black
+  'Bolivar': { bg: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', text: '#1a1a1a', accent: '#1a1a1a', border: '#1a1a1a' }, // Wheat & black
+  'Partagas': { bg: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', text: '#1a1a1a', accent: '#1a1a1a', border: '#1a1a1a' }, // Wheat & black
+  'H. Upmann': { bg: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', text: '#1a1a1a', accent: '#1a1a1a', border: '#1a1a1a' }, // Wheat & black
+  'Punch': { bg: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', text: '#1a1a1a', accent: '#1a1a1a', border: '#1a1a1a' }, // Wheat & black
+  'Romeo y Julieta': { bg: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', text: '#1a1a1a', accent: '#1a1a1a', border: '#1a1a1a' } // Wheat & black
 };
 
 // UK Market prices (GBP) - can be updated via external JSON
@@ -3736,7 +3736,7 @@ export default function CigarCollectionApp() {
         <button onClick={() => isSignedIn ? setShowAddModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#d4af37', border: '1px solid #d4af37' }}>
           Add Box
         </button>
-        <button onClick={() => isSignedIn ? setShowLogModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#d4af37', color: '#1a1a1a' }}>
+        <button onClick={() => isSignedIn ? setShowLogModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#d4af37', border: '1px solid #d4af37' }}>
           Log Smoke
         </button>
       </div>
