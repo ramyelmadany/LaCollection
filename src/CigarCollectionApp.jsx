@@ -3448,16 +3448,11 @@ export default function CigarCollectionApp() {
                 className="mb-3 pb-2 flex justify-between items-center" 
                 style={{ borderBottom: '2px solid #d4af37', cursor: 'pointer' }}
                 onClick={() => {
-                  setCollapsedBrands(prev => 
-                    prev.includes(brand) 
-                      ? prev.filter(b => b !== brand)
-                      : [...prev, brand]
-                  );
-                  localStorage.setItem('collapsedBrands', JSON.stringify(
-                    collapsedBrands.includes(brand) 
-                      ? collapsedBrands.filter(b => b !== brand)
-                      : [...collapsedBrands, brand]
-                  ));
+                  const newCollapsed = collapsedBrands.includes(brand) 
+                    ? collapsedBrands.filter(b => b !== brand)
+                    : [...collapsedBrands, brand];
+                  setCollapsedBrands(newCollapsed);
+                  localStorage.setItem('collapsedBrands', JSON.stringify(newCollapsed));
                 }}
               >
                 <h2 className="text-2xl font-bold tracking-wide" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{brand}</h2>
