@@ -2627,10 +2627,6 @@ export default function CigarCollectionApp() {
   const saved = localStorage.getItem('collapsedBrands');
   return saved !== null ? JSON.parse(saved) : [];
 });
-const [allowBrandCollapse, setAllowBrandCollapse] = useState(() => {
-  const saved = localStorage.getItem('allowBrandCollapse');
-  return saved !== null ? JSON.parse(saved) : false;
-});
   const [filterOpen, setFilterOpen] = useState(false);
   const [showOpenOnly, setShowOpenOnly] = useState(false);
   const [pullStart, setPullStart] = useState(0);
@@ -3450,23 +3446,24 @@ const [allowBrandCollapse, setAllowBrandCollapse] = useState(() => {
               {/* Brand Header */}
               <div 
                 className="mb-3 pb-2 flex justify-between items-center" 
-                style={{ borderBottom: '2px solid #d4af37', cursor: allowBrandCollapse ? 'pointer' : 'default' }}
+                style={{ borderBottom: '2px solid #d4af37', cursor: 'pointer' }}
                 onClick={() => {
-                  if (allowBrandCollapse) {
-                    setCollapsedBrands(prev => 
-                      prev.includes(brand) 
-                        ? prev.filter(b => b !== brand)
-                        : [...prev, brand]
-                    );
-                  }
+                  setCollapsedBrands(prev => 
+                    prev.includes(brand) 
+                      ? prev.filter(b => b !== brand)
+                      : [...prev, brand]
+                  );
+                  localStorage.setItem('collapsedBrands', JSON.stringify(
+                    collapsedBrands.includes(brand) 
+                      ? collapsedBrands.filter(b => b !== brand)
+                      : [...collapsedBrands, brand]
+                  ));
                 }}
               >
                 <h2 className="text-2xl font-bold tracking-wide" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{brand}</h2>
-                {allowBrandCollapse && (
-                  <span className="text-xl font-bold" style={{ color: '#d4af37' }}>
-                    {collapsedBrands.includes(brand) ? '+' : '−'}
-                  </span>
-                )}
+                <span className="text-xl font-bold" style={{ color: '#d4af37' }}>
+                  {collapsedBrands.includes(brand) ? '+' : '−'}
+                </span>
               </div>
               {/* Cigar cards for this brand */}
               {!collapsedBrands.includes(brand) && (
@@ -3835,42 +3832,13 @@ const [allowBrandCollapse, setAllowBrandCollapse] = useState(() => {
               </div>
             </div>
           </div>
-
-{/* Collapsible Brands Section */}
-          <div className="mb-6">
-            <h3 className="text-lg mb-3" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Layout</h3>
-            <div className="rounded-lg p-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="text-sm text-gray-300">Collapsible brand sections</div>
-                  <div className="text-xs text-gray-500">Allow collapsing brand sections on collection page</div>
-                </div>
-                <button 
-                  onClick={() => setAllowBrandCollapse(!allowBrandCollapse)}
-                  className="w-12 h-6 rounded-full relative"
-                  style={{ background: allowBrandCollapse ? '#d4af37' : '#333' }}
-                >
-                  <div 
-                    className="w-5 h-5 rounded-full absolute top-0.5 transition-all"
-                    style={{ 
-                      background: '#fff',
-                      left: allowBrandCollapse ? '26px' : '2px'
-                    }}
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
           
           {/* Save Settings Button */}
           <button 
             onClick={() => {
               localStorage.setItem('showCigarCount', JSON.stringify(showCigarCount));
-              localStorage.setItem('allowBrandCollapse', JSON.stringify(allowBrandCollapse));
-              localStorage.setItem('collapsedBrands', JSON.stringify(collapsedBrands));
               if (googleAccessToken) {
                 saveSetting('showCigarCount', showCigarCount, googleAccessToken);
-                saveSetting('allowBrandCollapse', allowBrandCollapse, googleAccessToken);
               }
               setView('collection');
             }}
