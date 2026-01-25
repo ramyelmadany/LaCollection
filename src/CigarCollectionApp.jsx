@@ -2618,10 +2618,7 @@ export default function CigarCollectionApp() {
   const [accessToken, setAccessToken] = useState(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showCigarCount, setShowCigarCount] = useState(() => {
-  const saved = localStorage.getItem('showCigarCount');
-  return saved !== null ? JSON.parse(saved) : true;
-});
+  const [showCigarCount, setShowCigarCount] = useState(true);
   const [filterOpen, setFilterOpen] = useState(false);
   const [showOpenOnly, setShowOpenOnly] = useState(false);
   const [pullStart, setPullStart] = useState(0);
