@@ -832,10 +832,17 @@ const CigarGroupCard = ({ group, onClick, maxLengths }) => {
         background: s.bg, 
         border: 'none', 
         opacity: isFinished ? 0.5 : 1,
-        boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.5), inset 0 -3px 6px rgba(0,0,0,0.2), 0 2px 0 rgba(255,255,255,0.1)',
-        borderTop: '1px solid rgba(255,255,255,0.4)',
-        borderBottom: '2px solid rgba(0,0,0,0.3)',
+        boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.1)',
+        borderTop: '1px solid rgba(255,255,255,0.15)',
       }}>
+        {/* Subtle paper texture overlay */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          opacity: 0.03,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          pointerEvents: 'none',
+        }} />
         <div className="p-3">
           <div className="text-center mb-1">
             <div className="font-bold tracking-wide" style={{ color: s.text, fontFamily: 'tt-ricordi-allegria, Georgia, serif', fontSize: brandSize }}>{brand}</div>
