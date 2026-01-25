@@ -3739,10 +3739,10 @@ export default function CigarCollectionApp() {
       
       {/* Bottom buttons */}
       <div className="fixed bottom-4 left-4 right-4 z-30 flex gap-3">
-        <button onClick={() => isSignedIn ? setShowAddModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#d4af37', border: '1px solid #d4af37' }}>
+        <button onClick={() => isSignedIn ? setShowAddModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#d4af37', border: '1px solid #d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
           Add Box
         </button>
-        <button onClick={() => isSignedIn ? setShowLogModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#d4af37', border: '1px solid #d4af37' }}>
+        <button onClick={() => isSignedIn ? setShowLogModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#d4af37', border: '1px solid #d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
           Log Smoke
         </button>
       </div>
