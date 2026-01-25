@@ -1102,6 +1102,19 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
   const [notes, setNotes] = useState(box.notes || '');
   const [consumed, setConsumed] = useState(box.consumed || 0);
   const [remaining, setRemaining] = useState(box.remaining || 0);
+
+  /// Update remaining if perBox changes - remaining = perBox - consumed
+  useEffect(() => {
+    const perBoxNum = parseInt(perBox) || 0;
+    const consumedNum = parseInt(consumed) || 0;
+    const remainingNum = parseInt(remaining) || 0;
+    const maxRemaining = perBoxNum - consumedNum;
+    
+    if (remainingNum > maxRemaining && perBoxNum > 0) {
+      setRemaining(Math.max(0, maxRemaining));
+    }
+  }, [perBox, consumed]);
+  
   const [isSaving, setIsSaving] = useState(false);
   
   const allLocations = [...new Set([...availableLocations, box.location].filter(Boolean))];
@@ -1221,7 +1234,13 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
               <input 
                 type="number" 
                 value={perBox} 
-                onChange={e => setPerBox(e.target.value)} 
+                onChange={e => {
+                  const val = parseInt(e.target.value) || 0;
+                  const consumedNum = parseInt(consumed) || 0;
+                  // perBox can't be less than consumed (can't have smoked more than existed)
+                  setPerBox(Math.max(val, consumedNum));
+                }}
+                min={consumed}
                 className="w-full px-3 py-2 rounded-lg text-base" 
                 style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
               />
@@ -1634,6 +1653,7 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
             const success = await onEdit(box, updatedData);
             if (success) {
               setShowEditModal(false);
+              onClose(); // Close the detail modal to force refresh
             }
             return success;
           }}
