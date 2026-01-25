@@ -2756,6 +2756,9 @@ export default function CigarCollectionApp() {
         location: row[12] || 'Cayman',
         consumed: thisConsumed,
         remaining: thisRemaining,
+        ringGauge: row[15] || '',
+        length: row[16] || '',
+        notes: row[17] || '',
       });
     }
     return boxes;
