@@ -2910,8 +2910,8 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
     const boxNumStr = row[1] || '';
     const boxNums = boxNumStr.split(',').map(s => s.trim()).filter(s => s);
     const perBox = parseInt(row[6]) || 0;
-    const totalRemaining = parseInt(row[14]) || 0;
-    const totalConsumed = parseInt(row[13]) || 0;
+    const totalRemaining = parseInt(row[15]) || 0;
+    const totalConsumed = parseInt(row[14]) || 0;
     
     if (qty <= 1) {
       return [rowToBox(row, rowIndex * 100)];
