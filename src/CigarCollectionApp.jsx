@@ -2876,12 +2876,12 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
       }
       
       if (rowIndex === -1) {
-      throw new Error(`Box number ${boxNum} not found in sheet`);
-    }
+        throw new Error(`Box number ${box.boxNum} not found in sheet`);
+      }
       
-      // Update columns N (consumed) and O (remaining)
-      const consumedCell = `N${rowIndex}`;
-      const remainingCell = `O${rowIndex}`;
+      // Update columns O (consumed) and P (remaining)
+      const consumedCell = `O${rowIndex}`;
+      const remainingCell = `P${rowIndex}`;
       
       await updateSheetCell(consumedCell, box.consumed, accessToken);
       await updateSheetCell(remainingCell, box.remaining, accessToken);
