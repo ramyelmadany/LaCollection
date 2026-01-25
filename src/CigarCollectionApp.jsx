@@ -16,6 +16,24 @@ const GOOGLE_SHEETS_CONFIG = {
   scopes: 'https://www.googleapis.com/auth/spreadsheets',
 };
 
+// Supported currencies
+const CURRENCIES = ['USD', 'GBP', 'EUR', 'CHF', 'JPY', 'CAD', 'AUD', 'CNY', 'HKD', 'SGD'];
+const CURRENCY_SYMBOLS = {
+  USD: '$', GBP: '£', EUR: '€', CHF: 'CHF ', JPY: '¥', 
+  CAD: 'C$', AUD: 'A$', CNY: '¥', HKD: 'HK$', SGD: 'S$'
+};
+
+// Convert amount from one currency to another using FX rates
+const convertCurrency = (amount, fromCurrency, toCurrency, rates) => {
+  if (!rates || !amount || fromCurrency === toCurrency) return amount;
+  
+  // Rates are relative to base currency
+  const fromRate = rates[fromCurrency] || 1;
+  const toRate = rates[toCurrency] || 1;
+  
+  return (amount / fromRate) * toRate;
+};
+
 // Google Auth State (will be set by OAuth)
 let googleAccessToken = null;
 
@@ -103,7 +121,7 @@ const fetchOnwardsData = async (accessToken) => {
 
 // Transform sheet row to box object
 const rowToBox = (row, index) => {
-  // Columns: Date of Purchase | Box Number | Received | Brand | Name | Quantity Purchased | Number / Box | Price / Box | Price / Cigar | Ageing / Immediate | Date of Box | Code | Location | Number Consumed | Number Remaining | Ring Gauge | Length | Notes
+  // Columns: Date of Purchase | Box Number | Received | Brand | Name | Quantity Purchased | Number / Box | Currency | Price / Box | Price / Cigar | Ageing / Immediate | Date of Box | Code | Location | Number Consumed | Number Remaining | Ring Gauge | Length | Notes
   return {
     id: index + 1,
     datePurchased: parseDate(row[0]),
@@ -113,17 +131,18 @@ const rowToBox = (row, index) => {
     name: row[4] || '',
     qty: parseInt(row[5]) || 1,
     perBox: parseInt(row[6]) || 0,
-    priceUSD: parseCurrency(row[7]),
-    pricePerCigar: parseCurrency(row[8]),
-    status: row[9] || 'Ageing',
-    dateOfBox: parseDate(row[10]),
-    code: row[11] || '',
-    location: row[12] || 'Cayman',
-    consumed: parseInt(row[13]) || 0,
-    remaining: parseInt(row[14]) || 0,
-    ringGauge: row[15] || '',
-    length: row[16] || '',
-    notes: row[17] || '',
+    currency: row[7] || 'USD',
+    price: parseCurrency(row[8]),
+    pricePerCigar: parseCurrency(row[9]),
+    status: row[10] || 'Ageing',
+    dateOfBox: parseDate(row[11]),
+    code: row[12] || '',
+    location: row[13] || 'Cayman',
+    consumed: parseInt(row[14]) || 0,
+    remaining: parseInt(row[15]) || 0,
+    ringGauge: row[16] || '',
+    length: row[17] || '',
+    notes: row[18] || '',
   };
 };
 
@@ -152,8 +171,8 @@ const rowToOnwards = (row, index) => {
 
 // Transform box object to sheet row
 const boxToRow = (box) => {
-  // Columns: Date of Purchase | Box Number | Received | Brand | Name | Quantity Purchased | Number / Box | Price / Box | Price / Cigar | Ageing / Immediate | Date of Box | Code | Location | Number Consumed | Number Remaining | Ring Gauge | Length | Notes
-  const pricePerCigar = box.perBox > 0 ? box.priceUSD / box.perBox : 0;
+  // Columns: Date of Purchase | Box Number | Received | Brand | Name | Quantity Purchased | Number / Box | Currency | Price / Box | Price / Cigar | Ageing / Immediate | Date of Box | Code | Location | Number Consumed | Number Remaining | Ring Gauge | Length | Notes
+  const pricePerCigar = box.perBox > 0 ? box.price / box.perBox : 0;
   return [
     formatDateForSheet(box.datePurchased),
     box.boxNum,
@@ -162,8 +181,9 @@ const boxToRow = (box) => {
     box.name,
     box.qty || 1,
     box.perBox,
-    formatCurrencyForSheet(box.priceUSD),
-    formatCurrencyForSheet(pricePerCigar),
+    box.currency || 'USD',
+    box.price,
+    pricePerCigar,
     box.status,
     box.dateOfBox ? formatDateForSheet(box.dateOfBox) : '',
     box.code || '',
@@ -283,7 +303,7 @@ const appendSheetRow = async (values, accessToken) => {
     }
     
     // Now write the data to that row
-    const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'Cigar Inventory'!A${insertRowIndex}:R${insertRowIndex}?valueInputOption=USER_ENTERED`;
+    const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'Cigar Inventory'!A${insertRowIndex}:S${insertRowIndex}?valueInputOption=USER_ENTERED`;
     const writeResponse = await fetch(writeUrl, {
       method: 'PUT',
       headers: {
@@ -291,7 +311,7 @@ const appendSheetRow = async (values, accessToken) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        range: `'Cigar Inventory'!A${insertRowIndex}:R${insertRowIndex}`,
+        range: `'Cigar Inventory'!A${insertRowIndex}:S${insertRowIndex}`,
         values: [values],
       }),
     });
@@ -392,30 +412,32 @@ const updateBoxInSheet = async (boxNum, updatedData, accessToken) => {
       throw new Error(`Box number ${boxNum} not found in sheet`);
     }
     
-    // Build the row data in the correct order (A:R)
+   // Build the row data in the correct order (A:S)
+    const pricePerCigar = updatedData.perBox > 0 ? updatedData.price / updatedData.perBox : 0;
     const rowData = [
       updatedData.datePurchased ? formatDateForSheet(updatedData.datePurchased) : '',  // A - Date of Purchase
       updatedData.boxNum || boxNum,  // B - Box Number
-      updatedData.received ? 'Yes' : 'No',  // C - Received
+      updatedData.received ? 'TRUE' : 'FALSE',  // C - Received
       updatedData.brand || '',  // D - Brand
       updatedData.name || '',  // E - Name
-      updatedData.perBox || '',  // F - Per Box
-      updatedData.priceUSD || '',  // G - Price USD
-      updatedData.status || '',  // H - Status
-      updatedData.dateOfBox ? formatDateForSheet(updatedData.dateOfBox) : '',  // I - Date of Box
-      updatedData.code || '',  // J - Code
-      '',  // K - Cost per Cigar (formula)
-      updatedData.location || '',  // L - Location
-      '',  // M - Age (formula)
-      updatedData.consumed || 0,  // N - Consumed
-      updatedData.remaining || 0,  // O - Remaining
-      updatedData.ringGauge || '',  // P - Ring Gauge
-      updatedData.length || '',  // Q - Length
-      updatedData.notes || '',  // R - Notes
+      updatedData.qty || 1,  // F - Quantity Purchased
+      updatedData.perBox || '',  // G - Number / Box
+      updatedData.currency || 'USD',  // H - Currency
+      updatedData.price || '',  // I - Price / Box
+      pricePerCigar,  // J - Price / Cigar
+      updatedData.status || '',  // K - Ageing / Immediate
+      updatedData.dateOfBox ? formatDateForSheet(updatedData.dateOfBox) : '',  // L - Date of Box
+      updatedData.code || '',  // M - Code
+      updatedData.location || '',  // N - Location
+      updatedData.consumed || 0,  // O - Number Consumed
+      updatedData.remaining || 0,  // P - Number Remaining
+      updatedData.ringGauge || '',  // Q - Ring Gauge
+      updatedData.length || '',  // R - Length
+      updatedData.notes || '',  // S - Notes
     ];
     
     // Update the row
-    const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'Cigar Inventory'!A${rowIndex}:R${rowIndex}?valueInputOption=USER_ENTERED`;
+    const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'Cigar Inventory'!A${rowIndex}:S${rowIndex}?valueInputOption=USER_ENTERED`;
     const response = await fetch(updateUrl, {
       method: 'PUT',
       headers: {
@@ -484,6 +506,22 @@ const fetchSettings = async (accessToken) => {
     return settings;
   } catch (error) {
     console.error('Error fetching settings:', error);
+    return null;
+  }
+};
+
+// Fetch FX rates from frankfurter.app
+const fetchFxRates = async (base = 'USD') => {
+  try {
+    const currencies = CURRENCIES.filter(c => c !== base).join(',');
+    const response = await fetch(`https://api.frankfurter.app/latest?from=${base}&to=${currencies}`);
+    if (!response.ok) throw new Error('Failed to fetch FX rates');
+    const data = await response.json();
+    // Add the base currency with rate 1
+    const rates = { ...data.rates, [base]: 1 };
+    return { rates, date: data.date };
+  } catch (error) {
+    console.error('Error fetching FX rates:', error);
     return null;
   }
 };
@@ -684,11 +722,17 @@ const updateHighestBoxNum = async (num, accessToken) => {
 // Default exchange rate (fallback if API fails)
 const DEFAULT_FX_RATE = 0.79;
 
-// Format helpers - USD primary
+// Format helpers
 const fmt = {
   usd: (v) => `$${v.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`,
   gbp: (v) => `£${v.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`,
   date: (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '-',
+  currency: (v, curr) => {
+    const symbol = CURRENCY_SYMBOLS[curr] || '$';
+    const locale = curr === 'GBP' ? 'en-GB' : curr === 'EUR' ? 'de-DE' : curr === 'JPY' ? 'ja-JP' : curr === 'CNY' ? 'zh-CN' : 'en-US';
+    const decimals = curr === 'JPY' ? 0 : 0;
+    return `${symbol}${v.toLocaleString(locale, {minimumFractionDigits: decimals, maximumFractionDigits: decimals})}`;
+  },
 };
 
 // Price metadata
@@ -1030,7 +1074,7 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
   const [name, setName] = useState(box.name || '');
   const [boxNum, setBoxNum] = useState(box.boxNum || '');
   const [perBox, setPerBox] = useState(box.perBox || '');
-  const [priceUSD, setPriceUSD] = useState(box.priceUSD || '');
+  const [price, setPrice] = useState(box.price || ''); const [priceCurrency, setPriceCurrency] = useState(box.currency || 'USD');
   const [datePurchased, setDatePurchased] = useState(box.datePurchased || '');
   const [location, setLocation] = useState(box.location || '');
   const [newLocation, setNewLocation] = useState('');
@@ -1056,7 +1100,8 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
       name,
       boxNum,
       perBox: parseInt(perBox),
-      priceUSD: parseFloat(priceUSD),
+      price: parseFloat(price),
+      currency: priceCurrency,
       datePurchased,
       location: finalLocation,
       status,
@@ -1191,16 +1236,28 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
             </div>
           </div>
           
-          {/* Price */}
+        {/* Price */}
           <div>
-            <label className="text-xs text-gray-500 block mb-2">Price (USD)</label>
-            <input 
-              type="number" 
-              value={priceUSD} 
-              onChange={e => setPriceUSD(e.target.value)} 
-              className="w-full px-3 py-2 rounded-lg text-base" 
-              style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
-            />
+            <label className="text-xs text-gray-500 block mb-2">Price</label>
+            <div className="flex gap-2">
+              <select 
+                value={priceCurrency} 
+                onChange={e => setPriceCurrency(e.target.value)}
+                className="px-3 py-2 rounded-lg text-base"
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '90px' }}
+              >
+                {CURRENCIES.map(c => (
+                  <option key={c} value={c}>{CURRENCY_SYMBOLS[c]} {c}</option>
+                ))}
+              </select>
+              <input 
+                type="number" 
+                value={price} 
+                onChange={e => setPrice(e.target.value)} 
+                className="flex-1 px-3 py-2 rounded-lg text-base" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+              />
+            </div>
           </div>
           
           {/* Date Purchased and Location */}
@@ -2174,7 +2231,8 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
   const [name, setName] = useState('');
   const [boxNum, setBoxNum] = useState('');
   const [perBox, setPerBox] = useState('');
-  const [priceUSD, setPriceUSD] = useState('');
+  const [price, setPrice] = useState('');
+  const [priceCurrency, setPriceCurrency] = useState('USD');
   const [datePurchased, setDatePurchased] = useState(new Date().toISOString().split('T')[0]);
   const [location, setLocation] = useState('Cayman');
   const [status, setStatus] = useState('Ageing');
@@ -2244,7 +2302,7 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
     const finalBrand = brand === '__custom__' ? customBrand : brand;
     const finalName = (brand === '__custom__' || name === '__custom__') ? customName : name;
     
-    if (!finalBrand || !finalName || !perBox || !priceUSD) return;
+    if (!finalBrand || !finalName || !perBox || !price) return;
     
     const newBoxes = [];
     const baseNum = boxNum;
@@ -2261,7 +2319,8 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
         datePurchased,
         received,
         perBox: parseInt(perBox),
-        priceUSD: parseFloat(priceUSD),
+        price: parseFloat(price),
+        currency: priceCurrency,
         status,
         dateOfBox: dateOfBox || '',
         code: code || '',
@@ -2400,8 +2459,20 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
               <input type="number" value={perBox} onChange={e => setPerBox(e.target.value)} placeholder="e.g. 25" className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
             </div>
             <div>
-              <label className="text-xs text-gray-500 block mb-2">Price (USD) *</label>
-              <input type="number" value={priceUSD} onChange={e => setPriceUSD(e.target.value)} placeholder="e.g. 2500" className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+              <label className="text-xs text-gray-500 block mb-2">Price *</label>
+              <div className="flex gap-2">
+                <select 
+                  value={priceCurrency} 
+                  onChange={e => setPriceCurrency(e.target.value)}
+                  className="px-3 py-2 rounded-lg text-base"
+                  style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '90px' }}
+                >
+                  {CURRENCIES.map(c => (
+                    <option key={c} value={c}>{CURRENCY_SYMBOLS[c]} {c}</option>
+                  ))}
+                </select>
+                <input type="number" value={price} onChange={e => setPrice(e.target.value)} placeholder="e.g. 2500" className="flex-1 px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+              </div>
             </div>
           </div>
           
@@ -2451,7 +2522,7 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
           </div>
           
           {/* Submit Button */}
-          <button onClick={handleSubmit} disabled={!brand || !name || !perBox || !priceUSD} className="w-full py-3 rounded-lg font-semibold mt-4" style={{ background: (!brand || !name || !perBox || !priceUSD) ? '#333' : '#d4af37', color: (!brand || !name || !perBox || !priceUSD) ? '#666' : '#000' }}>
+          <button onClick={handleSubmit} disabled={!brand || !name || !perBox || !price} className="w-full py-3 rounded-lg font-semibold mt-4" style={{ background: (!brand || !name || !perBox || !price) ? '#333' : '#d4af37', color: (!brand || !name || !perBox || !price) ? '#666' : '#000' }}>
             Add {quantity} Box{quantity > 1 ? 'es' : ''}
           </button>
         </div>
@@ -2623,6 +2694,12 @@ export default function CigarCollectionApp() {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [showCigarCount, setShowCigarCount] = useState(true);
+  const [baseCurrency, setBaseCurrency] = useState(() => {
+  const saved = localStorage.getItem('baseCurrency');
+  return saved || 'USD';
+});
+const [fxRates, setFxRates] = useState({});
+const [fxLastUpdated, setFxLastUpdated] = useState(null);
   const [collapsedBrands, setCollapsedBrands] = useState(() => {
   const saved = localStorage.getItem('collapsedBrands');
   return saved !== null ? JSON.parse(saved) : [];
@@ -2716,6 +2793,18 @@ export default function CigarCollectionApp() {
                 setShowCigarCount(sheetSettings.showCigarCount);
                 localStorage.setItem('showCigarCount', JSON.stringify(sheetSettings.showCigarCount));
               }
+              if (sheetSettings.baseCurrency) {
+                setBaseCurrency(sheetSettings.baseCurrency);
+                localStorage.setItem('baseCurrency', sheetSettings.baseCurrency);
+              }
+            }
+            
+            // Load FX rates
+            const savedBaseCurrency = sheetSettings?.baseCurrency || localStorage.getItem('baseCurrency') || 'USD';
+            const fxData = await fetchFxRates(savedBaseCurrency);
+            if (fxData) {
+              setFxRates(fxData.rates);
+              setFxLastUpdated(fxData.date);
             }
             
             setSyncStatus('success');
@@ -2850,17 +2939,18 @@ export default function CigarCollectionApp() {
         name: row[4] || '',
         qty: 1,
         perBox: perBox,
-        priceUSD: parseCurrency(row[7]),
-        pricePerCigar: parseCurrency(row[8]),
-        status: row[9] || 'Ageing',
-        dateOfBox: parseDate(row[10]),
-        code: row[11] || '',
-        location: row[12] || 'Cayman',
+        currency: row[7] || 'USD',
+        price: parseCurrency(row[8]),
+        pricePerCigar: parseCurrency(row[9]),
+        status: row[10] || 'Ageing',
+        dateOfBox: parseDate(row[11]),
+        code: row[12] || '',
+        location: row[13] || 'Cayman',
         consumed: thisConsumed,
         remaining: thisRemaining,
-        ringGauge: row[15] || '',
-        length: row[16] || '',
-        notes: row[17] || '',
+        ringGauge: row[16] || '',
+        length: row[17] || '',
+        notes: row[18] || '',
       });
     }
     return boxes;
@@ -2949,20 +3039,28 @@ export default function CigarCollectionApp() {
     toUSD: (gbp) => gbp / fxRate
   }), [fxRate, fxUpdated]);
   
-  // Format value in selected currency
-  const fmtCurrency = (usdValue) => {
-    if (currency === 'GBP') {
-      return fmt.gbp(FX.toGBP(usdValue));
-    }
-    return fmt.usd(usdValue);
+  // Format value in base currency (converts from original currency)
+  const fmtCurrency = (amount, fromCurrency = 'USD') => {
+    if (!amount || isNaN(amount)) return fmt.currency(0, baseCurrency);
+    const converted = convertCurrency(amount, fromCurrency, baseCurrency, fxRates);
+    return fmt.currency(converted, baseCurrency);
   };
   
-  // Format GBP value in selected currency
-  const fmtFromGBP = (gbpValue) => {
-    if (currency === 'GBP') {
-      return fmt.gbp(gbpValue);
+  // Format with original currency in brackets if different from base
+  const fmtCurrencyWithOriginal = (amount, fromCurrency) => {
+    if (!amount || isNaN(amount)) return fmt.currency(0, baseCurrency);
+    const baseAmount = convertCurrency(amount, fromCurrency, baseCurrency, fxRates);
+    if (fromCurrency === baseCurrency) {
+      return fmt.currency(baseAmount, baseCurrency);
     }
-    return fmt.usd(FX.toUSD(gbpValue));
+    return `${fmt.currency(baseAmount, baseCurrency)} (${fmt.currency(amount, fromCurrency)})`;
+  };
+  
+  // Format GBP value in base currency (for UK market prices)
+  const fmtFromGBP = (gbpValue) => {
+    if (!gbpValue || isNaN(gbpValue)) return fmt.currency(0, baseCurrency);
+    const converted = convertCurrency(gbpValue, 'GBP', baseCurrency, fxRates);
+    return fmt.currency(converted, baseCurrency);
   };
   
   // Handle smoke logging - updates local state AND Google Sheets
@@ -3794,6 +3892,31 @@ export default function CigarCollectionApp() {
         <div className="px-4 pb-8">
           <h2 className="text-xl font-bold mb-6" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Settings</h2>
           
+          {/* Currency Section */}
+          <div className="mb-6">
+            <h3 className="text-lg mb-3" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Currency</h3>
+            <div className="rounded-lg p-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+              <div className="mb-4">
+                <div className="text-sm text-gray-300 mb-2">Base Currency</div>
+                <select 
+                  value={baseCurrency} 
+                  onChange={(e) => setBaseCurrency(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg text-base"
+                  style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}
+                >
+                  {CURRENCIES.map(c => (
+                    <option key={c} value={c}>{CURRENCY_SYMBOLS[c]} {c}</option>
+                  ))}
+                </select>
+              </div>
+              {fxLastUpdated && (
+                <div className="text-xs text-gray-500">
+                  FX rates updated: {fxLastUpdated}
+                </div>
+              )}
+            </div>
+          </div>
+          
           {/* Theme Section */}
           <div className="mb-6">
             <h3 className="text-lg mb-3" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Theme</h3>
@@ -3830,10 +3953,18 @@ export default function CigarCollectionApp() {
           
           {/* Save Settings Button */}
           <button 
-            onClick={() => {
+            onClick={async () => {
               localStorage.setItem('showCigarCount', JSON.stringify(showCigarCount));
+              localStorage.setItem('baseCurrency', baseCurrency);
               if (googleAccessToken) {
                 saveSetting('showCigarCount', showCigarCount, googleAccessToken);
+                saveSetting('baseCurrency', baseCurrency, googleAccessToken);
+              }
+              // Refresh FX rates with new base currency
+              const fxData = await fetchFxRates(baseCurrency);
+              if (fxData) {
+                setFxRates(fxData.rates);
+                setFxLastUpdated(fxData.date);
               }
               setView('collection');
             }}
