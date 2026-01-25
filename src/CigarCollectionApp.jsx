@@ -348,9 +348,12 @@ const deleteSheetRow = async (boxNum, accessToken) => {
     const rows = data.values || [];
     
     // Find the row index (box number is in column B, index 1)
+    // Handle both exact match and comma-separated box numbers (e.g., "2.1, 2.2")
     let rowIndex = -1;
     for (let i = 0; i < rows.length; i++) {
-      if (rows[i][1] === String(boxNum) || rows[i][1] === boxNum) {
+      const cellValue = rows[i][1] || '';
+      const boxNums = cellValue.split(',').map(s => s.trim());
+      if (cellValue === String(boxNum) || cellValue === boxNum || boxNums.includes(String(boxNum))) {
         rowIndex = i + 1; // +1 because sheets are 1-indexed
         break;
       }
