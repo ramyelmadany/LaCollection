@@ -4023,7 +4023,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
               </div>
               {fxLastUpdated && (
                 <div className="text-xs text-gray-500">
-                  FX rates updated: {fxLastUpdated}
+                  FX rates updated: {new Date(fxLastUpdated).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </div>
               )}
             </div>
