@@ -1301,7 +1301,7 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
                 style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '90px' }}
               >
                 {CURRENCIES.map(c => (
-                  <option key={c} value={c}>{CURRENCY_SYMBOLS[c]} {c}</option>
+                  <option key={c} value={c}>{{c}</option>
                 ))}
               </select>
               <input 
@@ -2524,7 +2524,7 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
                   style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '90px' }}
                 >
                   {CURRENCIES.map(c => (
-                    <option key={c} value={c}>{CURRENCY_SYMBOLS[c]} {c}</option>
+                    <option key={c} value={c}>{{c}</option>
                   ))}
                 </select>
                 <input type="number" value={price} onChange={e => setPrice(e.target.value)} placeholder="e.g. 2500" className="flex-1 px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
@@ -4017,7 +4017,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                   style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}
                 >
                   {CURRENCIES.map(c => (
-                    <option key={c} value={c}>{CURRENCY_SYMBOLS[c]} {c}</option>
+                    <option key={c} value={c}>{c}</option>
                   ))}
                 </select>
               </div>
