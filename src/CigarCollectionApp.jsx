@@ -3437,7 +3437,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
       {/* Header */}
       <div className="sticky top-0 z-40 px-4 py-4" style={{ background: '#1a120b' }}>
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl tracking-widest font-semibold" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>LA COLECCIÓN</h1>
+          <h1 className="text-2xl tracking-widest font-semibold" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>LA COLECCIÓN</h1>
           <div className="flex items-center gap-3">
             {view === 'collection' && (
               <button 
