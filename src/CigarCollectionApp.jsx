@@ -994,7 +994,7 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
           <div className="text-center mb-3">
             <div className="font-medium" style={{ color: s.text, opacity: 0.9, fontSize: nameSize }}>{name}</div>
           </div>
-         <div className="rounded overflow-hidden mb-2" style={{ background: 'rgba(0,0,0,0.3)' }}>
+         <div className="rounded overflow-hidden mb-2" style={{ background: 'rgba(184,132,76,0.8)' }}>
             {[...Array(Math.ceil(boxes.length / 6) || 1)].map((_, rowIdx) => {
               const fullBoxesCount = boxes.filter(b => b.remaining === b.perBox).length;
               const openBoxesCount = boxes.filter(b => b.remaining > 0 && b.remaining < b.perBox).length;
