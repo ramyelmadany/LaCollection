@@ -3295,34 +3295,45 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
     return { maxBrand, maxName };
   }, [groups]);
   
-  const stats = useMemo(() => {
+ const stats = useMemo(() => {
     const totalCigars = boxes.reduce((s, b) => s + b.remaining, 0);
     const totalBoxes = boxes.length;
     const consumed = boxes.reduce((s, b) => s + b.consumed, 0);
-    const totalCostUSD = boxes.reduce((s, b) => s + b.priceUSD, 0);
-    const remainingCostUSD = boxes.reduce((s, b) => {
+    
+    // Convert all prices to base currency
+    const getBoxPriceInBase = (b) => convertCurrency(b.price || 0, b.currency || 'USD', baseCurrency, fxRates);
+    
+    const totalCost = boxes.reduce((s, b) => s + getBoxPriceInBase(b), 0);
+    const remainingCost = boxes.reduce((s, b) => {
       if (b.perBox === 0) return s;
-      return s + (b.priceUSD * (b.remaining / b.perBox));
+      return s + (getBoxPriceInBase(b) * (b.remaining / b.perBox));
     }, 0);
     
-    let totalMarketUSD = 0, remainingMarketUSD = 0;
+    let totalMarket = 0, remainingMarket = 0;
     boxes.forEach(b => {
       const m = getMarket(b.brand, b.name, b.perBox);
-      const marketGBP = m ? m.gbp : FX.toGBP(b.priceUSD) * 1.15;
-      const marketUSD = FX.toUSD(marketGBP);
-      totalMarketUSD += marketUSD;
+      const boxPriceInBase = getBoxPriceInBase(b);
+      const marketGBP = m ? m.gbp : (boxPriceInBase * 1.15);
+      const marketInBase = convertCurrency(marketGBP, 'GBP', baseCurrency, fxRates);
+      totalMarket += marketInBase;
       if (b.perBox > 0) {
-        remainingMarketUSD += marketUSD * (b.remaining / b.perBox);
+        remainingMarket += marketInBase * (b.remaining / b.perBox);
       }
     });
     
-    const totalSavingsUSD = totalMarketUSD - totalCostUSD;
-    const remainingSavingsUSD = remainingMarketUSD - remainingCostUSD;
+    const totalSavings = totalMarket - totalCost;
+    const remainingSavings = remainingMarket - remainingCost;
     const onwardsProfit = onwards.reduce((s, o) => s + (o.profitUSD || 0), 0);
     const onwardsCost = onwards.reduce((s, o) => s + o.costUSD, 0);
     
-    return { totalCigars, totalBoxes, consumed, totalCostUSD, remainingCostUSD, totalMarketUSD, remainingMarketUSD, totalSavingsUSD, remainingSavingsUSD, onwardsProfit, onwardsCost, onwardsBoxes: onwards.length };
-  }, [boxes, onwards, FX]);
+    return { 
+      totalCigars, totalBoxes, consumed, 
+      totalCostUSD: totalCost, remainingCostUSD: remainingCost, 
+      totalMarketUSD: totalMarket, remainingMarketUSD: remainingMarket, 
+      totalSavingsUSD: totalSavings, remainingSavingsUSD: remainingSavings, 
+      onwardsProfit, onwardsCost, onwardsBoxes: onwards.length 
+    };
+  }, [boxes, onwards, baseCurrency, fxRates]);
 
   // Show loading/sign-in screen
   if (dataLoading || splashDelay || !isSignedIn) {
@@ -3710,10 +3721,15 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
           {(() => {
             const remainingBoxes = boxes.filter(b => b.remaining > 0);
             
+            // Convert box price to base currency
+            const getBoxPriceInBase = (b) => {
+              return convertCurrency(b.price || 0, b.currency || 'USD', baseCurrency, fxRates);
+            };
+            
             const getBoxMarket = (b) => {
               const m = getMarket(b.brand, b.name, b.perBox);
-              const marketGBP = m ? m.gbp : FX.toGBP(b.priceUSD) * 1.15;
-              return FX.toUSD(marketGBP);
+              const marketGBP = m ? m.gbp : (getBoxPriceInBase(b) * 1.15);
+              return convertCurrency(marketGBP, 'GBP', baseCurrency, fxRates);
             };
             
             const groupByVitola = (boxList) => {
@@ -3755,7 +3771,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
             
             const bestPerformer = allVitolas
               .map(v => {
-                const avgPurchase = v.boxes.reduce((s, b) => s + b.priceUSD, 0) / v.boxes.length;
+                const avgPurchase = v.boxes.reduce((s, b) => s + getBoxPriceInBase(b), 0) / v.boxes.length;
                 const marketValue = getBoxMarket(v.boxes[0]);
                 const returnPct = avgPurchase > 0 ? ((marketValue - avgPurchase) / avgPurchase) * 100 : 0;
                 return {
@@ -3771,7 +3787,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
             
             const worstPerformer = allVitolas
               .map(v => {
-                const avgPurchase = v.boxes.reduce((s, b) => s + b.priceUSD, 0) / v.boxes.length;
+                const avgPurchase = v.boxes.reduce((s, b) => s + getBoxPriceInBase(b), 0) / v.boxes.length;
                 const marketValue = getBoxMarket(v.boxes[0]);
                 const returnPct = avgPurchase > 0 ? ((marketValue - avgPurchase) / avgPurchase) * 100 : 0;
                 return {
