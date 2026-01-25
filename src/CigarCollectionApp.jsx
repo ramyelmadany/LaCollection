@@ -876,8 +876,8 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true }) =
           const openBoxes = boxes.filter(b => b.remaining > 0 && b.remaining < b.perBox);
           const openCount = openBoxes.reduce((sum, b) => sum + b.remaining, 0);
           return openBoxes.length > 0 ? (
-            <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center font-bold shadow-lg" 
-              style={{ background: '#6B1E1E', color: '#fff', fontSize: 11 }}>{openCount}</div>
+            <div className="absolute -top-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center font-bold shadow-lg" 
+              style={{ background: '#6B1E1E', color: '#fff', fontSize: 12 }}>{openCount}</div>
           ) : null;
         })()}
         {isFinished && (
