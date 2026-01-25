@@ -459,6 +459,91 @@ const fetchHistoryData = async (accessToken) => {
   }
 };
 
+// Fetch settings from Google Sheets (requires OAuth token)
+const fetchSettings = async (accessToken) => {
+  const { sheetId } = GOOGLE_SHEETS_CONFIG;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Settings!A:B`;
+  
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
+    if (!response.ok) throw new Error('Failed to fetch settings');
+    const data = await response.json();
+    const rows = data.values || [];
+    
+    // Convert rows to object (skip header row)
+    const settings = {};
+    rows.slice(1).forEach(row => {
+      if (row[0]) {
+        settings[row[0]] = row[1] === 'true' ? true : row[1] === 'false' ? false : row[1];
+      }
+    });
+    return settings;
+  } catch (error) {
+    console.error('Error fetching settings:', error);
+    return null;
+  }
+};
+
+// Save a setting to Google Sheets
+const saveSetting = async (settingName, value, accessToken) => {
+  const { sheetId } = GOOGLE_SHEETS_CONFIG;
+  
+  try {
+    // First, fetch all settings to find the row
+    const fetchUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Settings!A:B`;
+    const fetchResponse = await fetch(fetchUrl, {
+      headers: { 'Authorization': `Bearer ${accessToken}` },
+    });
+    const data = await fetchResponse.json();
+    const rows = data.values || [];
+    
+    // Find the row with this setting
+    let rowIndex = -1;
+    for (let i = 1; i < rows.length; i++) {
+      if (rows[i][0] === settingName) {
+        rowIndex = i + 1; // +1 because sheets are 1-indexed
+        break;
+      }
+    }
+    
+    if (rowIndex === -1) {
+      // Setting doesn't exist, append it
+      const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Settings!A:B:append?valueInputOption=USER_ENTERED`;
+      await fetch(appendUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          values: [[settingName, String(value)]]
+        }),
+      });
+    } else {
+      // Update existing setting
+      const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Settings!B${rowIndex}?valueInputOption=USER_ENTERED`;
+      await fetch(updateUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          values: [[String(value)]]
+        }),
+      });
+    }
+    return true;
+  } catch (error) {
+    console.error('Error saving setting:', error);
+    return false;
+  }
+};
+
 // Add a smoke log entry to History sheet
 const addHistoryEntry = async (entry, accessToken) => {
   const { sheetId, historyRange } = GOOGLE_SHEETS_CONFIG;
@@ -2533,7 +2618,10 @@ export default function CigarCollectionApp() {
   const [accessToken, setAccessToken] = useState(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showCigarCount, setShowCigarCount] = useState(true);
+  const [showCigarCount, setShowCigarCount] = useState(() => {
+  const saved = localStorage.getItem('showCigarCount');
+  return saved !== null ? JSON.parse(saved) : true;
+});
   const [filterOpen, setFilterOpen] = useState(false);
   const [showOpenOnly, setShowOpenOnly] = useState(false);
   const [pullStart, setPullStart] = useState(0);
@@ -2615,6 +2703,15 @@ export default function CigarCollectionApp() {
             
             const storedHighest = await fetchHighestBoxNum();
             setHighestBoxNum(storedHighest);
+            
+            // Load settings from Sheets
+            const sheetSettings = await fetchSettings(response.access_token);
+            if (sheetSettings) {
+              if (sheetSettings.showCigarCount !== undefined) {
+                setShowCigarCount(sheetSettings.showCigarCount);
+                localStorage.setItem('showCigarCount', JSON.stringify(sheetSettings.showCigarCount));
+              }
+            }
             
             setSyncStatus('success');
           } catch (error) {
@@ -3695,7 +3792,14 @@ export default function CigarCollectionApp() {
                   <div className="text-xs text-gray-500">Display cigar count and box count below indicator</div>
                 </div>
                 <button 
-                  onClick={() => setShowCigarCount(!showCigarCount)}
+                  onClick={() => {
+                  const newValue = !showCigarCount;
+                  setShowCigarCount(newValue);
+                  localStorage.setItem('showCigarCount', JSON.stringify(newValue));
+                  if (googleAccessToken) {
+                    saveSetting('showCigarCount', newValue, googleAccessToken);
+                  }
+                }}
                   className="w-12 h-6 rounded-full relative"
                   style={{ background: showCigarCount ? '#d4af37' : '#333' }}
                 >
