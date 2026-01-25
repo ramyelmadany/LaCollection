@@ -994,16 +994,16 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
           <div className="text-center mb-3">
             <div className="font-medium" style={{ color: s.text, opacity: 0.9, fontSize: nameSize }}>{name}</div>
           </div>
-          <div className="rounded overflow-hidden mb-2" style={{ background: 'rgba(0,0,0,0.3)' }}>
+         <div className="rounded overflow-hidden mb-2" style={{ background: 'rgba(0,0,0,0.3)' }}>
             {[...Array(Math.ceil(boxes.length / 6) || 1)].map((_, rowIdx) => {
-              const fullBoxes = boxes.filter(b => b.remaining === b.perBox).length;
-              const openBoxes = boxes.filter(b => b.remaining > 0 && b.remaining < b.perBox).length;
+              const fullBoxesCount = boxes.filter(b => b.remaining === b.perBox).length;
+              const openBoxesCount = boxes.filter(b => b.remaining > 0 && b.remaining < b.perBox).length;
               return (
                 <div key={rowIdx} className="h-5 flex gap-0.5 p-1 items-end">
                   {[...Array(6)].map((_, i) => {
                     const boxIndex = rowIdx * 6 + i;
-                    const isFull = boxIndex < fullBoxes;
-                    const isOpen = boxIndex === fullBoxes && openBoxes > 0;
+                    const isFull = boxIndex < fullBoxesCount;
+                    const isOpen = boxIndex >= fullBoxesCount && boxIndex < fullBoxesCount + openBoxesCount;
                     const isEmpty = boxIndex >= boxes.length;
                     return <div key={i} className="flex-1 rounded-sm" style={{ 
                       height: isEmpty ? '0%' : (isFull || isOpen) ? '100%' : '20%', 
@@ -1031,8 +1031,8 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
               style={{ background: '#6B1E1E', color: '#fff', fontSize: 12 }}>{openCount}</div>
           ) : null;
         })()}
-        {isFinished && (
-          <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.7)' }}>
+        {isFinished && !isFinishedView && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ background: 'rgba(0,0,0,0.7)' }}>
             <span className="text-sm px-3 py-1 rounded" style={{ background: '#333', color: '#888' }}>Finished</span>
           </div>
         )}
@@ -1257,7 +1257,15 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
               <input 
                 type="number" 
                 value={consumed} 
-                onChange={e => setConsumed(e.target.value)} 
+                onChange={e => {
+                  const val = parseInt(e.target.value) || 0;
+                  const max = parseInt(perBox) || 0;
+                  const newConsumed = Math.min(Math.max(0, val), max);
+                  setConsumed(newConsumed);
+                  setRemaining(max - newConsumed);
+                }}
+                max={perBox}
+                min={0}
                 className="w-full px-3 py-2 rounded-lg text-base" 
                 style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
               />
@@ -1270,9 +1278,12 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
                 onChange={e => {
                   const val = parseInt(e.target.value) || 0;
                   const max = parseInt(perBox) || 0;
-                  setRemaining(Math.min(val, max));
+                  const newRemaining = Math.min(Math.max(0, val), max);
+                  setRemaining(newRemaining);
+                  setConsumed(max - newRemaining);
                 }}
-                max={perBox} 
+                max={perBox}
+                min={0} 
                 className="w-full px-3 py-2 rounded-lg text-base" 
                 style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
               />
