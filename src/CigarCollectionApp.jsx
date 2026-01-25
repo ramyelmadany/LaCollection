@@ -478,7 +478,7 @@ const fetchSettings = async (accessToken) => {
     const settings = {};
     rows.slice(1).forEach(row => {
       if (row[0]) {
-        settings[row[0]] = row[1] === 'true' ? true : row[1] === 'false' ? false : row[1];
+        settings[row[0]] = row[1]?.toLowerCase() === 'true' ? true : row[1]?.toLowerCase() === 'false' ? false : row[1];
       }
     });
     return settings;
