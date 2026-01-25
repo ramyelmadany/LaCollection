@@ -813,7 +813,7 @@ const groupBoxes = (boxes) => {
 };
 
 // Cigar Group Card
-const CigarGroupCard = ({ group, onClick, maxLengths }) => {
+const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true }) => {
   const { brand, name, boxes } = group;
   const s = brandStyles[brand] || brandStyles['Cohiba'];
   const totalRemaining = boxes.reduce((sum, b) => sum + b.remaining, 0);
@@ -865,10 +865,12 @@ const CigarGroupCard = ({ group, onClick, maxLengths }) => {
               );
             })}
           </div>
-          <div className="flex justify-between items-center text-sm">
-            <span className="font-bold" style={{ color: s.text }}>{totalRemaining} total</span>
-            <span style={{ color: s.text, opacity: 0.7 }}>{nonEmptyBoxes} box{nonEmptyBoxes !== 1 ? 'es' : ''}</span>
-          </div>
+          {showCigarCount && (
+            <div className="flex justify-between items-center text-sm">
+              <span className="font-bold" style={{ color: s.text }}>{totalRemaining} total</span>
+              <span style={{ color: s.text, opacity: 0.7 }}>{nonEmptyBoxes} box{nonEmptyBoxes !== 1 ? 'es' : ''}</span>
+            </div>
+          )}
         </div>
         {(() => {
           const openBoxes = boxes.filter(b => b.remaining > 0 && b.remaining < b.perBox);
@@ -2531,6 +2533,7 @@ export default function CigarCollectionApp() {
   const [accessToken, setAccessToken] = useState(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showCigarCount, setShowCigarCount] = useState(true);
   const [filterOpen, setFilterOpen] = useState(false);
   const [showOpenOnly, setShowOpenOnly] = useState(false);
   const [pullStart, setPullStart] = useState(0);
@@ -3178,7 +3181,7 @@ export default function CigarCollectionApp() {
             
             {/* Navigation */}
             <div className="space-y-2 mb-6">
-              {['collection', 'value', 'onwards', 'history', 'prices'].map(v => (
+              {['collection', 'value', 'onwards', 'history', 'prices', 'settings'].map(v => (
                 <button 
                   key={v} 
                   onClick={() => { setView(v); setMenuOpen(false); }}
@@ -3341,7 +3344,7 @@ export default function CigarCollectionApp() {
               </div>
               {/* Cigar cards for this brand */}
               <div className="grid grid-cols-2 gap-3">
-                {brandGroups.map(g => <CigarGroupCard key={`${g.brand}|${g.name}`} group={g} onClick={() => setSelectedGroup(g)} maxLengths={maxLengths} />)}
+                {brandGroups.map(g => <CigarGroupCard key={`${g.brand}|${g.name}`} group={g} onClick={() => setSelectedGroup(g)} maxLengths={maxLengths} showCigarCount={showCigarCount} />)}
               </div>
             </div>
           ))}
@@ -3663,6 +3666,47 @@ export default function CigarCollectionApp() {
               </>
             );
           })()}
+        </div>
+      )}
+
+{/* Settings View */}
+      {view === 'settings' && (
+        <div className="px-4 pb-8">
+          <h2 className="text-xl font-bold mb-6" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Settings</h2>
+          
+          {/* Theme Section */}
+          <div className="mb-6">
+            <h3 className="text-lg mb-3" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Theme</h3>
+            <div className="rounded-lg p-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+              <div className="text-sm text-gray-400">Coming soon...</div>
+            </div>
+          </div>
+          
+          {/* Display Section */}
+          <div className="mb-6">
+            <h3 className="text-lg mb-3" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Display</h3>
+            <div className="rounded-lg p-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+              <div className="flex justify-between items-center">
+                <div>
+                  <div className="text-sm text-gray-300">Show inventory info on cards</div>
+                  <div className="text-xs text-gray-500">Display cigar count and box count below indicator</div>
+                </div>
+                <button 
+                  onClick={() => setShowCigarCount(!showCigarCount)}
+                  className="w-12 h-6 rounded-full relative"
+                  style={{ background: showCigarCount ? '#d4af37' : '#333' }}
+                >
+                  <div 
+                    className="w-5 h-5 rounded-full absolute top-0.5 transition-all"
+                    style={{ 
+                      background: '#fff',
+                      left: showCigarCount ? '26px' : '2px'
+                    }}
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
       
