@@ -6,7 +6,7 @@ const GOOGLE_SHEETS_CONFIG = {
   apiKey: 'AIzaSyCGwQ71BGsiWWWJjX10_teVe3zQAmu9ZDk',
   clientId: '945855470299-l1is4q9t6lb1ak8v5n0871hsk6kt8ihl.apps.googleusercontent.com',
   sheetId: '10A_FMj8eotx-xlzAlCNFxjOr3xEOuO4p5GxAZjHC86A',
-  collectionRange: 'A:R',
+  collectionRange: 'A:S',
   onwardsRange: 'Onwards!A:L',
   onwardsSheetId: 1785734797,
   historyRange: 'History!A:F',
@@ -625,12 +625,16 @@ const addHistoryEntry = async (entry, accessToken) => {
 
 // Delete a history entry by finding and removing the row
 const deleteHistoryEntry = async (entry, accessToken) => {
-  const { apiKey, sheetId, historyRange, historySheetId } = GOOGLE_SHEETS_CONFIG;
+  const { sheetId, historyRange, historySheetId } = GOOGLE_SHEETS_CONFIG;
   
   try {
     // Fetch all history to find the matching row
-    const fetchUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${historyRange}?key=${apiKey}`;
-    const fetchResponse = await fetch(fetchUrl);
+    const fetchUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${historyRange}`;
+    const fetchResponse = await fetch(fetchUrl, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
     if (!fetchResponse.ok) throw new Error('Failed to fetch history data');
     const data = await fetchResponse.json();
     const rows = data.values || [];
@@ -2852,9 +2856,13 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
     
     try {
       // First, fetch all data to find the row with matching box number
-      const { apiKey, sheetId, collectionRange } = GOOGLE_SHEETS_CONFIG;
-      const fetchUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${collectionRange}?key=${apiKey}`;
-      const fetchResponse = await fetch(fetchUrl);
+      const { sheetId, collectionRange } = GOOGLE_SHEETS_CONFIG;
+      const fetchUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${collectionRange}`;
+      const fetchResponse = await fetch(fetchUrl, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      });
       if (!fetchResponse.ok) throw new Error('Failed to fetch sheet data');
       const data = await fetchResponse.json();
       const rows = data.values || [];
