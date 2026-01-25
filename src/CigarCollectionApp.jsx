@@ -961,7 +961,7 @@ const groupBoxes = (boxes) => {
 };
 
 // Cigar Group Card
-const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true }) => {
+const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isFinishedView = false }) => {
   const { brand, name, boxes } = group;
   const s = brandStyles[brand] || brandStyles['Cohiba'];
   const totalRemaining = boxes.reduce((sum, b) => sum + b.remaining, 0);
@@ -1004,7 +1004,7 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true }) =
                     const isEmpty = boxIndex >= boxes.length;
                     return <div key={i} className="flex-1 rounded-sm" style={{ 
                       height: isEmpty ? '0%' : (isFull || isOpen) ? '100%' : '20%', 
-                      background: isFull ? '#6B1E1E' : isOpen ? '#6B1E1E' : 'rgba(0,0,0,0.3)',
+                      background: isFinishedView ? '#1a1a1a' : (isFull ? '#6B1E1E' : isOpen ? '#6B1E1E' : 'rgba(0,0,0,0.3)'),
                       border: isOpen ? '2px solid #F5DEB3' : 'none',
                       visibility: isEmpty ? 'hidden' : 'visible'
                     }} />;
@@ -3211,12 +3211,34 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
   };
   
   const filtered = useMemo(() => {
-    let result = boxes;
+    let result = boxes.filter(b => b.remaining > 0); // Exclude finished boxes from main collection
     if (location.length > 0) result = result.filter(b => location.includes(b.location));
     if (selectedBrand !== 'All') result = result.filter(b => b.brand === selectedBrand);
     if (showOpenOnly) result = result.filter(b => b.remaining > 0 && b.remaining < b.perBox);
     return result;
   }, [boxes, location, selectedBrand, showOpenOnly]);
+
+  // Finished boxes for Collection History
+  const finishedBoxes = useMemo(() => {
+    return boxes.filter(b => b.remaining === 0);
+  }, [boxes]);
+  
+  const finishedGroups = useMemo(() => {
+    const g = groupBoxes(finishedBoxes);
+    return g.sort((a, b) => {
+      if (a.brand !== b.brand) return a.brand.localeCompare(b.brand);
+      return a.name.localeCompare(b.name);
+    });
+  }, [finishedBoxes]);
+  
+  const finishedGroupsByBrand = useMemo(() => {
+    const byBrand = {};
+    finishedGroups.forEach(g => {
+      if (!byBrand[g.brand]) byBrand[g.brand] = [];
+      byBrand[g.brand].push(g);
+    });
+    return byBrand;
+  }, [finishedGroups]);
   
   // Get unique locations for the location selector
   const availableLocations = useMemo(() => {
@@ -3430,21 +3452,32 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
               <button onClick={() => setMenuOpen(false)} className="text-2xl text-gray-500">×</button>
             </div>
             
-            {/* Navigation */}
+         {/* Navigation */}
             <div className="space-y-2 mb-6">
-              {['collection', 'value', 'onwards', 'history', 'prices', 'settings'].map(v => (
-                <button 
-                  key={v} 
-                  onClick={() => { setView(v); setMenuOpen(false); }}
-                  className="w-full text-left py-3 px-4 rounded-lg capitalize"
-                  style={{
-                    background: view === v ? '#d4af3720' : 'transparent',
-                    color: view === v ? '#d4af37' : '#888'
-                  }}
-                >
-                  {v}
-                </button>
-              ))}
+              {['collection', 'collection-history', 'value', 'onwards', 'history', 'prices', 'settings'].map(v => {
+                const displayNames = {
+                  'collection': 'Collection',
+                  'collection-history': 'Collection History',
+                  'value': 'Value',
+                  'onwards': 'Onwards',
+                  'history': 'History',
+                  'prices': 'Prices',
+                  'settings': 'Settings'
+                };
+                return (
+                  <button 
+                    key={v} 
+                    onClick={() => { setView(v); setMenuOpen(false); }}
+                    className="w-full text-left py-3 px-4 rounded-lg"
+                    style={{
+                      background: view === v ? '#d4af3720' : 'transparent',
+                      color: view === v ? '#d4af37' : '#888'
+                    }}
+                  >
+                    {displayNames[v]}
+                  </button>
+                );
+              })}
             </div>
             
             {/* Settings */}
@@ -3584,7 +3617,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
         </div>
       )}
     
-      {/* Collection View */}
+     {/* Collection View */}
       {view === 'collection' && (
         <div className="px-4">
           {Object.entries(groupsByBrand).map(([brand, brandGroups]) => (
@@ -3614,6 +3647,44 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
               )}
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Collection History View */}
+      {view === 'collection-history' && (
+        <div className="px-4">
+          <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Finished Boxes</h2>
+          {Object.keys(finishedGroupsByBrand).length === 0 ? (
+            <div className="text-center py-8 text-gray-500">No finished boxes yet</div>
+          ) : (
+            Object.entries(finishedGroupsByBrand).map(([brand, brandGroups]) => (
+              <div key={brand} className="mb-6">
+                {/* Brand Header */}
+                <div 
+                  className="mb-3 pb-2 flex justify-between items-center" 
+                  style={{ borderBottom: '2px solid #888', cursor: 'pointer' }}
+                  onClick={() => {
+                    const newCollapsed = collapsedBrands.includes(`history-${brand}`) 
+                      ? collapsedBrands.filter(b => b !== `history-${brand}`)
+                      : [...collapsedBrands, `history-${brand}`];
+                    setCollapsedBrands(newCollapsed);
+                    localStorage.setItem('collapsedBrands', JSON.stringify(newCollapsed));
+                  }}
+                >
+                  <h2 className="text-2xl font-bold tracking-wide" style={{ color: '#888', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{brand}</h2>
+                  <span className="text-xl font-bold" style={{ color: '#888' }}>
+                    {collapsedBrands.includes(`history-${brand}`) ? '+' : '−'}
+                  </span>
+                </div>
+                {/* Cigar cards for this brand */}
+                {!collapsedBrands.includes(`history-${brand}`) && (
+                  <div className="grid grid-cols-2 gap-3">
+                    {brandGroups.map(g => <CigarGroupCard key={`${g.brand}|${g.name}`} group={g} onClick={() => setSelectedGroup(g)} maxLengths={maxLengths} showCigarCount={showCigarCount} isFinishedView={true} />)}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
         </div>
       )}
       
@@ -4031,7 +4102,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
       {view === 'prices' && <PricesView boxes={boxes} currency={currency} FX={FX} fmtCurrency={fmtCurrency} fmtFromGBP={fmtFromGBP} />}
       
       {/* Modals */}
-      {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} onClose={() => setSelectedGroup(null)} fmtCurrency={fmtCurrency} fmtCurrencyWithOriginal={fmtCurrencyWithOriginal} fmtFromGBP={fmtFromGBP} baseCurrency={baseCurrency} fxRates={fxRates} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { const data = await fetchSheetData(googleAccessToken); if (data) { setBoxes(data.filter(row => row[0] && row[0] !== 'Date of Purchase' && !row[3]?.includes('Subtotal')).map(rowToBox)); } } return success; }} onEdit={async (box, updatedData) => { if (!googleAccessToken) return false; const success = await updateBoxInSheet(box.boxNum, updatedData, googleAccessToken); if (success) { await refreshData(); } return success; }} availableLocations={availableLocations} />}
+      {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} onClose={() => setSelectedGroup(null)} fmtCurrency={fmtCurrency} fmtCurrencyWithOriginal={fmtCurrencyWithOriginal} fmtFromGBP={fmtFromGBP} baseCurrency={baseCurrency} fxRates={fxRates} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { await refreshData(); } return success; }} onEdit={async (box, updatedData) => { if (!googleAccessToken) return false; const success = await updateBoxInSheet(box.boxNum, updatedData, googleAccessToken); if (success) { await refreshData(); } return success; }} availableLocations={availableLocations} />}
       {showLogModal && <SmokeLogModal boxes={boxes} onClose={() => setShowLogModal(false)} onLog={handleLog} />}
       {showAddModal && <AddBoxModal boxes={boxes} onClose={() => setShowAddModal(false)} onAdd={handleAddBoxes} highestBoxNum={highestBoxNum} />}
       {showSignInPrompt && (
