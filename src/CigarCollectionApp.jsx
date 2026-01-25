@@ -3494,27 +3494,9 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
               })}
             </div>
             
-            {/* Settings */}
+         {/* Sign In/Out */}
             <div className="border-t border-gray-700 pt-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400">Currency</span>
-                <button 
-                  onClick={() => setCurrency(currency === 'USD' ? 'GBP' : 'USD')} 
-                  className="px-3 py-1 rounded"
-                  style={{ background: '#252525', border: '1px solid #444' }}
-                >
-                  <span style={{ color: currency === 'USD' ? '#d4af37' : '#666' }}>$</span>
-                  <span className="text-gray-500 mx-1">/</span>
-                  <span style={{ color: currency === 'GBP' ? '#d4af37' : '#666' }}>£</span>
-                </button>
-              </div>
-              
-              <div className="text-sm text-gray-500">
-                {fxLoading ? 'Loading FX...' : `£1 = $${(1 / FX.rate).toFixed(2)}`}
-                {fxUpdated && <span className="ml-2">({fxUpdated})</span>}
-              </div>
-              
-              <div className="pt-4">
+              <div>
                 {!isSignedIn ? (
                   <button 
                     onClick={() => { handleGoogleSignIn(); setMenuOpen(false); }}
@@ -3524,16 +3506,13 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                     Sign In with Google
                   </button>
                 ) : (
-                  <div>
-                    <div className="text-sm text-green-400 mb-2">✓ Two-way sync enabled</div>
-                    <button 
-                      onClick={() => { handleGoogleSignOut(); setMenuOpen(false); }}
-                      className="w-full py-3 rounded-lg text-center"
-                      style={{ background: '#252525', color: '#888', border: '1px solid #444' }}
-                    >
-                      Sign Out
-                    </button>
-                  </div>
+                  <button 
+                    onClick={() => { handleGoogleSignOut(); setMenuOpen(false); }}
+                    className="w-full py-3 rounded-lg text-center"
+                    style={{ background: '#252525', color: '#888', border: '1px solid #444' }}
+                  >
+                    Sign Out
+                  </button>
                 )}
               </div>
             </div>
