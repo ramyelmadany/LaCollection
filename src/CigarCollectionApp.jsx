@@ -823,8 +823,8 @@ const CigarGroupCard = ({ group, onClick, maxLengths }) => {
   const isFinished = totalRemaining === 0;
   
   // Calculate font sizes based on max lengths
-  const brandSize = maxLengths?.maxBrand > 18 ? '0.9rem' : maxLengths?.maxBrand > 12 ? '1.1rem' : '1.25rem';
-  const nameSize = maxLengths?.maxName > 25 ? '0.85rem' : maxLengths?.maxName > 18 ? '1rem' : '1.125rem';
+  const brandSize = maxLengths?.maxBrand > 18 ? '1.1rem' : maxLengths?.maxBrand > 12 ? '1.3rem' : '1.5rem';
+  const nameSize = maxLengths?.maxName > 25 ? '1rem' : maxLengths?.maxName > 18 ? '1.15rem' : '1.25rem';
   
   return (
     <div onClick={onClick} className="relative cursor-pointer active:scale-98 transition-transform">
