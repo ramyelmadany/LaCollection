@@ -832,7 +832,9 @@ const CigarGroupCard = ({ group, onClick, maxLengths }) => {
         background: s.bg, 
         border: 'none', 
         opacity: isFinished ? 0.5 : 1,
-        boxShadow: '0 8px 16px rgba(0,0,0,0.5), 0 4px 6px rgba(0,0,0,0.4), inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 4px rgba(0,0,0,0.1)',
+        boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.5), inset 0 -3px 6px rgba(0,0,0,0.2), 0 2px 0 rgba(255,255,255,0.1)',
+        borderTop: '1px solid rgba(255,255,255,0.4)',
+        borderBottom: '2px solid rgba(0,0,0,0.3)',
       }}>
         <div className="p-3">
           <div className="text-center mb-1">
