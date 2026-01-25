@@ -1130,6 +1130,7 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
       remaining: parseInt(remaining),
     };
     
+    console.log('Saving updatedData:', updatedData);
     await onSave(updatedData);
     setIsSaving(false);
   };
@@ -1244,7 +1245,12 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
               <input 
                 type="number" 
                 value={remaining} 
-                onChange={e => setRemaining(e.target.value)} 
+                onChange={e => {
+                  const val = parseInt(e.target.value) || 0;
+                  const max = parseInt(perBox) || 0;
+                  setRemaining(Math.min(val, max));
+                }}
+                max={perBox} 
                 className="w-full px-3 py-2 rounded-lg text-base" 
                 style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
               />
