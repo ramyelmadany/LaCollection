@@ -866,7 +866,7 @@ const CigarGroupCard = ({ group, onClick, maxLengths }) => {
             })}
           </div>
           <div className="flex justify-between items-center text-sm">
-            <span className="font-bold" style={{ color: s.text }}>{totalRemaining} left</span>
+            <span className="font-bold" style={{ color: s.text }}>{totalRemaining} total</span>
             <span style={{ color: s.text, opacity: 0.7 }}>{nonEmptyBoxes} box{nonEmptyBoxes !== 1 ? 'es' : ''}</span>
           </div>
         </div>
