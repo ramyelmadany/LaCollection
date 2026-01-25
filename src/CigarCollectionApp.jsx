@@ -3644,11 +3644,18 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                 </span>
               </div>
               {/* Cigar cards for this brand */}
-              {!collapsedBrands.includes(brand) && (
-                <div className="grid grid-cols-2 gap-3">
-                  {brandGroups.map(g => <CigarGroupCard key={`${g.brand}|${g.name}`} group={g} onClick={() => setSelectedGroup(g)} maxLengths={maxLengths} showCigarCount={showCigarCount} />)}
-                </div>
-              )}
+<div 
+  className="grid transition-all duration-300 ease-in-out overflow-hidden"
+  style={{ 
+    gridTemplateRows: collapsedBrands.includes(brand) ? '0fr' : '1fr'
+  }}
+>
+  <div className="min-h-0">
+    <div className="grid grid-cols-2 gap-3 pb-1">
+      {brandGroups.map(g => <CigarGroupCard key=`${g.brand}|${g.name}`} group={g} onClick={() => setSelectedGroup(g)} maxLengths={maxLengths} showCigarCount={showCigarCount} />)}
+    </div>
+  </div>
+</div>
             </div>
           ))}
         </div>
