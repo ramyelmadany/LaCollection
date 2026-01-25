@@ -2848,7 +2848,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
   }, [accessToken]);
   
   // Update consumed/remaining in Google Sheets
-  const updateBoxInSheet = useCallback(async (box) => {
+  const updateBoxConsumed = useCallback(async (box) => {
     if (!accessToken) return false;
     
     setSyncStatus('writing');
@@ -3114,7 +3114,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
     
     // Write to Google Sheets if signed in
     if (isSignedIn && accessToken) {
-      await updateBoxInSheet({ ...updatedBox, remaining: newRemaining, consumed: newConsumed });
+      await updateBoxConsumed({ ...updatedBox, remaining: newRemaining, consumed: newConsumed });
       await addHistoryEntry(logEntry, accessToken);
     }
   };
@@ -3147,7 +3147,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
     
     // Update Google Sheets if signed in
     if (isSignedIn && accessToken) {
-      await updateBoxInSheet({ ...box, remaining: newRemaining, consumed: newConsumed });
+      await updateBoxConsumed({ ...box, remaining: newRemaining, consumed: newConsumed });
       await deleteHistoryEntry(entry, accessToken);
     }
   };
@@ -4061,7 +4061,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                     : b
                 ));
                 if (isSignedIn && accessToken) {
-                  await updateBoxInSheet({ ...box, remaining: newRemaining, consumed: newConsumed });
+                  await updateBoxConsumed({ ...box, remaining: newRemaining, consumed: newConsumed });
                 }
               }
             }
