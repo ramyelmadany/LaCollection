@@ -3639,7 +3639,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                 }}
               >
                 <h2 className="text-2xl font-bold tracking-wide" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{brand}</h2>
-                <span className="text-xl font-bold" style={{ color: '#d4af37' }}>
+                <span className="text-xl font-bold" style={{ color: '#F5DEB3' }}>
                   {collapsedBrands.includes(brand) ? '+' : '−'}
                 </span>
               </div>
