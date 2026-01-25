@@ -2878,9 +2878,6 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
       if (rowIndex === -1) {
       throw new Error(`Box number ${boxNum} not found in sheet`);
     }
-    
-    console.log('Found row at index:', rowIndex);
-    console.log('Updated data:', updatedData);
       
       // Update columns N (consumed) and O (remaining)
       const consumedCell = `N${rowIndex}`;
