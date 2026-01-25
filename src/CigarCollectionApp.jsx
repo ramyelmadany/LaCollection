@@ -982,7 +982,7 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
       <div className="relative rounded-xl overflow-hidden" style={{
         background: s.bg, 
         border: 'none', 
-        opacity: isFinished ? 0.5 : 1,
+        opacity: 1,
         boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.2), inset 0 -1px 2px rgba(0,0,0,0.08)',
         borderTop: '1px solid rgba(255,255,255,0.12)',
         backgroundImage: `${s.bg}, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23000' fill-opacity='0.03'/%3E%3Crect x='0' y='0' width='2' height='2' fill='%23fff' fill-opacity='0.02'/%3E%3C/svg%3E")`,
@@ -1006,9 +1006,9 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
                     const isOpen = boxIndex >= fullBoxesCount && boxIndex < fullBoxesCount + openBoxesCount;
                     const isEmpty = boxIndex >= boxes.length;
                     return <div key={i} className="flex-1 rounded-sm" style={{ 
-                      height: isEmpty ? '0%' : (isFull || isOpen) ? '100%' : '20%', 
+                      height: isEmpty ? '0%' : (isFull || isOpen || isFinishedView) ? '100%' : '20%', 
                       background: isFinishedView ? '#1a1a1a' : (isFull ? '#6B1E1E' : isOpen ? '#6B1E1E' : 'rgba(0,0,0,0.3)'),
-                      border: isOpen ? '2px solid #F5DEB3' : 'none',
+                      border: isOpen && !isFinishedView ? '2px solid #F5DEB3' : 'none',
                       visibility: isEmpty ? 'hidden' : 'visible'
                     }} />;
                   })}
