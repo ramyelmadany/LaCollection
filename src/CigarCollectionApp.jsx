@@ -3468,13 +3468,13 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
             
          {/* Navigation */}
             <div className="space-y-2 mb-6">
-              {['collection', 'collection-history', 'value', 'onwards', 'history', 'prices', 'settings'].map(v => {
+              {['collection', 'value', 'collection-history', 'history', 'onwards', 'prices', 'settings'].map(v => {
                 const displayNames = {
                   'collection': 'Collection',
+                  'value': 'Collection Value',
                   'collection-history': 'Collection History',
-                  'value': 'Value',
+                  'history': 'Logged Smokes',
                   'onwards': 'Onwards',
-                  'history': 'History',
                   'prices': 'Prices',
                   'settings': 'Settings'
                 };
