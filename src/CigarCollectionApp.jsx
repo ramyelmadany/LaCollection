@@ -1373,7 +1373,7 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
 };
 
 // Box Detail Modal
-const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, onEdit, isSignedIn, availableLocations = [] }) => {
+const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, fmtFromGBP, onDelete, onEdit, isSignedIn, availableLocations = [], baseCurrency, fxRates }) => {
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -1381,9 +1381,10 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, o
   const box = boxes[selectedIdx];
   const s = brandStyles[box.brand] || brandStyles['Cohiba'];
   const market = getMarket(box.brand, box.name, box.perBox);
-  const marketGBP = market?.gbp || FX.toGBP(box.priceUSD) * 1.15;
-  const marketUSD = FX.toUSD(marketGBP);
-  const savingsUSD = marketUSD - box.priceUSD;
+  const boxPriceInBase = convertCurrency(box.price || 0, box.currency || 'USD', baseCurrency, fxRates);
+  const marketGBP = market?.gbp || (boxPriceInBase * 1.15);
+  const marketInBase = convertCurrency(marketGBP, 'GBP', baseCurrency, fxRates);
+  const savingsInBase = marketInBase - boxPriceInBase;
 
   const handleDelete = async () => {
     if (!onDelete) return;
@@ -1431,14 +1432,14 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, o
   <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center text-lg" style={{ background: '#333', color: '#888' }}>x</button>
 </div>
         
-        {boxes.length > 1 && (
+       {boxes.length > 1 && (
           <div className="px-4 py-2 flex gap-2 overflow-x-auto">
             {boxes.map((b, i) => (
               <button key={b.id} onClick={() => setSelectedIdx(i)} className="px-3 py-1.5 rounded-lg text-sm whitespace-nowrap" style={{
                 background: selectedIdx === i ? '#d4af37' : '#252525',
                 color: selectedIdx === i ? '#000' : '#888',
                 border: `1px solid ${selectedIdx === i ? '#d4af37' : '#333'}`
-              }}>Box {b.boxNum} | {fmt.usd(b.priceUSD)}</button>
+              }}>Box {b.boxNum} | {fmt.currency(b.price || 0, b.currency || 'USD')}</button>
             ))}
           </div>
         )}
@@ -1460,15 +1461,15 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, o
           </div>
           
           <div className="rounded-lg p-4" style={{ background: '#252525' }}>
-            <div className="text-xs text-gray-500 mb-3" style={{ fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Pricing ({currency})</div>
+            <div className="text-xs text-gray-500 mb-3" style={{ fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Pricing ({baseCurrency})</div>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Your cost:</span>
-                <span className="text-green-400 font-semibold">{fmtCurrency(box.priceUSD)}</span>
+                <span className="text-green-400 font-semibold">{fmtCurrencyWithOriginal(box.price, box.currency)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">UK market:</span>
-                <span className="text-blue-400">{fmtCurrency(marketUSD)}</span>
+                <span className="text-blue-400">{fmtFromGBP(marketGBP)}</span>
               </div>
               <div className="flex justify-between text-sm items-center">
                 <span className="text-gray-400 text-xs">Source: {market?.source || 'estimate'}</span>
@@ -1499,10 +1500,10 @@ const BoxDetailModal = ({ boxes, onClose, currency, FX, fmtCurrency, onDelete, o
                   </div>
                 )}
               </div>
-              {savingsUSD > 0 && (
+              {savingsInBase > 0 && (
                 <div className="flex justify-between text-sm pt-2 border-t border-gray-700">
                   <span className="text-gray-400">Savings:</span>
-                  <span className="text-green-500 font-semibold">{fmtCurrency(savingsUSD)} ({Math.round(savingsUSD/marketUSD*100)}%)</span>
+                  <span className="text-green-500 font-semibold">{fmtFromGBP(savingsInBase)} ({Math.round(savingsInBase/marketInBase*100)}%)</span>
                 </div>
               )}
             </div>
@@ -3041,8 +3042,9 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
   
   // Format value in base currency (converts from original currency)
   const fmtCurrency = (amount, fromCurrency = 'USD') => {
-    if (!amount || isNaN(amount)) return fmt.currency(0, baseCurrency);
+    if (amount === undefined || amount === null || isNaN(amount)) return fmt.currency(0, baseCurrency);
     const converted = convertCurrency(amount, fromCurrency, baseCurrency, fxRates);
+    if (converted === undefined || converted === null || isNaN(converted)) return fmt.currency(0, baseCurrency);
     return fmt.currency(converted, baseCurrency);
   };
   
@@ -3983,7 +3985,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
       {view === 'prices' && <PricesView boxes={boxes} currency={currency} FX={FX} fmtCurrency={fmtCurrency} fmtFromGBP={fmtFromGBP} />}
       
       {/* Modals */}
-      {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} onClose={() => setSelectedGroup(null)} currency={currency} FX={FX} fmtCurrency={fmtCurrency} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { const data = await fetchSheetData(googleAccessToken); if (data) { setBoxes(data.filter(row => row[0] && row[0] !== 'Date of Purchase' && !row[3]?.includes('Subtotal')).map(rowToBox)); } } return success; }} onEdit={async (box, updatedData) => { if (!googleAccessToken) return false; const success = await updateBoxInSheet(box.boxNum, updatedData, googleAccessToken); if (success) { await refreshData(); } return success; }} availableLocations={availableLocations} />}
+      {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} onClose={() => setSelectedGroup(null)} fmtCurrency={fmtCurrency} fmtCurrencyWithOriginal={fmtCurrencyWithOriginal} fmtFromGBP={fmtFromGBP} baseCurrency={baseCurrency} fxRates={fxRates} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { const data = await fetchSheetData(googleAccessToken); if (data) { setBoxes(data.filter(row => row[0] && row[0] !== 'Date of Purchase' && !row[3]?.includes('Subtotal')).map(rowToBox)); } } return success; }} onEdit={async (box, updatedData) => { if (!googleAccessToken) return false; const success = await updateBoxInSheet(box.boxNum, updatedData, googleAccessToken); if (success) { await refreshData(); } return success; }} availableLocations={availableLocations} />}
       {showLogModal && <SmokeLogModal boxes={boxes} onClose={() => setShowLogModal(false)} onLog={handleLog} />}
       {showAddModal && <AddBoxModal boxes={boxes} onClose={() => setShowAddModal(false)} onAdd={handleAddBoxes} highestBoxNum={highestBoxNum} />}
       {showSignInPrompt && (
