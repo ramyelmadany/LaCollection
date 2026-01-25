@@ -3350,7 +3350,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
             <button 
               onClick={handleGoogleSignIn}
               className="mt-4 px-6 py-3 rounded-lg font-semibold"
-              style={{ background: '#d4af37', color: '#1a120b' }}
+              style={{ background: '#F5DEB3', color: '#1a120b' }}
             >
               Sign In with Google
             </button>
@@ -3473,7 +3473,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
             onClick={e => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-8">
-              <span className="text-lg" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Menu</span>
+              <span className="text-lg" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Menu</span>
               <button onClick={() => setMenuOpen(false)} className="text-2xl text-gray-500">×</button>
             </div>
             
@@ -3495,8 +3495,8 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                     onClick={() => { setView(v); setMenuOpen(false); }}
                     className="w-full text-left py-3 px-4 rounded-lg"
                     style={{
-                      background: view === v ? '#d4af3720' : 'transparent',
-                      color: view === v ? '#d4af37' : '#888'
+                      background: view === v ? '#F5DEB320' : 'transparent',
+                      color: view === v ? '#F5DEB3' : '#888'
                     }}
                   >
                     {displayNames[v]}
@@ -3512,7 +3512,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                   <button 
                     onClick={() => { handleGoogleSignIn(); setMenuOpen(false); }}
                     className="w-full py-3 rounded-lg text-center font-semibold"
-                    style={{ background: '#d4af37', color: '#1a120b' }}
+                    style={{ background: '#F5DEB3', color: '#1a120b' }}
                   >
                     Sign In with Google
                   </button>
@@ -3541,7 +3541,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
             onClick={e => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-6">
-              <span className="text-lg" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Filters</span>
+              <span className="text-lg" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Filters</span>
               <button onClick={() => setFilterOpen(false)} className="text-2xl text-gray-500">×</button>
             </div>
             
@@ -3561,7 +3561,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                     }} 
                     className="px-4 py-2 rounded-lg text-sm"
                     style={{
-                      background: location.includes(l) ? '#d4af37' : '#252525',
+                      background: location.includes(l) ? '#F5DEB3' : '#252525',
                       color: location.includes(l) ? '#000' : '#888',
                       border: location.includes(l) ? 'none' : '1px solid #444'
                     }}
@@ -3582,7 +3582,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                     onClick={() => setSelectedBrand(brand)} 
                     className="px-3 py-2 rounded-lg text-sm"
                     style={{
-                      background: selectedBrand === brand ? '#d4af37' : '#252525',
+                      background: selectedBrand === brand ? '#F5DEB3' : '#252525',
                       color: selectedBrand === brand ? '#000' : '#888',
                       border: selectedBrand === brand ? 'none' : '1px solid #444'
                     }}
@@ -3600,7 +3600,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                 onClick={() => setShowOpenOnly(!showOpenOnly)} 
                 className="px-4 py-2 rounded-lg text-sm"
                 style={{
-                  background: showOpenOnly ? '#d4af37' : '#252525',
+                  background: showOpenOnly ? '#F5DEB3' : '#252525',
                   color: showOpenOnly ? '#000' : '#888',
                   border: showOpenOnly ? 'none' : '1px solid #444'
                 }}
@@ -3623,7 +3623,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
     
      {/* Collection View */}
       {view === 'collection' && (
-        <div className="px-4">
+        <div className="px-4 pt-6">
           {Object.entries(groupsByBrand).map(([brand, brandGroups]) => (
             <div key={brand} className="mb-6">
               {/* Brand Header */}
@@ -3664,7 +3664,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
       {/* Collection History View */}
       {view === 'collection-history' && (
         <div className="px-4">
-          <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Finished Boxes</h2>
+          <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Finished Boxes</h2>
           {Object.keys(finishedGroupsByBrand).length === 0 ? (
             <div className="text-center py-8 text-gray-500">No finished boxes yet</div>
           ) : (
