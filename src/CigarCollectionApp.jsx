@@ -832,17 +832,10 @@ const CigarGroupCard = ({ group, onClick, maxLengths }) => {
         background: s.bg, 
         border: 'none', 
         opacity: isFinished ? 0.5 : 1,
-        boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.25), inset 0 -1px 2px rgba(0,0,0,0.1)',
-        borderTop: '1px solid rgba(255,255,255,0.15)',
+        boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.2), inset 0 -1px 2px rgba(0,0,0,0.08)',
+        borderTop: '1px solid rgba(255,255,255,0.12)',
+        backgroundImage: `${s.bg}, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23000' fill-opacity='0.03'/%3E%3Crect x='0' y='0' width='2' height='2' fill='%23fff' fill-opacity='0.02'/%3E%3C/svg%3E")`,
       }}>
-        {/* Subtle paper texture overlay */}
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          opacity: 0.03,
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-          pointerEvents: 'none',
-        }} />
         <div className="p-3">
           <div className="text-center mb-1">
             <div className="font-bold tracking-wide" style={{ color: s.text, fontFamily: 'tt-ricordi-allegria, Georgia, serif', fontSize: brandSize }}>{brand}</div>
@@ -863,7 +856,7 @@ const CigarGroupCard = ({ group, onClick, maxLengths }) => {
                     const isEmpty = boxIndex >= boxes.length;
                     return <div key={i} className="flex-1 rounded-sm" style={{ 
                       height: isEmpty ? '0%' : (isFull || isOpen) ? '100%' : '20%', 
-                      background: isFull ? 'linear-gradient(90deg, #5D4037, #8D6E63, #5D4037)' : isOpen ? 'linear-gradient(90deg, #a89880, #d4c4a8, #a89880)' : 'rgba(0,0,0,0.3)',
+                      background: isFull ? 'linear-gradient(90deg, #a89880, #d4c4a8, #a89880)' : isOpen ? 'linear-gradient(90deg, #d4c4a8, #e8dcc8, #d4c4a8)' : 'rgba(0,0,0,0.3)',
                       visibility: isEmpty ? 'hidden' : 'visible'
                     }} />;
                   })}
