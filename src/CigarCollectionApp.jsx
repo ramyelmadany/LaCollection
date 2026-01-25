@@ -1301,7 +1301,7 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
                 style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '90px' }}
               >
                 {CURRENCIES.map(c => (
-                  <option key={c} value={c}>{{c}</option>
+                  <option key={c} value={c}>{c}</option>
                 ))}
               </select>
               <input 
