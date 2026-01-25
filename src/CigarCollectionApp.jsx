@@ -2397,7 +2397,7 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
     <div className="fixed inset-0 z-50 flex items-end justify-center p-4" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
       <div className="w-full max-w-md rounded-xl max-h-[85vh] overflow-y-auto" style={{ background: '#1a1a1a', border: '1px solid #333' }} onClick={e => e.stopPropagation()}>
         <div className="sticky top-0 z-10 p-4 flex justify-between items-center" style={{ background: '#1a1a1a', borderBottom: '1px solid #333' }}>
-          <h3 className="text-lg font-semibold" style={{ color: '#d4af37' }}>Add New Box</h3>
+          <h3 className="text-lg font-semibold" style={{ color: '#F5DEB3' }}>Add New Box</h3>
           <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#333', color: '#888' }}>x</button>
         </div>
         
@@ -3443,11 +3443,11 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
               <button 
                 onClick={() => setFilterOpen(true)}
                 className="relative px-3 py-1.5 rounded text-sm"
-                style={{ color: '#d4af37', border: '1px solid #d4af37' }}
+                style={{ color: '#F5DEB3', border: '1px solid #F5DEB3' }}
               >
                 Filter
                 {(location.length > 0 && !location.includes('All') || selectedBrand !== 'All' || showOpenOnly) && (
-                  <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full" style={{ background: '#d4af37' }}></span>
+                  <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full" style={{ background: '#F5DEB3' }}></span>
                 )}
               </button>
             )}
@@ -3455,9 +3455,9 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
               onClick={() => setMenuOpen(true)}
               className="w-10 h-10 flex flex-col items-center justify-center gap-1.5"
             >
-              <div className="w-6 h-0.5" style={{ background: '#d4af37' }}></div>
-              <div className="w-6 h-0.5" style={{ background: '#d4af37' }}></div>
-              <div className="w-6 h-0.5" style={{ background: '#d4af37' }}></div>
+              <div className="w-6 h-0.5" style={{ background: '#F5DEB3' }}></div>
+              <div className="w-6 h-0.5" style={{ background: '#F5DEB3' }}></div>
+              <div className="w-6 h-0.5" style={{ background: '#F5DEB3' }}></div>
             </button>
           </div>
         </div>
@@ -3629,7 +3629,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
               {/* Brand Header */}
               <div 
                 className="mb-3 pb-2 flex justify-between items-center" 
-                style={{ borderBottom: '2px solid #d4af37', cursor: 'pointer' }}
+                style={{ borderBottom: '2px solid #F5DEB3', cursor: 'pointer' }}
                 onClick={() => {
                   const newCollapsed = collapsedBrands.includes(brand) 
                     ? collapsedBrands.filter(b => b !== brand)
@@ -4177,12 +4177,12 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
       
       {/* Bottom buttons */}
       <div className="fixed bottom-4 left-4 right-4 z-30 flex gap-3">
-        <button onClick={() => isSignedIn ? setShowAddModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#d4af37', border: '1px solid #d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
-          Add Box
-        </button>
-        <button onClick={() => isSignedIn ? setShowLogModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#d4af37', border: '1px solid #d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
-          Log Smoke
-        </button>
+        <button onClick={() => isSignedIn ? setShowAddModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#F5DEB3', border: '1px solid #F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
+  Add Box
+</button>
+<button onClick={() => isSignedIn ? setShowLogModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#F5DEB3', border: '1px solid #F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
+  Log Smoke
+</button>
       </div>
     </div>
   );
