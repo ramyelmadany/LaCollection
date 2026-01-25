@@ -856,7 +856,7 @@ const CigarGroupCard = ({ group, onClick, maxLengths }) => {
                     const isEmpty = boxIndex >= boxes.length;
                     return <div key={i} className="flex-1 rounded-sm" style={{ 
                       height: isEmpty ? '0%' : (isFull || isOpen) ? '100%' : '20%', 
-                      background: isFull ? '#6B1E1E' : isOpen ? '#F5DEB3' : 'rgba(0,0,0,0.3)',
+                      background: isFull ? '#6B1E1E' : isOpen ? '#F5DEB3' : '#8B5A3D',
                       visibility: isEmpty ? 'hidden' : 'visible'
                     }} />;
                   })}
