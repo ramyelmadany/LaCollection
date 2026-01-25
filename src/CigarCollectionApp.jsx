@@ -258,10 +258,14 @@ const appendSheetRow = async (values, accessToken) => {
   const { sheetId } = GOOGLE_SHEETS_CONFIG;
   
   // First, find the "Subtotal Spent" row
-  const findUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'Cigar Inventory'!A:A?key=${GOOGLE_SHEETS_CONFIG.apiKey}`;
+  const findUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'Cigar Inventory'!A:A`;
   
   try {
-    const findResponse = await fetch(findUrl);
+    const findResponse = await fetch(findUrl, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
     const findData = await findResponse.json();
     const rows = findData.values || [];
     
@@ -291,7 +295,7 @@ const appendSheetRow = async (values, accessToken) => {
               startIndex: insertRowIndex - 1,
               endIndex: insertRowIndex
             },
-            inheritFromBefore: true
+            inheritFromBefore: insertRowIndex > 1
           }
         }]
       }),
@@ -389,12 +393,16 @@ const deleteSheetRow = async (boxNum, accessToken) => {
 
 // Update a row in Google Sheets by finding the box number first
 const updateBoxInSheet = async (boxNum, updatedData, accessToken) => {
-  const { apiKey, sheetId, collectionRange } = GOOGLE_SHEETS_CONFIG;
+  const { sheetId, collectionRange } = GOOGLE_SHEETS_CONFIG;
   
   try {
     // First, fetch all data to find the row with matching box number
-    const fetchUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${collectionRange}?key=${apiKey}`;
-    const fetchResponse = await fetch(fetchUrl);
+    const fetchUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${collectionRange}`;
+    const fetchResponse = await fetch(fetchUrl, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
     if (!fetchResponse.ok) throw new Error('Failed to fetch sheet data');
     const data = await fetchResponse.json();
     const rows = data.values || [];
