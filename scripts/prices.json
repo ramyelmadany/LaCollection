@@ -44,36 +44,6 @@
     },
     "num_sources": 1
   },
-  "Cohiba|Siglo VI|25": {
-    "brand": "Cohiba",
-    "name": "Siglo VI",
-    "box_size": 25,
-    "price": 27.0,
-    "sources": {
-      "JJ Fox": {
-        "price": 27.0,
-        "url": "https://www.jjfox.co.uk/cohiba-siglo-vi.html",
-        "in_stock": false,
-        "product_name": "Cohiba Siglo VI"
-      }
-    },
-    "num_sources": 1
-  },
-  "Cohiba|Maduro 5 Genios|25": {
-    "brand": "Cohiba",
-    "name": "Maduro 5 Genios",
-    "box_size": 25,
-    "price": 39.0,
-    "sources": {
-      "JJ Fox": {
-        "price": 39.0,
-        "url": "https://www.jjfox.co.uk/cohiba-maduro-5-genios-603.html",
-        "in_stock": false,
-        "product_name": "Cohiba Maduro 5 Genios"
-      }
-    },
-    "num_sources": 1
-  },
   "Cohiba|Maduro 5 Magicos|25": {
     "brand": "Cohiba",
     "name": "Maduro 5 Magicos",
@@ -85,21 +55,6 @@
         "url": "https://www.jjfox.co.uk/cohiba-maduro-5-magicos.html",
         "in_stock": true,
         "product_name": "Cohiba Maduro 5 Magicos"
-      }
-    },
-    "num_sources": 1
-  },
-  "Cohiba|Behike 52|10": {
-    "brand": "Cohiba",
-    "name": "Behike 52",
-    "box_size": 10,
-    "price": 7000.0,
-    "sources": {
-      "JJ Fox": {
-        "price": 7000.0,
-        "url": "https://www.jjfox.co.uk/cohiba-behike-56-150933.html",
-        "in_stock": true,
-        "product_name": "Cohiba Behike 56"
       }
     },
     "num_sources": 1
@@ -175,21 +130,6 @@
         "url": "https://www.jjfox.co.uk/trinindad-esmeralda.html",
         "in_stock": true,
         "product_name": "Trinidad Esmeralda"
-      }
-    },
-    "num_sources": 1
-  },
-  "Cohiba|Siglo VI|10": {
-    "brand": "Cohiba",
-    "name": "Siglo VI",
-    "box_size": 10,
-    "price": 27.0,
-    "sources": {
-      "JJ Fox": {
-        "price": 27.0,
-        "url": "https://www.jjfox.co.uk/cohiba-siglo-vi.html",
-        "in_stock": false,
-        "product_name": "Cohiba Siglo VI"
       }
     },
     "num_sources": 1

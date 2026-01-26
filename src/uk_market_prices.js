@@ -1,6 +1,6 @@
 // UK Market Prices - Auto-generated
-// Updated: 2026-01-26 19:38
-// Cigars with prices: 13/21
+// Updated: 2026-01-26 20:00
+// Cigars with prices: 9/21
 
 export const ukMarketPrices = {
   "Montecristo|Brillantes|18": {
@@ -36,45 +36,12 @@ export const ukMarketPrices = {
     },
     "updated": "2026-01-26"
   },
-  "Cohiba|Siglo VI|25": {
-    "price": 27.0,
-    "sources": {
-      "JJ Fox": {
-        "price": 27.0,
-        "url": "https://www.jjfox.co.uk/cohiba-siglo-vi.html",
-        "in_stock": false
-      }
-    },
-    "updated": "2026-01-26"
-  },
-  "Cohiba|Maduro 5 Genios|25": {
-    "price": 39.0,
-    "sources": {
-      "JJ Fox": {
-        "price": 39.0,
-        "url": "https://www.jjfox.co.uk/cohiba-maduro-5-genios-603.html",
-        "in_stock": false
-      }
-    },
-    "updated": "2026-01-26"
-  },
   "Cohiba|Maduro 5 Magicos|25": {
     "price": 2700.0,
     "sources": {
       "JJ Fox": {
         "price": 2700.0,
         "url": "https://www.jjfox.co.uk/cohiba-maduro-5-magicos.html",
-        "in_stock": true
-      }
-    },
-    "updated": "2026-01-26"
-  },
-  "Cohiba|Behike 52|10": {
-    "price": 7000.0,
-    "sources": {
-      "JJ Fox": {
-        "price": 7000.0,
-        "url": "https://www.jjfox.co.uk/cohiba-behike-56-150933.html",
         "in_stock": true
       }
     },
@@ -131,17 +98,6 @@ export const ukMarketPrices = {
         "price": 860.0,
         "url": "https://www.jjfox.co.uk/trinindad-esmeralda.html",
         "in_stock": true
-      }
-    },
-    "updated": "2026-01-26"
-  },
-  "Cohiba|Siglo VI|10": {
-    "price": 27.0,
-    "sources": {
-      "JJ Fox": {
-        "price": 27.0,
-        "url": "https://www.jjfox.co.uk/cohiba-siglo-vi.html",
-        "in_stock": false
       }
     },
     "updated": "2026-01-26"
