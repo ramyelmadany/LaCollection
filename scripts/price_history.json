@@ -58,6 +58,14 @@
         "Havana House",
         "My Smoking Shop"
       ]
+    },
+    {
+      "date": "2026-01-26",
+      "price_gbp": 1377.99,
+      "sources": [
+        "Havana House",
+        "My Smoking Shop"
+      ]
     }
   ],
   "Cohiba|Maduro 5 Magicos|25": [
@@ -118,6 +126,14 @@
       "sources": [
         "Havana House"
       ]
+    },
+    {
+      "date": "2026-01-26",
+      "price_gbp": 859.5,
+      "sources": [
+        "CGars",
+        "Cigar Club"
+      ]
     }
   ],
   "Cohiba|Behike 52|10": [
@@ -172,6 +188,14 @@
       "price_gbp": 3399.0,
       "sources": [
         "CGars"
+      ]
+    },
+    {
+      "date": "2026-01-26",
+      "price_gbp": 3099.5,
+      "sources": [
+        "CGars",
+        "Cigar Club"
       ]
     }
   ],
@@ -236,6 +260,13 @@
       "sources": [
         "Havana House"
       ]
+    },
+    {
+      "date": "2026-01-26",
+      "price_gbp": 813.0,
+      "sources": [
+        "CGars"
+      ]
     }
   ],
   "Cohiba|Behike 56|10": [
@@ -293,6 +324,15 @@
         "Havana House",
         "JJ Fox"
       ]
+    },
+    {
+      "date": "2026-01-26",
+      "price_gbp": 5233.0,
+      "sources": [
+        "CGars",
+        "Havana House",
+        "Cigar Club"
+      ]
     }
   ],
   "Cohiba|Lanceros|25": [
@@ -348,6 +388,15 @@
       "sources": [
         "CGars",
         "Havana House"
+      ]
+    },
+    {
+      "date": "2026-01-26",
+      "price_gbp": 2583.0,
+      "sources": [
+        "CGars",
+        "Havana House",
+        "Cigar Club"
       ]
     }
   ],
@@ -522,6 +571,13 @@
       "sources": [
         "CGars"
       ]
+    },
+    {
+      "date": "2026-01-26",
+      "price_gbp": 3823.0,
+      "sources": [
+        "CGars"
+      ]
     }
   ],
   "Bolivar|New Gold Medal|10": [
@@ -562,6 +618,13 @@
     },
     {
       "date": "2026-01-23",
+      "price_gbp": 899.99,
+      "sources": [
+        "CGars"
+      ]
+    },
+    {
+      "date": "2026-01-26",
       "price_gbp": 899.99,
       "sources": [
         "CGars"
@@ -611,6 +674,13 @@
       "price_gbp": 1600.0,
       "sources": [
         "Havana House"
+      ]
+    },
+    {
+      "date": "2026-01-26",
+      "price_gbp": 97.0,
+      "sources": [
+        "Cigar Club"
       ]
     }
   ],
@@ -667,6 +737,14 @@
       "sources": [
         "Havana House"
       ]
+    },
+    {
+      "date": "2026-01-26",
+      "price_gbp": 1109.5,
+      "sources": [
+        "CGars",
+        "Cigar Club"
+      ]
     }
   ],
   "Partagas|Linea Maestra Maestros|20": [
@@ -719,6 +797,14 @@
         "CGars",
         "Havana House"
       ]
+    },
+    {
+      "date": "2026-01-26",
+      "price_gbp": 1396.7,
+      "sources": [
+        "CGars",
+        "Havana House"
+      ]
     }
   ],
   "Hoyo de Monterrey|Petit Robustos|25": [
@@ -760,6 +846,14 @@
     },
     {
       "date": "2026-01-23",
+      "price_gbp": 655.25,
+      "sources": [
+        "Havana House",
+        "My Smoking Shop"
+      ]
+    },
+    {
+      "date": "2026-01-26",
       "price_gbp": 655.25,
       "sources": [
         "Havana House",
@@ -823,6 +917,15 @@
       "sources": [
         "Havana House"
       ]
+    },
+    {
+      "date": "2026-01-26",
+      "price_gbp": 1361.33,
+      "sources": [
+        "CGars",
+        "Havana House",
+        "Cigar Club"
+      ]
     }
   ],
   "Cohiba|Siglo VI|10": [
@@ -867,6 +970,13 @@
       "price_gbp": 1355.0,
       "sources": [
         "CGars"
+      ]
+    },
+    {
+      "date": "2026-01-26",
+      "price_gbp": 97.0,
+      "sources": [
+        "Cigar Club"
       ]
     }
   ],
@@ -918,6 +1028,15 @@
         "Havana House",
         "My Smoking Shop"
       ]
+    },
+    {
+      "date": "2026-01-26",
+      "price_gbp": 1189.66,
+      "sources": [
+        "CGars",
+        "Havana House",
+        "My Smoking Shop"
+      ]
     }
   ],
   "Trinidad|Robusto Extra|12": [
@@ -959,6 +1078,15 @@
       "sources": [
         "CGars",
         "Havana House"
+      ]
+    },
+    {
+      "date": "2026-01-26",
+      "price_gbp": 948.0,
+      "sources": [
+        "CGars",
+        "Havana House",
+        "Cigar Club"
       ]
     }
   ],
@@ -1022,6 +1150,14 @@
         "CGars",
         "Havana House"
       ]
+    },
+    {
+      "date": "2026-01-26",
+      "price_gbp": 814.0,
+      "sources": [
+        "CGars",
+        "Havana House"
+      ]
     }
   ],
   "Partagas|Lusitanias|10": [
@@ -1037,6 +1173,23 @@
       "price_gbp": 699.0,
       "sources": [
         "CGars"
+      ]
+    },
+    {
+      "date": "2026-01-26",
+      "price_gbp": 637.0,
+      "sources": [
+        "CGars",
+        "Cigar Club"
+      ]
+    }
+  ],
+  "Montecristo|Linea 1935 Leyenda|20": [
+    {
+      "date": "2026-01-26",
+      "price_gbp": 425.0,
+      "sources": [
+        "Havana House"
       ]
     }
   ]
