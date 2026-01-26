@@ -1,5 +1,5 @@
 // UK Market Prices - Auto-generated
-// Updated: 2026-01-26 16:19
+// Updated: 2026-01-26 16:39
 // Cigars with prices: 19/21
 
 export const ukMarketPrices = {
