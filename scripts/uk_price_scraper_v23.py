@@ -161,9 +161,12 @@ def load_inventory():
                     col = col.strip().strip('"')
                     if col == 'Brand': brand_idx = j
                     elif col == 'Name': name_idx = j
-                    elif 'Number' in col and 'Box' in col: box_idx = j
+                    # Match "Number / Box" or "Number/Box" but NOT "Box Number"
+                    elif ('Number' in col and '/' in col and 'Box' in col) or col == 'Number / Box' or col == 'Number/Box':
+                        box_idx = j
                 
                 if all(x is not None for x in [brand_idx, name_idx, box_idx]):
+                    print(f"  Found columns: Brand={brand_idx}, Name={name_idx}, Box={box_idx}")
                     i += 1
                     while i < len(lines):
                         row = lines[i]
@@ -1076,10 +1079,10 @@ def save(results):
 
 def main():
     print("=" * 60)
-    print("UK CIGAR PRICE SCRAPER v22")
+    print("UK CIGAR PRICE SCRAPER v23")
     print("=" * 60)
     print(f"Date: {datetime.now()}")
-    print("Fixes: JJ Fox pack extraction, outlier filtering, +2 retailers")
+    print("Fixes: Cigar Club, Davidoff London, inventory column detection")
     
     cigars = load_inventory()
     if not cigars:
