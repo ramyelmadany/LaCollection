@@ -355,35 +355,30 @@ def get_product_variants(product_url):
         
         # Method 3: Simple product - single price with box size in details or URL
         if not variants:
-            # Find the main product price - try multiple selectors
+            # Find the main product price
             price = None
-            price_selectors = [
-                '.product-feature .price',
-                '.summary .price .woocommerce-Price-amount',
-                '.summary .price',
-                '.woocommerce-Price-amount',
-                'p.price'
-            ]
+            price_el = soup.select_one('.product-feature .price, .summary .price .woocommerce-Price-amount')
+            price_text = price_el.get_text() if price_el else ''
+            price_match = re.search(r'£([\d,]+\.?\d*)', price_text)
             
-            for selector in price_selectors:
-                price_el = soup.select_one(selector)
-                if price_el:
-                    price_text = price_el.get_text()
-                    price_match = re.search(r'£([\d,]+\.?\d*)', price_text)
-                    if price_match:
-                        price = float(price_match.group(1).replace(',', ''))
-                        if price > 50:  # Skip cart prices like £0.00
-                            break
-                        price = None
+            if not price_match:
+                # Try finding price in product-feature area specifically
+                feature_area = soup.select_one('.product-features, .product-feature')
+                if feature_area:
+                    feature_text = feature_area.get_text()
+                    price_match = re.search(r'£([\d,]+\.?\d*)', feature_text)
             
-            # Fallback: find price in page text (first substantial price)
-            if not price:
+            # Fallback: find first substantial price in page text
+            if not price_match:
                 all_prices = re.findall(r'£([\d,]+\.?\d*)', page_text)
                 for p in all_prices:
                     val = float(p.replace(',', ''))
-                    if val > 100:  # Skip small prices (accessories, cart)
+                    if val > 50:  # Skip cart prices like £0.00
                         price = val
                         break
+            
+            if price_match:
+                price = float(price_match.group(1).replace(',', ''))
             
             if price:
                 
@@ -425,8 +420,8 @@ def get_product_variants(product_url):
                             box_size = potential_size
                 
                 # Validate price is reasonable for the box size
-                # Minimum prices: ~£25 per cigar for premium Cubans
-                min_price = box_size * 25 if box_size else 100
+                # Minimum prices: ~£15 per cigar for premium Cubans (lowered for safety)
+                min_price = box_size * 15 if box_size else 50
                 
                 if box_size and price >= min_price:
                     in_stock = 'out of stock' not in page_text.lower()
