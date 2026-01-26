@@ -3,28 +3,13 @@
     "brand": "Montecristo",
     "name": "Brillantes",
     "box_size": 18,
-    "price": 1750.0,
+    "price": 2250.0,
     "sources": {
-      "Cigar Club": {
-        "price": 1750.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/montecristo-cigars/montecristo-brillantes-year-of-the-dragon-2024-cigar/",
+      "JJ Fox": {
+        "price": 2250.0,
+        "url": "https://www.jjfox.co.uk/montecristo-brillantes-year-of-the-dragon.html",
         "in_stock": true,
-        "product_name": "Montecristo Brillantes Year of the Dragon 2024 Cigar - Box of 18"
-      }
-    },
-    "num_sources": 1
-  },
-  "Trinidad|Robusto Extra|12": {
-    "brand": "Trinidad",
-    "name": "Robusto Extra",
-    "box_size": 12,
-    "price": 895.0,
-    "sources": {
-      "Cigar Club": {
-        "price": 895.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/trinidad-cigars/trinidad-robusto-extra-cigar-box-of-12/",
-        "in_stock": true,
-        "product_name": "Trinidad Robusto Extra Cigar \u2013 Box of 12 - Box of 12"
+        "product_name": "Montecristo Brillantes Year of The Dragon"
       }
     },
     "num_sources": 1
@@ -33,28 +18,13 @@
     "brand": "Montecristo",
     "name": "Linea 1935 Leyenda",
     "box_size": 20,
-    "price": 1450.0,
+    "price": 1360.0,
     "sources": {
-      "Cigar Club": {
-        "price": 1450.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/montecristo-cigars/montecristo-linea-1935-leyenda-cigar/",
+      "JJ Fox": {
+        "price": 1360.0,
+        "url": "https://www.jjfox.co.uk/montecristo-linea-1935-maltes.html",
         "in_stock": true,
-        "product_name": "Montecristo Linea 1935 Leyenda Cigar - Box of 20"
-      }
-    },
-    "num_sources": 1
-  },
-  "Ramon Allones|Absolutos|20": {
-    "brand": "Ramon Allones",
-    "name": "Absolutos",
-    "box_size": 20,
-    "price": 1200.0,
-    "sources": {
-      "Cigar Club": {
-        "price": 1200.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/ramon-allones-cigars/ramon-allones-absolutos-limited-edition-2024/",
-        "in_stock": true,
-        "product_name": "Ramon Allones Absolutos- Limited Edition 2024 - Box of 20"
+        "product_name": "Montecristo Linea 1935 Maltes"
       }
     },
     "num_sources": 1
@@ -63,13 +33,13 @@
     "brand": "Partagas",
     "name": "Lusitanias",
     "box_size": 10,
-    "price": 575.0,
+    "price": 630.0,
     "sources": {
-      "Cigar Club": {
-        "price": 575.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/partagas-cigars/partagas-lusitanias/",
-        "in_stock": true,
-        "product_name": "Partagas Lusitanias - Box of 10"
+      "JJ Fox": {
+        "price": 630.0,
+        "url": "https://www.jjfox.co.uk/partagas-lusitanias-821.html",
+        "in_stock": false,
+        "product_name": "Partagas Lusitanias"
       }
     },
     "num_sources": 1
@@ -78,13 +48,13 @@
     "brand": "Cohiba",
     "name": "Siglo VI",
     "box_size": 25,
-    "price": 2800.0,
+    "price": 27.0,
     "sources": {
-      "Cigar Club": {
-        "price": 2800.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-1492/cohiba-siglo-vi/",
-        "in_stock": true,
-        "product_name": "Cohiba Siglo VI - Box of 25"
+      "JJ Fox": {
+        "price": 27.0,
+        "url": "https://www.jjfox.co.uk/cohiba-siglo-vi.html",
+        "in_stock": false,
+        "product_name": "Cohiba Siglo VI"
       }
     },
     "num_sources": 1
@@ -93,13 +63,13 @@
     "brand": "Cohiba",
     "name": "Maduro 5 Genios",
     "box_size": 25,
-    "price": 2850.0,
+    "price": 39.0,
     "sources": {
-      "Cigar Club": {
-        "price": 2850.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/maduro/cohiba-genios/",
-        "in_stock": true,
-        "product_name": "Cohiba Maduro 5 Genios Cigar - Box of 25"
+      "JJ Fox": {
+        "price": 39.0,
+        "url": "https://www.jjfox.co.uk/cohiba-maduro-5-genios-603.html",
+        "in_stock": false,
+        "product_name": "Cohiba Maduro 5 Genios"
       }
     },
     "num_sources": 1
@@ -108,13 +78,13 @@
     "brand": "Cohiba",
     "name": "Maduro 5 Magicos",
     "box_size": 25,
-    "price": 1650.0,
+    "price": 2700.0,
     "sources": {
-      "Cigar Club": {
-        "price": 1650.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/maduro/cohiba-magicos/",
+      "JJ Fox": {
+        "price": 2700.0,
+        "url": "https://www.jjfox.co.uk/cohiba-maduro-5-magicos.html",
         "in_stock": true,
-        "product_name": "Cohiba Magicos Maduro 5 - Box of 25"
+        "product_name": "Cohiba Maduro 5 Magicos"
       }
     },
     "num_sources": 1
@@ -123,13 +93,13 @@
     "brand": "Cohiba",
     "name": "Behike 52",
     "box_size": 10,
-    "price": 3500.0,
+    "price": 7000.0,
     "sources": {
-      "Cigar Club": {
-        "price": 3500.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/cohiba-behike-cohiba-cigars/cohiba-behike-bhk-54-box-10s/",
-        "in_stock": false,
-        "product_name": "Cohiba Behike BHK 54 \u2013 Box 10s - Box of 10"
+      "JJ Fox": {
+        "price": 7000.0,
+        "url": "https://www.jjfox.co.uk/cohiba-behike-56-150933.html",
+        "in_stock": true,
+        "product_name": "Cohiba Behike 56"
       }
     },
     "num_sources": 1
@@ -138,28 +108,13 @@
     "brand": "Partagas",
     "name": "Linea Maestra Maestros",
     "box_size": 20,
-    "price": 1150.0,
+    "price": 1700.0,
     "sources": {
-      "Cigar Club": {
-        "price": 1150.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/partagas-cigars/partagas-linea-maestra-maestro/",
+      "JJ Fox": {
+        "price": 1700.0,
+        "url": "https://www.jjfox.co.uk/partagas-linea-maestra-rito.html",
         "in_stock": true,
-        "product_name": "Partagas Linea Maestra Maestro - Box of 20"
-      }
-    },
-    "num_sources": 1
-  },
-  "Hoyo de Monterrey|Petit Robustos|25": {
-    "brand": "Hoyo de Monterrey",
-    "name": "Petit Robustos",
-    "box_size": 25,
-    "price": 597.5,
-    "sources": {
-      "Cigar Club": {
-        "price": 597.5,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/hoyo-de-monterrey-cigars/hoyo-de-monterrey-petit-robustos/",
-        "in_stock": true,
-        "product_name": "Hoyo De Monterrey Petit Robustos - Cabinet of 25"
+        "product_name": "Partagas Linea Maestra Rito"
       }
     },
     "num_sources": 1
@@ -168,13 +123,13 @@
     "brand": "Cohiba",
     "name": "Siglo I",
     "box_size": 25,
-    "price": 715.0,
+    "price": 770.0,
     "sources": {
-      "Cigar Club": {
-        "price": 715.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-1492/cohiba-siglo-i/",
+      "JJ Fox": {
+        "price": 770.0,
+        "url": "https://www.jjfox.co.uk/cohiba-siglo-i-628.html",
         "in_stock": true,
-        "product_name": "Cohiba Siglo I Cigars - Box of 25"
+        "product_name": "Cohiba Siglo I"
       }
     },
     "num_sources": 1
@@ -183,13 +138,13 @@
     "brand": "Cohiba",
     "name": "Medio Siglo",
     "box_size": 25,
-    "price": 1440.0,
+    "price": 1570.0,
     "sources": {
-      "Cigar Club": {
-        "price": 1440.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-1492/cohiba-medio-siglo/",
+      "JJ Fox": {
+        "price": 1570.0,
+        "url": "https://www.jjfox.co.uk/cohiba-medio-siglo.html",
         "in_stock": true,
-        "product_name": "Cohiba Medio Siglo - Cabinet of 25"
+        "product_name": "Cohiba Medio Siglo"
       }
     },
     "num_sources": 1
@@ -198,13 +153,13 @@
     "brand": "Cohiba",
     "name": "Behike 56",
     "box_size": 10,
-    "price": 3500.0,
+    "price": 7000.0,
     "sources": {
-      "Cigar Club": {
-        "price": 3500.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/cohiba-behike-cohiba-cigars/cohiba-behike-bhk-54-box-10s/",
-        "in_stock": false,
-        "product_name": "Cohiba Behike BHK 54 \u2013 Box 10s - Box of 10"
+      "JJ Fox": {
+        "price": 7000.0,
+        "url": "https://www.jjfox.co.uk/cohiba-behike-56-150933.html",
+        "in_stock": true,
+        "product_name": "Cohiba Behike 56"
       }
     },
     "num_sources": 1
@@ -213,28 +168,13 @@
     "brand": "Trinidad",
     "name": "Esmeralda",
     "box_size": 12,
-    "price": 725.0,
+    "price": 860.0,
     "sources": {
-      "Cigar Club": {
-        "price": 725.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/trinidad-cigars/trinidad-esmeralda-cigar-box-of-12/",
+      "JJ Fox": {
+        "price": 860.0,
+        "url": "https://www.jjfox.co.uk/trinindad-esmeralda.html",
         "in_stock": true,
-        "product_name": "Trinidad Esmeralda Cigar \u2013 Box of 12 - Box of 12"
-      }
-    },
-    "num_sources": 1
-  },
-  "Cohiba|Lanceros|25": {
-    "brand": "Cohiba",
-    "name": "Lanceros",
-    "box_size": 25,
-    "price": 1950.0,
-    "sources": {
-      "Cigar Club": {
-        "price": 1950.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-clasica/cohiba-lanceros/",
-        "in_stock": false,
-        "product_name": "Cohiba Lanceros - Box of 25"
+        "product_name": "Trinidad Esmeralda"
       }
     },
     "num_sources": 1
@@ -243,13 +183,13 @@
     "brand": "Cohiba",
     "name": "Siglo VI",
     "box_size": 10,
-    "price": 1225.0,
+    "price": 27.0,
     "sources": {
-      "Cigar Club": {
-        "price": 1225.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-1492/cohiba-siglo-vi/",
-        "in_stock": true,
-        "product_name": "Cohiba Siglo VI - Box of 10"
+      "JJ Fox": {
+        "price": 27.0,
+        "url": "https://www.jjfox.co.uk/cohiba-siglo-vi.html",
+        "in_stock": false,
+        "product_name": "Cohiba Siglo VI"
       }
     },
     "num_sources": 1

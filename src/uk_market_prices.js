@@ -1,191 +1,147 @@
 // UK Market Prices - Auto-generated
-// Updated: 2026-01-26 17:42
-// Cigars with prices: 17/21
+// Updated: 2026-01-26 19:38
+// Cigars with prices: 13/21
 
 export const ukMarketPrices = {
   "Montecristo|Brillantes|18": {
-    "price": 1750.0,
+    "price": 2250.0,
     "sources": {
-      "Cigar Club": {
-        "price": 1750.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/montecristo-cigars/montecristo-brillantes-year-of-the-dragon-2024-cigar/",
-        "in_stock": true
-      }
-    },
-    "updated": "2026-01-26"
-  },
-  "Trinidad|Robusto Extra|12": {
-    "price": 895.0,
-    "sources": {
-      "Cigar Club": {
-        "price": 895.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/trinidad-cigars/trinidad-robusto-extra-cigar-box-of-12/",
+      "JJ Fox": {
+        "price": 2250.0,
+        "url": "https://www.jjfox.co.uk/montecristo-brillantes-year-of-the-dragon.html",
         "in_stock": true
       }
     },
     "updated": "2026-01-26"
   },
   "Montecristo|Linea 1935 Leyenda|20": {
-    "price": 1450.0,
+    "price": 1360.0,
     "sources": {
-      "Cigar Club": {
-        "price": 1450.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/montecristo-cigars/montecristo-linea-1935-leyenda-cigar/",
-        "in_stock": true
-      }
-    },
-    "updated": "2026-01-26"
-  },
-  "Ramon Allones|Absolutos|20": {
-    "price": 1200.0,
-    "sources": {
-      "Cigar Club": {
-        "price": 1200.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/ramon-allones-cigars/ramon-allones-absolutos-limited-edition-2024/",
+      "JJ Fox": {
+        "price": 1360.0,
+        "url": "https://www.jjfox.co.uk/montecristo-linea-1935-maltes.html",
         "in_stock": true
       }
     },
     "updated": "2026-01-26"
   },
   "Partagas|Lusitanias|10": {
-    "price": 575.0,
+    "price": 630.0,
     "sources": {
-      "Cigar Club": {
-        "price": 575.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/partagas-cigars/partagas-lusitanias/",
-        "in_stock": true
+      "JJ Fox": {
+        "price": 630.0,
+        "url": "https://www.jjfox.co.uk/partagas-lusitanias-821.html",
+        "in_stock": false
       }
     },
     "updated": "2026-01-26"
   },
   "Cohiba|Siglo VI|25": {
-    "price": 2800.0,
+    "price": 27.0,
     "sources": {
-      "Cigar Club": {
-        "price": 2800.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-1492/cohiba-siglo-vi/",
-        "in_stock": true
+      "JJ Fox": {
+        "price": 27.0,
+        "url": "https://www.jjfox.co.uk/cohiba-siglo-vi.html",
+        "in_stock": false
       }
     },
     "updated": "2026-01-26"
   },
   "Cohiba|Maduro 5 Genios|25": {
-    "price": 2850.0,
+    "price": 39.0,
     "sources": {
-      "Cigar Club": {
-        "price": 2850.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/maduro/cohiba-genios/",
-        "in_stock": true
+      "JJ Fox": {
+        "price": 39.0,
+        "url": "https://www.jjfox.co.uk/cohiba-maduro-5-genios-603.html",
+        "in_stock": false
       }
     },
     "updated": "2026-01-26"
   },
   "Cohiba|Maduro 5 Magicos|25": {
-    "price": 1650.0,
+    "price": 2700.0,
     "sources": {
-      "Cigar Club": {
-        "price": 1650.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/maduro/cohiba-magicos/",
+      "JJ Fox": {
+        "price": 2700.0,
+        "url": "https://www.jjfox.co.uk/cohiba-maduro-5-magicos.html",
         "in_stock": true
       }
     },
     "updated": "2026-01-26"
   },
   "Cohiba|Behike 52|10": {
-    "price": 3500.0,
+    "price": 7000.0,
     "sources": {
-      "Cigar Club": {
-        "price": 3500.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/cohiba-behike-cohiba-cigars/cohiba-behike-bhk-54-box-10s/",
-        "in_stock": false
-      }
-    },
-    "updated": "2026-01-26"
-  },
-  "Partagas|Linea Maestra Maestros|20": {
-    "price": 1150.0,
-    "sources": {
-      "Cigar Club": {
-        "price": 1150.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/partagas-cigars/partagas-linea-maestra-maestro/",
+      "JJ Fox": {
+        "price": 7000.0,
+        "url": "https://www.jjfox.co.uk/cohiba-behike-56-150933.html",
         "in_stock": true
       }
     },
     "updated": "2026-01-26"
   },
-  "Hoyo de Monterrey|Petit Robustos|25": {
-    "price": 597.5,
+  "Partagas|Linea Maestra Maestros|20": {
+    "price": 1700.0,
     "sources": {
-      "Cigar Club": {
-        "price": 597.5,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/hoyo-de-monterrey-cigars/hoyo-de-monterrey-petit-robustos/",
+      "JJ Fox": {
+        "price": 1700.0,
+        "url": "https://www.jjfox.co.uk/partagas-linea-maestra-rito.html",
         "in_stock": true
       }
     },
     "updated": "2026-01-26"
   },
   "Cohiba|Siglo I|25": {
-    "price": 715.0,
+    "price": 770.0,
     "sources": {
-      "Cigar Club": {
-        "price": 715.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-1492/cohiba-siglo-i/",
+      "JJ Fox": {
+        "price": 770.0,
+        "url": "https://www.jjfox.co.uk/cohiba-siglo-i-628.html",
         "in_stock": true
       }
     },
     "updated": "2026-01-26"
   },
   "Cohiba|Medio Siglo|25": {
-    "price": 1440.0,
+    "price": 1570.0,
     "sources": {
-      "Cigar Club": {
-        "price": 1440.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-1492/cohiba-medio-siglo/",
+      "JJ Fox": {
+        "price": 1570.0,
+        "url": "https://www.jjfox.co.uk/cohiba-medio-siglo.html",
         "in_stock": true
       }
     },
     "updated": "2026-01-26"
   },
   "Cohiba|Behike 56|10": {
-    "price": 3500.0,
+    "price": 7000.0,
     "sources": {
-      "Cigar Club": {
-        "price": 3500.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/cohiba-behike-cohiba-cigars/cohiba-behike-bhk-54-box-10s/",
-        "in_stock": false
+      "JJ Fox": {
+        "price": 7000.0,
+        "url": "https://www.jjfox.co.uk/cohiba-behike-56-150933.html",
+        "in_stock": true
       }
     },
     "updated": "2026-01-26"
   },
   "Trinidad|Esmeralda|12": {
-    "price": 725.0,
+    "price": 860.0,
     "sources": {
-      "Cigar Club": {
-        "price": 725.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/trinidad-cigars/trinidad-esmeralda-cigar-box-of-12/",
+      "JJ Fox": {
+        "price": 860.0,
+        "url": "https://www.jjfox.co.uk/trinindad-esmeralda.html",
         "in_stock": true
-      }
-    },
-    "updated": "2026-01-26"
-  },
-  "Cohiba|Lanceros|25": {
-    "price": 1950.0,
-    "sources": {
-      "Cigar Club": {
-        "price": 1950.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-clasica/cohiba-lanceros/",
-        "in_stock": false
       }
     },
     "updated": "2026-01-26"
   },
   "Cohiba|Siglo VI|10": {
-    "price": 1225.0,
+    "price": 27.0,
     "sources": {
-      "Cigar Club": {
-        "price": 1225.0,
-        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-1492/cohiba-siglo-vi/",
-        "in_stock": true
+      "JJ Fox": {
+        "price": 27.0,
+        "url": "https://www.jjfox.co.uk/cohiba-siglo-vi.html",
+        "in_stock": false
       }
     },
     "updated": "2026-01-26"
