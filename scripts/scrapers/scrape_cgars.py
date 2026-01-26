@@ -112,6 +112,7 @@ def extract_box_size(text):
     patterns = [
         (r'box\s*of\s*(\d+)', 'box of N'),
         (r'cabinet\s*of\s*(\d+)', 'cabinet of N'),
+        (r'-\s*cabinet\s*of\s*(\d+)', '- cabinet of N'),
         (r'slb\s*of\s*(\d+)', 'SLB of N'),
         (r'vslb\s*of\s*(\d+)', 'VSLB of N'),
         (r'slb\s*(\d+)', 'SLB N'),
@@ -124,6 +125,7 @@ def extract_box_size(text):
         (r'-\s*(\d+)\s*cigars?', '- N cigars'),
         (r'(\d+)\s*cigars?\s*(?:box|cab)', 'N cigars box'),
         (r'pack\s*of\s*(\d+)', 'pack of N'),
+        (r'-\s*pack\s*of\s*(\d+)', '- pack of N'),
     ]
     
     for pattern, desc in patterns:
@@ -223,12 +225,19 @@ def search_products(term):
         time.sleep(random.uniform(0.5, 1.0))
         
         init()  # Ensure browser is ready
-        _page.goto(url, wait_until='domcontentloaded', timeout=30000)
+        _page.goto(url, wait_until='networkidle', timeout=30000)
         
+        # Wait for products to load
         try:
-            _page.wait_for_selector('.product-listing-box', timeout=5000)
+            _page.wait_for_selector('.product-listing-box', timeout=10000)
         except:
             pass
+        
+        # Scroll to load any lazy-loaded content
+        _page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
+        time.sleep(0.5)
+        _page.evaluate('window.scrollTo(0, 0)')
+        time.sleep(0.5)
         
         html = _page.content()
         soup = BeautifulSoup(html, 'html.parser')
@@ -236,7 +245,7 @@ def search_products(term):
         for box in soup.select('.product-listing-box'):
             try:
                 name_el = box.select_one('.product-name')
-                price_el = box.select_one('.new_price')
+                price_el = box.select_one('.now_price')
                 
                 if not name_el:
                     continue
