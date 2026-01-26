@@ -206,9 +206,28 @@ def search_products(term):
         time.sleep(random.uniform(0.5, 1.0))
         init()
         
-        _page.goto(url, wait_until='domcontentloaded', timeout=30000)
+        _page.goto(url, wait_until='networkidle', timeout=30000)
         
-        # Wait for products
+        # Check if we were redirected to a product page (single result)
+        current_url = _page.url
+        if '/shop/' in current_url and '/product/' not in url:
+            # We were redirected to a product page - extract product info
+            html = _page.content()
+            soup = BeautifulSoup(html, 'html.parser')
+            
+            title_el = soup.select_one('h1.product_title, h1')
+            if title_el:
+                name = title_el.get_text(strip=True)
+                products.append({
+                    'name': name,
+                    'url': current_url,
+                    'normalized': normalize_name(name)
+                })
+                print(f"    Cigar Club '{term}': 1 product (direct)")
+                _cache[cache_key] = products
+                return products
+        
+        # Wait for products on search results page
         try:
             _page.wait_for_selector('li.product, .products li', timeout=5000)
         except:
@@ -336,14 +355,17 @@ def get_product_variants(product_url):
         
         # Method 3: Simple product - single price with box size in details or URL
         if not variants:
-            # Find the main product price
-            price_el = soup.select_one('.price .woocommerce-Price-amount, .summary .price')
+            # Find the main product price - look for the prominent price display
+            price_el = soup.select_one('.product-feature .price, .summary .price .woocommerce-Price-amount')
             price_text = price_el.get_text() if price_el else ''
             price_match = re.search(r'£([\d,]+\.?\d*)', price_text)
             
             if not price_match:
-                # Try finding price in page text
-                price_match = re.search(r'£([\d,]+\.?\d*)', page_text)
+                # Try finding price in product-feature area specifically
+                feature_area = soup.select_one('.product-features, .product-feature')
+                if feature_area:
+                    feature_text = feature_area.get_text()
+                    price_match = re.search(r'£([\d,]+\.?\d*)', feature_text)
             
             if price_match:
                 price = float(price_match.group(1).replace(',', ''))
@@ -378,7 +400,11 @@ def get_product_variants(product_url):
                             box_size = common_size
                             break
                 
-                if box_size and price > 20:
+                # Validate price is reasonable for the box size
+                # Minimum prices: ~£30 per cigar for premium Cubans
+                min_price = box_size * 25 if box_size else 100
+                
+                if box_size and price >= min_price:
                     in_stock = 'out of stock' not in page_text.lower()
                     variants.append({
                         'variant_name': f'Box of {box_size}',
