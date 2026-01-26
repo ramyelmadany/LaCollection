@@ -390,9 +390,9 @@ def get_product_variants(product_url):
                 if packaging_match:
                     box_size = int(packaging_match.group(1))
                 
-                # Check for "box of X" anywhere in text (more flexible)
+                # Check for "box of X" or "boxes of X" anywhere in text (more flexible)
                 if not box_size:
-                    box_match = re.search(r'box of (\d+)', page_text, re.IGNORECASE)
+                    box_match = re.search(r'box(?:es)? of (\d+)', page_text, re.IGNORECASE)
                     if box_match:
                         box_size = int(box_match.group(1))
                 
