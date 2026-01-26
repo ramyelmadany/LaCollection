@@ -47,6 +47,22 @@ except ImportError:
     install("requests")
     import requests
 
+# Google Sheets API with service account
+try:
+    from google.oauth2 import service_account
+    from googleapiclient.discovery import build
+    GOOGLE_API_AVAILABLE = True
+except ImportError:
+    try:
+        install("google-auth")
+        install("google-api-python-client")
+        from google.oauth2 import service_account
+        from googleapiclient.discovery import build
+        GOOGLE_API_AVAILABLE = True
+    except:
+        GOOGLE_API_AVAILABLE = False
+        print("Warning: Google API libraries not available")
+
 SHEET_ID = "10A_FMj8eotx-xlzAlCNFxjOr3xEOuO4p5GxAZjHC86A"
 SHEET_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv&gid=1253000469"
 
@@ -143,11 +159,102 @@ def fetch_page(url, wait_selector=None, wait_time=3):
         return None
 
 
-def load_inventory():
-    print("Loading inventory...")
+def load_inventory_from_api():
+    """Load inventory using Google Sheets API with service account."""
+    print("Loading inventory via Google Sheets API...")
+    
+    # Check for credentials
+    creds_json = os.environ.get('GOOGLE_SHEETS_CREDENTIALS')
+    if not creds_json:
+        print("  No GOOGLE_SHEETS_CREDENTIALS environment variable found")
+        return None
+    
+    try:
+        # Parse credentials from environment variable
+        creds_data = json.loads(creds_json)
+        credentials = service_account.Credentials.from_service_account_info(
+            creds_data,
+            scopes=['https://www.googleapis.com/auth/spreadsheets.readonly']
+        )
+        
+        # Build the Sheets API service
+        service = build('sheets', 'v4', credentials=credentials)
+        
+        # Get the data from the sheet (adjust range as needed)
+        # Using the inventory tab (gid=1253000469 corresponds to a specific sheet)
+        result = service.spreadsheets().values().get(
+            spreadsheetId=SHEET_ID,
+            range='Inventory!A:S'  # Adjust sheet name if different
+        ).execute()
+        
+        rows = result.get('values', [])
+        print(f"  Loaded {len(rows)} rows from API")
+        
+        if not rows:
+            return []
+        
+        # Find header row
+        cigars = []
+        seen = set()
+        header_idx = None
+        brand_idx = name_idx = box_idx = None
+        
+        for i, row in enumerate(rows):
+            row_str = ','.join(str(c) for c in row)
+            if 'Brand' in row_str and 'Name' in row_str:
+                header_idx = i
+                for j, col in enumerate(row):
+                    col_clean = str(col).strip()
+                    if col_clean == 'Brand':
+                        brand_idx = j
+                    elif col_clean == 'Name':
+                        name_idx = j
+                    elif '/' in col_clean and 'Number' in col_clean and 'Box' in col_clean:
+                        box_idx = j
+                
+                if all(x is not None for x in [brand_idx, name_idx, box_idx]):
+                    print(f"  Found columns: Brand={brand_idx}, Name={name_idx}, Box={box_idx}")
+                    break
+        
+        if header_idx is None or box_idx is None:
+            print("  Could not find required columns")
+            return []
+        
+        # Parse data rows
+        for row in rows[header_idx + 1:]:
+            if len(row) > max(brand_idx, name_idx, box_idx):
+                brand = str(row[brand_idx]).strip() if brand_idx < len(row) else ''
+                name = str(row[name_idx]).strip() if name_idx < len(row) else ''
+                box_raw = str(row[box_idx]).strip() if box_idx < len(row) else ''
+                
+                if brand and name and box_raw:
+                    try:
+                        box = int(re.search(r'\d+', box_raw).group())
+                        if 3 <= box <= 50:
+                            key = f"{brand}|{name}|{box}"
+                            if key not in seen:
+                                seen.add(key)
+                                cigars.append({"brand": brand, "name": name, "box_size": box, "key": key})
+                    except:
+                        pass
+        
+        print(f"  Found {len(cigars)} cigars")
+        return cigars
+        
+    except Exception as e:
+        print(f"  API Error: {e}")
+        return None
+
+
+def load_inventory_from_url():
+    """Fallback: Load inventory from public URL."""
+    print("Loading inventory via public URL...")
     try:
         resp = requests.get(SHEET_URL, timeout=30)
         lines = resp.text.strip().split('\n')
+        print(f"  Loaded {len(lines)} lines from sheet")
+        if lines:
+            print(f"  First line: {lines[0][:200]}...")
         cigars = []
         seen = set()
         
@@ -155,15 +262,20 @@ def load_inventory():
         while i < len(lines):
             line = lines[i]
             if 'Brand' in line and 'Name' in line:
+                print(f"  Found header line at {i}: {line[:150]}...")
                 parts = line.split(',')
                 brand_idx = name_idx = box_idx = None
                 for j, col in enumerate(parts):
-                    col = col.strip().strip('"')
-                    if col == 'Brand': brand_idx = j
-                    elif col == 'Name': name_idx = j
-                    # Match "Number / Box" or "Number/Box" but NOT "Box Number"
-                    elif ('Number' in col and '/' in col and 'Box' in col) or col == 'Number / Box' or col == 'Number/Box':
+                    col_clean = col.strip().strip('"')
+                    if col_clean == 'Brand': 
+                        brand_idx = j
+                        print(f"    Brand at index {j}")
+                    elif col_clean == 'Name': 
+                        name_idx = j
+                        print(f"    Name at index {j}")
+                    elif '/' in col_clean and 'Number' in col_clean and 'Box' in col_clean:
                         box_idx = j
+                        print(f"    Number/Box at index {j}: '{col_clean}'")
                 
                 if all(x is not None for x in [brand_idx, name_idx, box_idx]):
                     print(f"  Found columns: Brand={brand_idx}, Name={name_idx}, Box={box_idx}")
@@ -205,8 +317,20 @@ def load_inventory():
         print(f"  Found {len(cigars)} cigars")
         return cigars
     except Exception as e:
-        print(f"  Error: {e}")
+        print(f"  URL Error: {e}")
         return []
+
+
+def load_inventory():
+    """Load inventory - try API first, fall back to URL."""
+    # Try Google Sheets API first
+    if GOOGLE_API_AVAILABLE:
+        cigars = load_inventory_from_api()
+        if cigars is not None:
+            return cigars
+    
+    # Fall back to public URL
+    return load_inventory_from_url()
 
 
 def get_stem(word):
