@@ -257,19 +257,29 @@ def get_product_variants(product_url):
     
     try:
         time.sleep(random.uniform(0.3, 0.6))
-        _page.goto(product_url, wait_until='domcontentloaded', timeout=30000)
+        _page.goto(product_url, wait_until='networkidle', timeout=30000)
         
-        # Wait for product features to load
+        # Wait for product features to load - try multiple selectors
         try:
-            _page.wait_for_selector('.product-feature, .product-features', timeout=5000)
+            _page.wait_for_selector('.product-feature, .product-features, .variations', timeout=8000)
         except:
-            pass
+            # Try waiting a bit more
+            time.sleep(2)
         
         html = _page.content()
         soup = BeautifulSoup(html, 'html.parser')
         
         # Find all product-feature divs
         features = soup.select('.product-feature')
+        
+        # Debug: if no features found, try alternative selectors
+        if not features:
+            # Try other possible selectors
+            features = soup.select('.product-features > div')
+        
+        if not features:
+            # Check if there's variant info in a different format
+            features = soup.select('[class*="variation"], [class*="variant"]')
         
         for feature in features:
             try:
@@ -300,6 +310,43 @@ def get_product_variants(product_url):
                     })
             except:
                 continue
+        
+        # Fallback: parse from page text if no variants found via DOM
+        if not variants:
+            page_text = soup.get_text()
+            # Look for patterns like "Box of 25\n£2,800.00"
+            box_patterns = [
+                (r'Box of (\d+)[^\d£]*£([\d,]+\.?\d*)', 'Box of {}'),
+                (r'Single[^\d£]*£([\d,]+\.?\d*)', 'Single'),
+                (r'Cabinet of (\d+)[^\d£]*£([\d,]+\.?\d*)', 'Cabinet of {}'),
+            ]
+            
+            for pattern, name_fmt in box_patterns:
+                matches = re.findall(pattern, page_text, re.IGNORECASE)
+                for match in matches:
+                    try:
+                        if isinstance(match, tuple) and len(match) == 2:
+                            if match[0].isdigit():
+                                box_size = int(match[0])
+                                price = float(match[1].replace(',', ''))
+                                variant_name = name_fmt.format(box_size)
+                            else:
+                                box_size = 1
+                                price = float(match[0].replace(',', ''))
+                                variant_name = name_fmt
+                        
+                            if box_size and price and price > 20:
+                                # Check if already added
+                                if not any(v['box_size'] == box_size for v in variants):
+                                    variants.append({
+                                        'variant_name': variant_name,
+                                        'box_size': box_size,
+                                        'price': price,
+                                        'in_stock': True,  # Assume in stock if not stated
+                                        'url': product_url
+                                    })
+                    except:
+                        continue
         
     except Exception as e:
         print(f"    Error fetching variants: {e}")
