@@ -1,6 +1,6 @@
 // UK Market Prices - Auto-generated
-// Updated: 2026-01-26 21:48
-// Cigars with prices: 9/21
+// Updated: 2026-01-26 22:38
+// Cigars with prices: 10/21
 
 export const ukMarketPrices = {
   "Montecristo|Brillantes|18": {
@@ -75,6 +75,17 @@ export const ukMarketPrices = {
       "JJ Fox": {
         "price": 770.0,
         "url": "https://www.jjfox.co.uk/cohiba-siglo-i-628.html",
+        "in_stock": true
+      }
+    },
+    "updated": "2026-01-26"
+  },
+  "Cohiba|Medio Siglo|25": {
+    "price": 1570.0,
+    "sources": {
+      "JJ Fox": {
+        "price": 1570.0,
+        "url": "https://www.jjfox.co.uk/cohiba-medio-siglo.html",
         "in_stock": true
       }
     },
