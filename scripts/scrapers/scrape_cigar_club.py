@@ -166,7 +166,10 @@ def get_search_terms(brand, name):
     brand_l = brand.lower()
     name_l = name.lower()
     
+    # Full name with brand
     terms.append(f"{brand} {name}")
+    
+    # Just the name
     terms.append(name)
     
     # Try singular version
@@ -178,8 +181,13 @@ def get_search_terms(brand, name):
             singular_name = ' '.join(name_words[:-1] + [stem])
             terms.append(f"{brand} {singular_name}")
     
+    # Just the last word (vitola name) - helps find "Genios", "Esmeralda", etc.
+    if name_words and len(name_words[-1]) > 3:
+        terms.append(name_words[-1])
+    
+    # First significant word with brand
     first_word = name_l.split()[0] if name_l.split() else ''
-    if first_word and first_word != brand_l:
+    if first_word and first_word != brand_l and len(first_word) > 2:
         terms.append(f"{brand} {first_word}")
     
     return terms
@@ -259,33 +267,23 @@ def get_product_variants(product_url):
         time.sleep(random.uniform(0.3, 0.6))
         _page.goto(product_url, wait_until='networkidle', timeout=30000)
         
-        # Wait for product features to load - try multiple selectors
+        # Wait for page to load
         try:
-            _page.wait_for_selector('.product-feature, .product-features, .variations', timeout=8000)
+            _page.wait_for_selector('.product-feature, .product-features, .price', timeout=8000)
         except:
-            # Try waiting a bit more
             time.sleep(2)
         
         html = _page.content()
         soup = BeautifulSoup(html, 'html.parser')
+        page_text = soup.get_text()
         
-        # Find all product-feature divs
+        # Method 1: Look for .product-feature elements (variable products)
         features = soup.select('.product-feature')
-        
-        # Debug: if no features found, try alternative selectors
-        if not features:
-            # Try other possible selectors
-            features = soup.select('.product-features > div')
-        
-        if not features:
-            # Check if there's variant info in a different format
-            features = soup.select('[class*="variation"], [class*="variant"]')
         
         for feature in features:
             try:
                 text = feature.get_text(separator=' ', strip=True)
                 
-                # Extract variant name (e.g., "Box of 25", "Single")
                 name_el = feature.select_one('span')
                 if not name_el:
                     continue
@@ -293,14 +291,12 @@ def get_product_variants(product_url):
                 variant_name = name_el.get_text(strip=True)
                 box_size = extract_box_size(variant_name)
                 
-                # Extract price
                 price_match = re.search(r'£([\d,]+\.?\d*)', text)
                 price = float(price_match.group(1).replace(',', '')) if price_match else None
                 
-                # Check stock status
                 in_stock = 'out of stock' not in text.lower()
                 
-                if box_size and price:
+                if box_size and price and price > 20:
                     variants.append({
                         'variant_name': variant_name,
                         'box_size': box_size,
@@ -311,42 +307,86 @@ def get_product_variants(product_url):
             except:
                 continue
         
-        # Fallback: parse from page text if no variants found via DOM
+        # Method 2: Text-based extraction for variable products
         if not variants:
-            page_text = soup.get_text()
-            # Look for patterns like "Box of 25\n£2,800.00"
             box_patterns = [
-                (r'Box of (\d+)[^\d£]*£([\d,]+\.?\d*)', 'Box of {}'),
-                (r'Single[^\d£]*£([\d,]+\.?\d*)', 'Single'),
-                (r'Cabinet of (\d+)[^\d£]*£([\d,]+\.?\d*)', 'Cabinet of {}'),
+                (r'Box of (\d+)\s*£([\d,]+\.?\d*)', 'Box of {}'),
+                (r'Box of (\d+)[^\d£]*?£([\d,]+\.?\d*)', 'Box of {}'),
+                (r'Cabinet of (\d+)\s*£([\d,]+\.?\d*)', 'Cabinet of {}'),
             ]
             
             for pattern, name_fmt in box_patterns:
-                matches = re.findall(pattern, page_text, re.IGNORECASE)
+                matches = re.findall(pattern, page_text, re.IGNORECASE | re.DOTALL)
                 for match in matches:
                     try:
-                        if isinstance(match, tuple) and len(match) == 2:
-                            if match[0].isdigit():
-                                box_size = int(match[0])
-                                price = float(match[1].replace(',', ''))
-                                variant_name = name_fmt.format(box_size)
-                            else:
-                                box_size = 1
-                                price = float(match[0].replace(',', ''))
-                                variant_name = name_fmt
+                        box_size = int(match[0])
+                        price = float(match[1].replace(',', ''))
+                        variant_name = name_fmt.format(box_size)
                         
-                            if box_size and price and price > 20:
-                                # Check if already added
-                                if not any(v['box_size'] == box_size for v in variants):
-                                    variants.append({
-                                        'variant_name': variant_name,
-                                        'box_size': box_size,
-                                        'price': price,
-                                        'in_stock': True,  # Assume in stock if not stated
-                                        'url': product_url
-                                    })
+                        if price > 20 and not any(v['box_size'] == box_size for v in variants):
+                            variants.append({
+                                'variant_name': variant_name,
+                                'box_size': box_size,
+                                'price': price,
+                                'in_stock': True,
+                                'url': product_url
+                            })
                     except:
                         continue
+        
+        # Method 3: Simple product - single price with box size in details or URL
+        if not variants:
+            # Find the main product price
+            price_el = soup.select_one('.price .woocommerce-Price-amount, .summary .price')
+            price_text = price_el.get_text() if price_el else ''
+            price_match = re.search(r'£([\d,]+\.?\d*)', price_text)
+            
+            if not price_match:
+                # Try finding price in page text
+                price_match = re.search(r'£([\d,]+\.?\d*)', page_text)
+            
+            if price_match:
+                price = float(price_match.group(1).replace(',', ''))
+                
+                # Find box size from various sources
+                box_size = None
+                
+                # Check "Packaging: Box of X"
+                packaging_match = re.search(r'Packaging[:\s]+Box of (\d+)', page_text, re.IGNORECASE)
+                if packaging_match:
+                    box_size = int(packaging_match.group(1))
+                
+                # Check URL for box size
+                if not box_size:
+                    url_match = re.search(r'box[- ]?(\d+)', product_url, re.IGNORECASE)
+                    if url_match:
+                        box_size = int(url_match.group(1))
+                
+                # Check product title for box size
+                if not box_size:
+                    title_el = soup.select_one('h1, .product_title')
+                    if title_el:
+                        title = title_el.get_text()
+                        title_match = re.search(r'Box\s*(?:of\s*)?(\d+)', title, re.IGNORECASE)
+                        if title_match:
+                            box_size = int(title_match.group(1))
+                
+                # Check for common box sizes in text
+                if not box_size:
+                    for common_size in [10, 25, 20, 12, 50]:
+                        if f'box of {common_size}' in page_text.lower() or f'{common_size} cigars' in page_text.lower():
+                            box_size = common_size
+                            break
+                
+                if box_size and price > 20:
+                    in_stock = 'out of stock' not in page_text.lower()
+                    variants.append({
+                        'variant_name': f'Box of {box_size}',
+                        'box_size': box_size,
+                        'price': price,
+                        'in_stock': in_stock,
+                        'url': product_url
+                    })
         
     except Exception as e:
         print(f"    Error fetching variants: {e}")
@@ -358,6 +398,7 @@ def get_product_variants(product_url):
 def match_product(product, brand, cigar_name):
     """Check if product matches brand and cigar name (box size checked separately)."""
     prod_name = product['normalized']
+    prod_name_original = product['name'].lower()
     
     # Brand check
     brand_lower = brand.lower()
@@ -379,20 +420,19 @@ def match_product(product, brand, cigar_name):
         if cigar_romans != prod_romans:
             return False, f"roman numeral mismatch ({cigar_romans} vs {prod_romans})"
     
-    # Key words matching - last word (vitola) must match
+    # Key words matching
     key_words = [w for w in cigar_normalized.split() if len(w) > 2]
     
     if key_words:
-        last_word = key_words[-1]
-        last_word_stem = get_stem(last_word)
+        # Check if the product contains all key words from cigar name
+        # (product may have additional words like "Year of the Dragon")
+        matched_words = sum(1 for word in key_words if word in prod_name or get_stem(word) in prod_name)
         
-        if last_word not in prod_name and last_word_stem not in prod_name:
-            return False, f"vitola mismatch (expected '{last_word}')"
+        # Need at least half the key words to match, or all if only 1-2 words
+        min_matches = max(1, len(key_words) // 2) if len(key_words) > 2 else len(key_words)
         
-        if len(key_words) > 1:
-            other_words = key_words[:-1]
-            if not any(word in prod_name for word in other_words):
-                return False, "no other key words matched"
+        if matched_words < min_matches:
+            return False, f"insufficient word matches ({matched_words}/{len(key_words)})"
     
     return True, "matched"
 
