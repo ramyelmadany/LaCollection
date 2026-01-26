@@ -103,9 +103,9 @@
     "brand": "Partagas",
     "name": "Linea Maestra Maestros",
     "box_size": 20,
-    "price": 1489.0,
+    "price": 1444.0,
     "sources": {
-      "CGars": 1489.0
+      "CGars": 1444.0
     },
     "num_sources": 1
   },

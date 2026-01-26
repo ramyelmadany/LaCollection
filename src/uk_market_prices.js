@@ -1,5 +1,5 @@
 // UK Market Prices - Auto-generated
-// Updated: 2026-01-26 14:04
+// Updated: 2026-01-26 14:21
 // Cigars with prices: 17/21
 
 export const ukMarketPrices = {
@@ -74,7 +74,7 @@ export const ukMarketPrices = {
     "updated": "2026-01-26"
   },
   "Partagas|Linea Maestra Maestros|20": {
-    "price": 1489.0,
+    "price": 1444.0,
     "sources": [
       "CGars"
     ],
