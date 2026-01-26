@@ -1,1 +1,152 @@
-{}
+{
+  "Trinidad|Robusto Extra|12": {
+    "brand": "Trinidad",
+    "name": "Robusto Extra",
+    "box_size": 12,
+    "price": 895.0,
+    "sources": {
+      "Cigar Club": {
+        "price": 895.0,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/trinidad-cigars/trinidad-robusto-extra-cigar-box-of-12/",
+        "in_stock": true,
+        "product_name": "Trinidad Robusto Extra Cigar \u2013 Box of 12 - Box of 12"
+      }
+    },
+    "num_sources": 1
+  },
+  "Montecristo|Linea 1935 Leyenda|20": {
+    "brand": "Montecristo",
+    "name": "Linea 1935 Leyenda",
+    "box_size": 20,
+    "price": 1450.0,
+    "sources": {
+      "Cigar Club": {
+        "price": 1450.0,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/montecristo-cigars/montecristo-linea-1935-leyenda-cigar/",
+        "in_stock": true,
+        "product_name": "Montecristo Linea 1935 Leyenda Cigar - Box of 20"
+      }
+    },
+    "num_sources": 1
+  },
+  "Partagas|Lusitanias|10": {
+    "brand": "Partagas",
+    "name": "Lusitanias",
+    "box_size": 10,
+    "price": 575.0,
+    "sources": {
+      "Cigar Club": {
+        "price": 575.0,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/partagas-cigars/partagas-lusitanias/",
+        "in_stock": true,
+        "product_name": "Partagas Lusitanias - Box of 10"
+      }
+    },
+    "num_sources": 1
+  },
+  "Cohiba|Siglo VI|25": {
+    "brand": "Cohiba",
+    "name": "Siglo VI",
+    "box_size": 25,
+    "price": 2800.0,
+    "sources": {
+      "Cigar Club": {
+        "price": 2800.0,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-1492/cohiba-siglo-vi/",
+        "in_stock": true,
+        "product_name": "Cohiba Siglo VI - Box of 25"
+      }
+    },
+    "num_sources": 1
+  },
+  "Cohiba|Maduro 5 Magicos|25": {
+    "brand": "Cohiba",
+    "name": "Maduro 5 Magicos",
+    "box_size": 25,
+    "price": 1650.0,
+    "sources": {
+      "Cigar Club": {
+        "price": 1650.0,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/maduro/cohiba-magicos/",
+        "in_stock": true,
+        "product_name": "Cohiba Magicos Maduro 5 - Box of 25"
+      }
+    },
+    "num_sources": 1
+  },
+  "Partagas|Linea Maestra Maestros|20": {
+    "brand": "Partagas",
+    "name": "Linea Maestra Maestros",
+    "box_size": 20,
+    "price": 1150.0,
+    "sources": {
+      "Cigar Club": {
+        "price": 1150.0,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/partagas-cigars/partagas-linea-maestra-maestro/",
+        "in_stock": true,
+        "product_name": "Partagas Linea Maestra Maestro - Box of 20"
+      }
+    },
+    "num_sources": 1
+  },
+  "Hoyo de Monterrey|Petit Robustos|25": {
+    "brand": "Hoyo de Monterrey",
+    "name": "Petit Robustos",
+    "box_size": 25,
+    "price": 597.5,
+    "sources": {
+      "Cigar Club": {
+        "price": 597.5,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/hoyo-de-monterrey-cigars/hoyo-de-monterrey-petit-robustos/",
+        "in_stock": true,
+        "product_name": "Hoyo De Monterrey Petit Robustos - Cabinet of 25"
+      }
+    },
+    "num_sources": 1
+  },
+  "Cohiba|Siglo I|25": {
+    "brand": "Cohiba",
+    "name": "Siglo I",
+    "box_size": 25,
+    "price": 715.0,
+    "sources": {
+      "Cigar Club": {
+        "price": 715.0,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-1492/cohiba-siglo-i/",
+        "in_stock": true,
+        "product_name": "Cohiba Siglo I Cigars - Box of 25"
+      }
+    },
+    "num_sources": 1
+  },
+  "Cohiba|Medio Siglo|25": {
+    "brand": "Cohiba",
+    "name": "Medio Siglo",
+    "box_size": 25,
+    "price": 1440.0,
+    "sources": {
+      "Cigar Club": {
+        "price": 1440.0,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-1492/cohiba-medio-siglo/",
+        "in_stock": true,
+        "product_name": "Cohiba Medio Siglo - Cabinet of 25"
+      }
+    },
+    "num_sources": 1
+  },
+  "Cohiba|Siglo VI|10": {
+    "brand": "Cohiba",
+    "name": "Siglo VI",
+    "box_size": 10,
+    "price": 1225.0,
+    "sources": {
+      "Cigar Club": {
+        "price": 1225.0,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-1492/cohiba-siglo-vi/",
+        "in_stock": true,
+        "product_name": "Cohiba Siglo VI - Box of 10"
+      }
+    },
+    "num_sources": 1
+  }
+}
