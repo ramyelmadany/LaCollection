@@ -315,9 +315,24 @@ def get_product_price(product_url, target_box_size):
                                 'url': product_url
                             }
                         else:
-                            # Price too low - likely showing single cigar price
-                            # Don't return this result
-                            pass
+                            # Price too low - likely showing single cigar price for all-OOS product
+                            # Return special marker indicating product exists but price unavailable
+                            result = {
+                                'price': None,
+                                'box_size': target_box_size,
+                                'in_stock': False,
+                                'url': product_url,
+                                'price_unavailable': True
+                            }
+            elif target_option is None:
+                # Box size option doesn't exist for this product
+                result = {
+                    'price': None,
+                    'box_size': target_box_size,
+                    'in_stock': False,
+                    'url': product_url,
+                    'box_not_available': True
+                }
         else:
             # No dropdown - might be a simple product
             # Check if there's a price displayed
@@ -448,6 +463,9 @@ def scrape(brand, cigar_name, box_size):
     
     Returns:
         dict with 'price', 'box_size', 'url', 'in_stock' if found, or None
+        Special cases:
+        - price=None with price_unavailable=True: Product exists but price not shown (all OOS)
+        - price=None with box_not_available=True: Product exists but not in requested box size
     """
     search_terms = get_search_terms(brand, cigar_name)
     
@@ -462,14 +480,38 @@ def scrape(brand, cigar_name, box_size):
                 price_info = get_product_price(product['url'], box_size)
                 
                 if price_info:
-                    return {
-                        'price': price_info['price'],
-                        'box_size': price_info['box_size'],
-                        'product_name': product['name'],
-                        'retailer': 'JJ Fox',
-                        'url': price_info['url'],
-                        'in_stock': price_info['in_stock']
-                    }
+                    # Check for special cases
+                    if price_info.get('price_unavailable'):
+                        print(f"  ⚠ PRICE UNAVAILABLE (all OOS) {brand} {cigar_name} (Box {box_size})")
+                        return {
+                            'price': None,
+                            'box_size': price_info['box_size'],
+                            'product_name': product['name'],
+                            'retailer': 'JJ Fox',
+                            'url': price_info['url'],
+                            'in_stock': False,
+                            'price_unavailable': True
+                        }
+                    elif price_info.get('box_not_available'):
+                        print(f"  ⚠ BOX SIZE NOT AVAILABLE {brand} {cigar_name} (Box {box_size})")
+                        return {
+                            'price': None,
+                            'box_size': price_info['box_size'],
+                            'product_name': product['name'],
+                            'retailer': 'JJ Fox',
+                            'url': price_info['url'],
+                            'in_stock': False,
+                            'box_not_available': True
+                        }
+                    elif price_info.get('price'):
+                        return {
+                            'price': price_info['price'],
+                            'box_size': price_info['box_size'],
+                            'product_name': product['name'],
+                            'retailer': 'JJ Fox',
+                            'url': price_info['url'],
+                            'in_stock': price_info['in_stock']
+                        }
     
     return None
 
