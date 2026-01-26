@@ -104,21 +104,6 @@
     },
     "num_sources": 1
   },
-  "Cohiba|Medio Siglo|25": {
-    "brand": "Cohiba",
-    "name": "Medio Siglo",
-    "box_size": 25,
-    "price": 1570.0,
-    "sources": {
-      "JJ Fox": {
-        "price": 1570.0,
-        "url": "https://www.jjfox.co.uk/cohiba-medio-siglo.html",
-        "in_stock": true,
-        "product_name": "Cohiba Medio Siglo"
-      }
-    },
-    "num_sources": 1
-  },
   "Cohiba|Behike 56|10": {
     "brand": "Cohiba",
     "name": "Behike 56",
