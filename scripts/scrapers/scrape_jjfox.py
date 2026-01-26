@@ -382,7 +382,27 @@ def match_product(product, brand, cigar_name):
         if cigar_romans != prod_romans:
             return False, f"roman numeral mismatch"
     
-    # Key words matching
+    # Vitola (last word) matching - but skip if it's a Roman numeral (already checked above)
+    cigar_words = cigar_name.lower().split()
+    if cigar_words:
+        last_word = cigar_words[-1]
+        last_word_stem = get_stem(last_word)
+        
+        # Skip if last word is a Roman numeral or common non-vitola word
+        roman_nums = {'i', 'ii', 'iii', 'iv', 'v', 'vi', 'vii', 'viii', 'ix', 'x'}
+        skip_words = {'box', 'of', 'cigars', 'cigar', '52', '54', '56'}
+        
+        if last_word not in roman_nums and last_word not in skip_words:
+            # Check if vitola or its stem is in product name
+            if last_word not in prod_name and last_word_stem not in prod_name:
+                # Also check original name for spelling variations (Leyenda vs Leyanda)
+                if last_word not in prod_name_original and last_word_stem not in prod_name_original:
+                    # Try fuzzy match for common misspellings (e vs a)
+                    fuzzy_stem = last_word_stem.replace('e', 'a')
+                    if fuzzy_stem not in prod_name and fuzzy_stem not in prod_name_original:
+                        return False, f"vitola mismatch (expected '{last_word}')"
+    
+    # Key words matching (for additional validation)
     key_words = [w for w in cigar_normalized.split() if len(w) > 2]
     
     if key_words:
