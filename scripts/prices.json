@@ -59,6 +59,21 @@
     },
     "num_sources": 1
   },
+  "Cohiba|Maduro 5 Genios|25": {
+    "brand": "Cohiba",
+    "name": "Maduro 5 Genios",
+    "box_size": 25,
+    "price": 2850.0,
+    "sources": {
+      "Cigar Club": {
+        "price": 2850.0,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/maduro/cohiba-genios/",
+        "in_stock": true,
+        "product_name": "Cohiba Maduro 5 Genios Cigar - Box of 25"
+      }
+    },
+    "num_sources": 1
+  },
   "Cohiba|Maduro 5 Magicos|25": {
     "brand": "Cohiba",
     "name": "Maduro 5 Magicos",
@@ -70,6 +85,21 @@
         "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/maduro/cohiba-magicos/",
         "in_stock": true,
         "product_name": "Cohiba Magicos Maduro 5 - Box of 25"
+      }
+    },
+    "num_sources": 1
+  },
+  "Cohiba|Behike 52|10": {
+    "brand": "Cohiba",
+    "name": "Behike 52",
+    "box_size": 10,
+    "price": 39.99,
+    "sources": {
+      "Cigar Club": {
+        "price": 39.99,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/cohiba-behike-cohiba-cigars/cohiba-behike-bhk-52-box-10s/",
+        "in_stock": false,
+        "product_name": "Cohiba Behike BHK 52 - Box of 10"
       }
     },
     "num_sources": 1
@@ -130,6 +160,36 @@
         "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-1492/cohiba-medio-siglo/",
         "in_stock": true,
         "product_name": "Cohiba Medio Siglo - Cabinet of 25"
+      }
+    },
+    "num_sources": 1
+  },
+  "Cohiba|Behike 56|10": {
+    "brand": "Cohiba",
+    "name": "Behike 56",
+    "box_size": 10,
+    "price": 39.99,
+    "sources": {
+      "Cigar Club": {
+        "price": 39.99,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/cohiba-behike-cohiba-cigars/cohiba-behike-bhk-56-box-10s/",
+        "in_stock": false,
+        "product_name": "Cohiba Behike BHK 56 - Box of 10"
+      }
+    },
+    "num_sources": 1
+  },
+  "Cohiba|Lanceros|25": {
+    "brand": "Cohiba",
+    "name": "Lanceros",
+    "box_size": 25,
+    "price": 39.99,
+    "sources": {
+      "Cigar Club": {
+        "price": 39.99,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-clasica/cohiba-lanceros/",
+        "in_stock": false,
+        "product_name": "Cohiba Lanceros - Box of 25"
       }
     },
     "num_sources": 1

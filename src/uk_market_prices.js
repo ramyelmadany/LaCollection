@@ -1,6 +1,6 @@
 // UK Market Prices - Auto-generated
-// Updated: 2026-01-26 16:53
-// Cigars with prices: 10/21
+// Updated: 2026-01-26 17:10
+// Cigars with prices: 14/21
 
 export const ukMarketPrices = {
   "Trinidad|Robusto Extra|12": {
@@ -47,6 +47,17 @@ export const ukMarketPrices = {
     },
     "updated": "2026-01-26"
   },
+  "Cohiba|Maduro 5 Genios|25": {
+    "price": 2850.0,
+    "sources": {
+      "Cigar Club": {
+        "price": 2850.0,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/maduro/cohiba-genios/",
+        "in_stock": true
+      }
+    },
+    "updated": "2026-01-26"
+  },
   "Cohiba|Maduro 5 Magicos|25": {
     "price": 1650.0,
     "sources": {
@@ -54,6 +65,17 @@ export const ukMarketPrices = {
         "price": 1650.0,
         "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/maduro/cohiba-magicos/",
         "in_stock": true
+      }
+    },
+    "updated": "2026-01-26"
+  },
+  "Cohiba|Behike 52|10": {
+    "price": 39.99,
+    "sources": {
+      "Cigar Club": {
+        "price": 39.99,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/cohiba-behike-cohiba-cigars/cohiba-behike-bhk-52-box-10s/",
+        "in_stock": false
       }
     },
     "updated": "2026-01-26"
@@ -98,6 +120,28 @@ export const ukMarketPrices = {
         "price": 1440.0,
         "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-1492/cohiba-medio-siglo/",
         "in_stock": true
+      }
+    },
+    "updated": "2026-01-26"
+  },
+  "Cohiba|Behike 56|10": {
+    "price": 39.99,
+    "sources": {
+      "Cigar Club": {
+        "price": 39.99,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/cohiba-behike-cohiba-cigars/cohiba-behike-bhk-56-box-10s/",
+        "in_stock": false
+      }
+    },
+    "updated": "2026-01-26"
+  },
+  "Cohiba|Lanceros|25": {
+    "price": 39.99,
+    "sources": {
+      "Cigar Club": {
+        "price": 39.99,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-clasica/cohiba-lanceros/",
+        "in_stock": false
       }
     },
     "updated": "2026-01-26"
