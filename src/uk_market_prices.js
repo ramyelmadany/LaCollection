@@ -1,6 +1,6 @@
 // UK Market Prices - Auto-generated
-// Updated: 2026-01-26 17:36
-// Cigars with prices: 16/21
+// Updated: 2026-01-26 17:42
+// Cigars with prices: 17/21
 
 export const ukMarketPrices = {
   "Montecristo|Brillantes|18": {
@@ -31,6 +31,17 @@ export const ukMarketPrices = {
       "Cigar Club": {
         "price": 1450.0,
         "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/montecristo-cigars/montecristo-linea-1935-leyenda-cigar/",
+        "in_stock": true
+      }
+    },
+    "updated": "2026-01-26"
+  },
+  "Ramon Allones|Absolutos|20": {
+    "price": 1200.0,
+    "sources": {
+      "Cigar Club": {
+        "price": 1200.0,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/ramon-allones-cigars/ramon-allones-absolutos-limited-edition-2024/",
         "in_stock": true
       }
     },

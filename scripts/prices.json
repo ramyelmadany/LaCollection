@@ -44,6 +44,21 @@
     },
     "num_sources": 1
   },
+  "Ramon Allones|Absolutos|20": {
+    "brand": "Ramon Allones",
+    "name": "Absolutos",
+    "box_size": 20,
+    "price": 1200.0,
+    "sources": {
+      "Cigar Club": {
+        "price": 1200.0,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/ramon-allones-cigars/ramon-allones-absolutos-limited-edition-2024/",
+        "in_stock": true,
+        "product_name": "Ramon Allones Absolutos- Limited Edition 2024 - Box of 20"
+      }
+    },
+    "num_sources": 1
+  },
   "Partagas|Lusitanias|10": {
     "brand": "Partagas",
     "name": "Lusitanias",
