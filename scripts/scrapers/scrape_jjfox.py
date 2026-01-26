@@ -158,6 +158,11 @@ def get_search_terms(brand, name):
             singular_name = ' '.join(name_words[:-1] + [stem])
             terms.append(f"{brand} {singular_name}")
     
+    # Special case for Behike - search just "Behike" to get all variants
+    # because JJ Fox search doesn't work well with "Behike 52"
+    if 'behike' in name.lower():
+        terms.append("Behike")
+    
     # Just vitola name
     if name_words and len(name_words[-1]) > 3:
         terms.append(name_words[-1])
@@ -394,13 +399,30 @@ def match_product(product, brand, cigar_name):
         
         if last_word not in roman_nums and last_word not in skip_words:
             # Check if vitola or its stem is in product name
-            if last_word not in prod_name and last_word_stem not in prod_name:
-                # Also check original name for spelling variations (Leyenda vs Leyanda)
-                if last_word not in prod_name_original and last_word_stem not in prod_name_original:
-                    # Try fuzzy match for common misspellings (e vs a)
-                    fuzzy_stem = last_word_stem.replace('e', 'a')
-                    if fuzzy_stem not in prod_name and fuzzy_stem not in prod_name_original:
-                        return False, f"vitola mismatch (expected '{last_word}')"
+            found_vitola = False
+            
+            # Direct match
+            if last_word in prod_name or last_word_stem in prod_name:
+                found_vitola = True
+            elif last_word in prod_name_original or last_word_stem in prod_name_original:
+                found_vitola = True
+            else:
+                # Try fuzzy match for common misspellings (e<->a vowel swap)
+                # Generate variations: leyenda -> leyanda, leyenda
+                for i, char in enumerate(last_word):
+                    if char == 'e':
+                        variation = last_word[:i] + 'a' + last_word[i+1:]
+                        if variation in prod_name_original:
+                            found_vitola = True
+                            break
+                    elif char == 'a':
+                        variation = last_word[:i] + 'e' + last_word[i+1:]
+                        if variation in prod_name_original:
+                            found_vitola = True
+                            break
+            
+            if not found_vitola:
+                return False, f"vitola mismatch (expected '{last_word}')"
     
     # Key words matching (for additional validation)
     key_words = [w for w in cigar_normalized.split() if len(w) > 2]
