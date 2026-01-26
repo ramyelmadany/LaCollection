@@ -141,6 +141,18 @@ def normalize_name(text):
     return ' '.join(t.split())
 
 
+def get_stem(word):
+    """Get word stem by removing common endings."""
+    w = word.lower().strip()
+    if w.endswith('os'):
+        return w[:-1]  # robustos -> robusto
+    if w.endswith('es') and len(w) > 3:
+        return w[:-1]  # brillantes -> brillante
+    if w.endswith('s') and len(w) > 3:
+        return w[:-1]
+    return w
+
+
 def get_search_terms(brand, name):
     """Generate search terms."""
     terms = []
@@ -149,6 +161,16 @@ def get_search_terms(brand, name):
     
     terms.append(f"{brand} {name}")
     terms.append(name)
+    
+    # Try singular version
+    name_words = name_l.split()
+    if name_words:
+        last_word = name_words[-1]
+        stem = get_stem(last_word)
+        if stem != last_word:
+            singular_name = ' '.join(name_words[:-1] + [stem])
+            terms.append(f"{brand} {singular_name}")
+            terms.append(singular_name)
     
     first_word = name_l.split()[0] if name_l.split() else ''
     if first_word and first_word != brand_l:
@@ -163,7 +185,8 @@ def search_products(term):
     if cache_key in _cache:
         return _cache[cache_key]
     
-    url = f"https://www.havanahouse.co.uk/search?q={quote_plus(term)}"
+    # Havana House uses WooCommerce search
+    url = f"https://www.havanahouse.co.uk/?s={quote_plus(term)}&post_type=product"
     products = []
     
     try:
@@ -174,32 +197,24 @@ def search_products(term):
         
         # Wait for products to load
         try:
-            _page.wait_for_selector('.product-block, .product-item, .product', timeout=5000)
+            _page.wait_for_selector('li.product, ul.products > li', timeout=5000)
         except:
             pass
         
         html = _page.content()
         soup = BeautifulSoup(html, 'html.parser')
         
-        # Havana House uses various product selectors
-        product_selectors = [
-            '.product-block',
-            '.product-item', 
-            '.product-card',
-            'li.product',
-            '.grid-item.product'
-        ]
-        
-        product_elements = []
-        for selector in product_selectors:
-            product_elements.extend(soup.select(selector))
+        # WooCommerce product selectors
+        product_elements = soup.select('li.product, ul.products > li')
         
         for item in product_elements:
             try:
                 # Find product name
-                name_el = item.select_one('.product-block__title, .product-title, .product-name, h3 a, h2 a, .title a')
+                name_el = item.select_one('.woocommerce-loop-product__title, h2.woocommerce-loop-product__title')
                 # Find price
-                price_el = item.select_one('.product-price, .price, .money, .product-block__price')
+                price_el = item.select_one('.price .woocommerce-Price-amount, .price')
+                # Find URL
+                link_el = item.select_one('a.woocommerce-LoopProduct-link, a[href*="/product/"]')
                 
                 if not name_el:
                     continue
@@ -207,15 +222,16 @@ def search_products(term):
                 name = name_el.get_text(strip=True)
                 price_text = price_el.get_text() if price_el else ''
                 price = parse_price(price_text)
+                url = link_el.get('href', '') if link_el else ''
+                
+                # Check stock status
+                is_out_of_stock = bool(item.select_one('.out-of-stock, .sold-out')) or 'outofstock' in item.get('class', [])
+                in_stock = not is_out_of_stock
                 
                 # Skip non-cigars
                 skip_words = ['humidor', 'ashtray', 'cutter', 'lighter', 'case', 'holder', 
                               'pouch', 'sampler', 'gift', 'accessory', 'membership']
                 if any(w in name.lower() for w in skip_words):
-                    continue
-                
-                # Skip "Sold Out" items
-                if item.select_one('.sold-out, .soldout'):
                     continue
                 
                 box_size = extract_box_size(name)
@@ -225,7 +241,9 @@ def search_products(term):
                         'name': name,
                         'price': price,
                         'box_size': box_size,
-                        'normalized': normalize_name(name)
+                        'normalized': normalize_name(name),
+                        'url': url,
+                        'in_stock': in_stock
                     })
             except:
                 continue
@@ -312,7 +330,9 @@ def scrape(brand, cigar_name, box_size):
                     'price': product['price'],
                     'box_size': product['box_size'],
                     'product_name': product['name'],
-                    'retailer': 'Havana House'
+                    'retailer': 'Havana House',
+                    'url': product.get('url', ''),
+                    'in_stock': product.get('in_stock', True)
                 }
     
     return None
