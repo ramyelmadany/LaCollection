@@ -225,19 +225,13 @@ def search_products(term):
         time.sleep(random.uniform(0.5, 1.0))
         
         init()  # Ensure browser is ready
-        _page.goto(url, wait_until='networkidle', timeout=30000)
+        _page.goto(url, wait_until='domcontentloaded', timeout=30000)
         
         # Wait for products to load
         try:
-            _page.wait_for_selector('.product-listing-box', timeout=10000)
+            _page.wait_for_selector('.product-listing-box', timeout=5000)
         except:
             pass
-        
-        # Scroll to load any lazy-loaded content
-        _page.evaluate('window.scrollTo(0, document.body.scrollHeight)')
-        time.sleep(0.5)
-        _page.evaluate('window.scrollTo(0, 0)')
-        time.sleep(0.5)
         
         html = _page.content()
         soup = BeautifulSoup(html, 'html.parser')
@@ -245,7 +239,8 @@ def search_products(term):
         for box in soup.select('.product-listing-box'):
             try:
                 name_el = box.select_one('.product-name')
-                price_el = box.select_one('.now_price')
+                # Try both price selectors
+                price_el = box.select_one('.now_price') or box.select_one('.new_price')
                 
                 if not name_el:
                     continue
