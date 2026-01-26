@@ -158,6 +158,19 @@ def normalize_name(text):
     return ' '.join(t.split())
 
 
+def get_stem(word):
+    """Get word stem by removing common endings."""
+    w = word.lower().strip()
+    # Spanish/cigar-specific endings
+    if w.endswith('os'):
+        return w[:-1]  # robustos -> robusto
+    if w.endswith('es') and len(w) > 3:
+        return w[:-1]  # brillantes -> brillante
+    if w.endswith('s') and len(w) > 3:
+        return w[:-1]  # cigars -> cigar
+    return w
+
+
 def get_search_terms(brand, name):
     """Generate search terms from most to least specific."""
     terms = []
@@ -165,16 +178,33 @@ def get_search_terms(brand, name):
     brand_l = brand.lower()
     name_l = name.lower()
     
-    # Full name
+    # Full name with brand
     terms.append(f"{brand} {name}")
     
     # Just the specific name
     terms.append(name)
     
+    # Try singular version if name ends in s/es/os
+    name_words = name_l.split()
+    if name_words:
+        last_word = name_words[-1]
+        stem = get_stem(last_word)
+        if stem != last_word:
+            # Create singular version
+            singular_name = ' '.join(name_words[:-1] + [stem])
+            terms.append(f"{brand} {singular_name}")
+            terms.append(singular_name)
+    
     # First word of name with brand
     first_word = name_l.split()[0] if name_l.split() else ''
     if first_word and first_word != brand_l:
         terms.append(f"{brand} {first_word}")
+    
+    # Also try just brand + stemmed first word
+    if first_word:
+        stem_first = get_stem(first_word)
+        if stem_first != first_word:
+            terms.append(f"{brand} {stem_first}")
     
     return terms
 
@@ -300,14 +330,25 @@ def match_product(product, brand, cigar_name, target_box_size):
         if not cigar_years.intersection(prod_years):
             return False, f"year mismatch ({cigar_years} vs {prod_years})"
     
-    # Key words matching
+    # Key words matching - with stem comparison for singular/plural
     matched_words = 0
     for word in key_words:
+        word_stem = get_stem(word)
         if word in prod_name:
             matched_words += 1
-        # Also check for partial matches (siglo in siglos)
-        elif any(word in pw or pw in word for pw in prod_name.split()):
+        elif word_stem in prod_name:
             matched_words += 1
+        else:
+            # Check each word in product name
+            for pw in prod_name.split():
+                pw_stem = get_stem(pw)
+                if word_stem == pw_stem:
+                    matched_words += 1
+                    break
+                # Also check for partial matches (siglo in siglos)
+                elif word in pw or pw in word:
+                    matched_words += 1
+                    break
     
     if key_words and matched_words == 0:
         return False, "no key words matched"
@@ -343,6 +384,8 @@ def scrape(brand, cigar_name, box_size):
                     'product_name': product['name'],
                     'retailer': 'CGars'
                 }
+            elif products:  # Log first rejection reason for debugging
+                print(f"      Rejected '{product['name'][:50]}...' - {reason}")
     
     return None
 
