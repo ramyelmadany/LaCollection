@@ -46,7 +46,7 @@ _cache = {}
 
 
 def init():
-    """Initialize the browser."""
+    """Initialize the browser with stealth settings."""
     global _playwright, _browser, _context, _page
     if _page:
         return
@@ -58,15 +58,42 @@ def init():
         
         _browser = _playwright.chromium.launch(
             headless=True,
-            args=['--disable-blink-features=AutomationControlled', '--no-sandbox']
+            args=[
+                '--disable-blink-features=AutomationControlled',
+                '--no-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-web-security',
+                '--disable-features=IsolateOrigins,site-per-process'
+            ]
         )
         
         _context = _browser.new_context(
             viewport={'width': 1920, 'height': 1080},
-            user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            user_agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            locale='en-GB',
+            timezone_id='Europe/London',
         )
         
         _page = _context.new_page()
+        
+        # Hide webdriver property
+        _page.add_init_script("""
+            Object.defineProperty(navigator, 'webdriver', {
+                get: () => undefined
+            });
+            
+            // Hide automation indicators
+            window.chrome = { runtime: {} };
+            
+            Object.defineProperty(navigator, 'plugins', {
+                get: () => [1, 2, 3, 4, 5]
+            });
+            
+            Object.defineProperty(navigator, 'languages', {
+                get: () => ['en-GB', 'en-US', 'en']
+            });
+        """)
+        
         print("  Browser ready")
     except Exception as e:
         print(f"  Browser init error: {e}")
@@ -196,68 +223,84 @@ def search_products(term):
     if cache_key in _cache:
         return _cache[cache_key]
     
-    # Havana House uses WooCommerce search
-    url = f"https://www.havanahouse.co.uk/?s={quote_plus(term)}&post_type=product"
     products = []
     
     try:
         time.sleep(random.uniform(0.5, 1.0))
-        
         init()
-        _page.goto(url, wait_until='domcontentloaded', timeout=30000)
         
-        # Wait for products to load
-        try:
-            _page.wait_for_selector('li.product, ul.products > li', timeout=5000)
-        except:
-            pass
-        
-        html = _page.content()
-        soup = BeautifulSoup(html, 'html.parser')
-        
-        # WooCommerce product selectors
-        product_elements = soup.select('li.product, ul.products > li')
-        
-        for item in product_elements:
+        # Search up to 3 pages
+        for page_num in range(1, 4):
+            if page_num == 1:
+                url = f"https://www.havanahouse.co.uk/?s={quote_plus(term)}&post_type=product"
+            else:
+                url = f"https://www.havanahouse.co.uk/page/{page_num}/?s={quote_plus(term)}&post_type=product"
+            
+            _page.goto(url, wait_until='domcontentloaded', timeout=30000)
+            
+            # Wait for products to load
             try:
-                # Find product name
-                name_el = item.select_one('.woocommerce-loop-product__title, h2.woocommerce-loop-product__title')
-                # Find price
-                price_el = item.select_one('.price .woocommerce-Price-amount, .price')
-                # Find URL
-                link_el = item.select_one('a.woocommerce-LoopProduct-link, a[href*="/product/"]')
-                
-                if not name_el:
-                    continue
-                
-                name = name_el.get_text(strip=True)
-                price_text = price_el.get_text() if price_el else ''
-                price = parse_price(price_text)
-                url = link_el.get('href', '') if link_el else ''
-                
-                # Check stock status
-                is_out_of_stock = bool(item.select_one('.out-of-stock, .sold-out')) or 'outofstock' in item.get('class', [])
-                in_stock = not is_out_of_stock
-                
-                # Skip non-cigars
-                skip_words = ['humidor', 'ashtray', 'cutter', 'lighter', 'case', 'holder', 
-                              'pouch', 'sampler', 'gift', 'accessory', 'membership']
-                if any(w in name.lower() for w in skip_words):
-                    continue
-                
-                box_size = extract_box_size(name)
-                
-                if name and price and price > 20:
-                    products.append({
-                        'name': name,
-                        'price': price,
-                        'box_size': box_size,
-                        'normalized': normalize_name(name),
-                        'url': url,
-                        'in_stock': in_stock
-                    })
+                _page.wait_for_selector('li.product, ul.products > li', timeout=5000)
             except:
-                continue
+                break  # No products on this page
+            
+            html = _page.content()
+            soup = BeautifulSoup(html, 'html.parser')
+            
+            # WooCommerce product selectors
+            product_elements = soup.select('li.product, ul.products > li')
+            
+            if not product_elements:
+                break  # No more pages
+            
+            for item in product_elements:
+                try:
+                    # Find product name
+                    name_el = item.select_one('.woocommerce-loop-product__title, h2.woocommerce-loop-product__title')
+                    # Find price
+                    price_el = item.select_one('.price .woocommerce-Price-amount, .price')
+                    # Find URL
+                    link_el = item.select_one('a.woocommerce-LoopProduct-link, a[href*="/product/"]')
+                    
+                    if not name_el:
+                        continue
+                    
+                    name = name_el.get_text(strip=True)
+                    price_text = price_el.get_text() if price_el else ''
+                    price = parse_price(price_text)
+                    url = link_el.get('href', '') if link_el else ''
+                    
+                    # Check stock status
+                    is_out_of_stock = bool(item.select_one('.out-of-stock, .sold-out, .outofstock')) or 'outofstock' in ' '.join(item.get('class', []))
+                    in_stock = not is_out_of_stock
+                    
+                    # Skip non-cigars
+                    skip_words = ['humidor', 'ashtray', 'cutter', 'lighter', 'case', 'holder', 
+                                  'pouch', 'sampler', 'gift', 'accessory', 'membership']
+                    if any(w in name.lower() for w in skip_words):
+                        continue
+                    
+                    box_size = extract_box_size(name)
+                    
+                    if name and price and price > 20:
+                        # Avoid duplicates
+                        if not any(p['name'] == name for p in products):
+                            products.append({
+                                'name': name,
+                                'price': price,
+                                'box_size': box_size,
+                                'normalized': normalize_name(name),
+                                'url': url,
+                                'in_stock': in_stock
+                            })
+                except:
+                    continue
+            
+            # Check if there's a next page
+            if not soup.select('.page-numbers .next, a.next'):
+                break
+            
+            time.sleep(random.uniform(0.3, 0.6))
         
         print(f"    Havana House '{term}': {len(products)} products")
         
