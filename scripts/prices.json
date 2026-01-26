@@ -132,22 +132,16 @@
     "brand": "Cohiba",
     "name": "Siglo VI",
     "box_size": 25,
-    "price": 2399.5,
+    "price": 3199.0,
     "sources": {
       "CGars": {
         "price": 3199.0,
         "url": "https://www.cgarsltd.co.uk/cohiba-siglo-cigar-cabinet-p-76.html",
         "in_stock": false,
         "product_name": "Cohiba Siglo VI Cigar - Cabinet of 25"
-      },
-      "Havana House": {
-        "price": 1600.0,
-        "url": "https://www.havanahouse.co.uk/product/cohiba-medio-siglo-cigar-box-of-25/",
-        "in_stock": true,
-        "product_name": "Cohiba Medio Siglo Cigar \u2013 Box of 25"
       }
     },
-    "num_sources": 2
+    "num_sources": 1
   },
   "Cohiba|Maduro 5 Genios|25": {
     "brand": "Cohiba",
@@ -216,7 +210,7 @@
     "brand": "Partagas",
     "name": "Linea Maestra Maestros",
     "box_size": 20,
-    "price": 1374.2,
+    "price": 1425.6,
     "sources": {
       "CGars": {
         "price": 1444.0,
@@ -225,10 +219,10 @@
         "product_name": "Partagas Linea Maestra Maestro Cigar - Box of 20"
       },
       "Havana House": {
-        "price": 1304.4,
-        "url": "https://www.havanahouse.co.uk/product/partagas-linea-maestra-origen-cigar-box-of-20/",
-        "in_stock": true,
-        "product_name": "Partagas Linea Maestra Origen Cigar \u2013 Box of 20"
+        "price": 1407.2,
+        "url": "https://www.havanahouse.co.uk/product/partagas-linea-maestra-maestro-cigar-box-of-20/",
+        "in_stock": false,
+        "product_name": "Partagas Linea Maestra Maestro Cigar \u2013 Box of 20"
       }
     },
     "num_sources": 2
@@ -258,7 +252,7 @@
     "brand": "Cohiba",
     "name": "Siglo I",
     "box_size": 25,
-    "price": 1206.5,
+    "price": 806.5,
     "sources": {
       "CGars": {
         "price": 813.0,
@@ -267,10 +261,10 @@
         "product_name": "Cohiba Siglo I Cigar - Cabinet of 25"
       },
       "Havana House": {
-        "price": 1600.0,
-        "url": "https://www.havanahouse.co.uk/product/cohiba-medio-siglo-cigar-box-of-25/",
+        "price": 800.0,
+        "url": "https://www.havanahouse.co.uk/product/cohiba-siglo-i-cigar-box-of-25/",
         "in_stock": true,
-        "product_name": "Cohiba Medio Siglo Cigar \u2013 Box of 25"
+        "product_name": "Cohiba Siglo I Cigar \u2013 Box of 25"
       }
     },
     "num_sources": 2
@@ -363,21 +357,15 @@
     "brand": "Cohiba",
     "name": "Siglo VI",
     "box_size": 10,
-    "price": 773.5,
+    "price": 1355.0,
     "sources": {
       "CGars": {
         "price": 1355.0,
         "url": "https://www.cgarsltd.co.uk/cohiba-siglo-cigar-box-p-78.html",
         "in_stock": true,
         "product_name": "Cohiba Siglo VI Cigar - Box of 10"
-      },
-      "Havana House": {
-        "price": 192.0,
-        "url": "https://www.havanahouse.co.uk/product/cohiba-medio-siglo-cigar-pack-3-tubos/",
-        "in_stock": true,
-        "product_name": "Cohiba Medio Siglo Cigar \u2013 Pack of 3 Tubos"
       }
     },
-    "num_sources": 2
+    "num_sources": 1
   }
 }
