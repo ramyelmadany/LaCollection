@@ -242,9 +242,16 @@ def run_scrapers(cigars):
                         print(f"  ✗ {cigar['name']}: Box mismatch (wanted {cigar['box_size']}, got {extracted_box})")
                         continue
                     
-                    all_results[cigar['key']][retailer_name] = price
+                    # Store price along with metadata
+                    all_results[cigar['key']][retailer_name] = {
+                        'price': price,
+                        'url': result.get('url', ''),
+                        'in_stock': result.get('in_stock', True),
+                        'product_name': result.get('product_name', '')
+                    }
                     retailer_stats[retailer_name]['found'] += 1
-                    print(f"  ✓ {cigar['brand']} {cigar['name']} (Box {cigar['box_size']}): £{price:.2f}")
+                    stock_status = "✓" if result.get('in_stock', True) else "⚠ OUT OF STOCK"
+                    print(f"  {stock_status} {cigar['brand']} {cigar['name']} (Box {cigar['box_size']}): £{price:.2f}")
             
             # Cleanup scraper
             if hasattr(module, 'cleanup'):
@@ -266,13 +273,14 @@ def aggregate_results(cigars, all_results):
     
     for cigar in cigars:
         key = cigar['key']
-        retailer_prices = all_results.get(key, {})
+        retailer_data = all_results.get(key, {})
         
-        if not retailer_prices:
+        if not retailer_data:
             print(f"✗ {cigar['brand']} {cigar['name']} (Box {cigar['box_size']}): No prices found")
             continue
         
-        prices_with_sources = [(p, r) for r, p in retailer_prices.items()]
+        # Extract prices with sources for filtering
+        prices_with_sources = [(data['price'], r) for r, data in retailer_data.items()]
         
         # Filter outliers
         filtered = filter_outliers(prices_with_sources, cigar['box_size'])
@@ -287,12 +295,23 @@ def aggregate_results(cigars, all_results):
         avg_price, sources = calculate_average(filtered)
         
         if avg_price:
+            # Build sources dict with full data
+            sources_dict = {}
+            for price, retailer in sources:
+                data = retailer_data[retailer]
+                sources_dict[retailer] = {
+                    'price': data['price'],
+                    'url': data.get('url', ''),
+                    'in_stock': data.get('in_stock', True),
+                    'product_name': data.get('product_name', '')
+                }
+            
             final_prices[key] = {
                 'brand': cigar['brand'],
                 'name': cigar['name'],
                 'box_size': cigar['box_size'],
                 'price': avg_price,
-                'sources': {r: p for p, r in sources},
+                'sources': sources_dict,
                 'num_sources': len(sources)
             }
             source_str = ', '.join([f"{r}: £{p:.2f}" for p, r in sources])
@@ -333,9 +352,19 @@ def save_results(final_prices, cigars):
     js_data = {}
     for key, data in final_prices.items():
         js_key = f"{data['brand']}|{data['name']}|{data['box_size']}"
+        
+        # Build sources with URLs and stock status
+        sources_info = {}
+        for retailer, source_data in data['sources'].items():
+            sources_info[retailer] = {
+                'price': source_data['price'],
+                'url': source_data.get('url', ''),
+                'in_stock': source_data.get('in_stock', True)
+            }
+        
         js_data[js_key] = {
             'price': data['price'],
-            'sources': list(data['sources'].keys()),
+            'sources': sources_info,
             'updated': datetime.now().strftime('%Y-%m-%d')
         }
     
