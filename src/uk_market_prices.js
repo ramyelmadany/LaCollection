@@ -1,6 +1,6 @@
 // UK Market Prices - Auto-generated
-// Updated: 2026-01-26 17:10
-// Cigars with prices: 14/21
+// Updated: 2026-01-26 17:18
+// Cigars with prices: 15/21
 
 export const ukMarketPrices = {
   "Trinidad|Robusto Extra|12": {
@@ -70,10 +70,10 @@ export const ukMarketPrices = {
     "updated": "2026-01-26"
   },
   "Cohiba|Behike 52|10": {
-    "price": 39.99,
+    "price": 2800.0,
     "sources": {
       "Cigar Club": {
-        "price": 39.99,
+        "price": 2800.0,
         "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/cohiba-behike-cohiba-cigars/cohiba-behike-bhk-52-box-10s/",
         "in_stock": false
       }
@@ -125,21 +125,32 @@ export const ukMarketPrices = {
     "updated": "2026-01-26"
   },
   "Cohiba|Behike 56|10": {
-    "price": 39.99,
+    "price": 4500.0,
     "sources": {
       "Cigar Club": {
-        "price": 39.99,
+        "price": 4500.0,
         "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/cohiba-behike-cohiba-cigars/cohiba-behike-bhk-56-box-10s/",
         "in_stock": false
       }
     },
     "updated": "2026-01-26"
   },
-  "Cohiba|Lanceros|25": {
-    "price": 39.99,
+  "Trinidad|Esmeralda|12": {
+    "price": 725.0,
     "sources": {
       "Cigar Club": {
-        "price": 39.99,
+        "price": 725.0,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/trinidad-cigars/trinidad-esmeralda-cigar-box-of-12/",
+        "in_stock": true
+      }
+    },
+    "updated": "2026-01-26"
+  },
+  "Cohiba|Lanceros|25": {
+    "price": 1950.0,
+    "sources": {
+      "Cigar Club": {
+        "price": 1950.0,
         "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-clasica/cohiba-lanceros/",
         "in_stock": false
       }

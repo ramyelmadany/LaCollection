@@ -93,10 +93,10 @@
     "brand": "Cohiba",
     "name": "Behike 52",
     "box_size": 10,
-    "price": 39.99,
+    "price": 2800.0,
     "sources": {
       "Cigar Club": {
-        "price": 39.99,
+        "price": 2800.0,
         "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/cohiba-behike-cohiba-cigars/cohiba-behike-bhk-52-box-10s/",
         "in_stock": false,
         "product_name": "Cohiba Behike BHK 52 - Box of 10"
@@ -168,13 +168,28 @@
     "brand": "Cohiba",
     "name": "Behike 56",
     "box_size": 10,
-    "price": 39.99,
+    "price": 4500.0,
     "sources": {
       "Cigar Club": {
-        "price": 39.99,
+        "price": 4500.0,
         "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/cohiba-behike-cohiba-cigars/cohiba-behike-bhk-56-box-10s/",
         "in_stock": false,
         "product_name": "Cohiba Behike BHK 56 - Box of 10"
+      }
+    },
+    "num_sources": 1
+  },
+  "Trinidad|Esmeralda|12": {
+    "brand": "Trinidad",
+    "name": "Esmeralda",
+    "box_size": 12,
+    "price": 725.0,
+    "sources": {
+      "Cigar Club": {
+        "price": 725.0,
+        "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/trinidad-cigars/trinidad-esmeralda-cigar-box-of-12/",
+        "in_stock": true,
+        "product_name": "Trinidad Esmeralda Cigar \u2013 Box of 12 - Box of 12"
       }
     },
     "num_sources": 1
@@ -183,10 +198,10 @@
     "brand": "Cohiba",
     "name": "Lanceros",
     "box_size": 25,
-    "price": 39.99,
+    "price": 1950.0,
     "sources": {
       "Cigar Club": {
-        "price": 39.99,
+        "price": 1950.0,
         "url": "https://www.cigar-club.com/shop/cigars/regions/havanas/cohiba-cigars/la-linea-clasica/cohiba-lanceros/",
         "in_stock": false,
         "product_name": "Cohiba Lanceros - Box of 25"
