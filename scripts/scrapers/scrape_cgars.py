@@ -336,7 +336,10 @@ def match_product(product, brand, cigar_name, target_box_size):
     cigar_romans = set(re.findall(roman_pattern, cigar_lower))
     prod_romans = set(re.findall(roman_pattern, prod_name))
     
-    if cigar_romans and prod_romans:
+    # If cigar name has roman numerals, product must have matching ones
+    if cigar_romans:
+        if not prod_romans:
+            return False, f"missing roman numeral (expected {cigar_romans})"
         if cigar_romans != prod_romans:
             return False, f"roman numeral mismatch ({cigar_romans} vs {prod_romans})"
     
@@ -349,28 +352,45 @@ def match_product(product, brand, cigar_name, target_box_size):
         if not cigar_years.intersection(prod_years):
             return False, f"year mismatch ({cigar_years} vs {prod_years})"
     
-    # Key words matching - with stem comparison for singular/plural
-    matched_words = 0
-    for word in key_words:
-        word_stem = get_stem(word)
-        if word in prod_name:
-            matched_words += 1
-        elif word_stem in prod_name:
-            matched_words += 1
+    # Key words matching - the last word (vitola name) is most important
+    if key_words:
+        # Last word is typically the vitola name (Maestros, Robusto, etc) - must match
+        last_word = key_words[-1]
+        last_word_stem = get_stem(last_word)
+        
+        # Check if last word or its stem is in product name
+        last_word_found = False
+        if last_word in prod_name or last_word_stem in prod_name:
+            last_word_found = True
         else:
-            # Check each word in product name
+            # Check each word in product name for stem match
             for pw in prod_name.split():
                 pw_stem = get_stem(pw)
-                if word_stem == pw_stem:
-                    matched_words += 1
+                if last_word_stem == pw_stem or last_word in pw or pw in last_word:
+                    last_word_found = True
                     break
-                # Also check for partial matches (siglo in siglos)
-                elif word in pw or pw in word:
-                    matched_words += 1
+        
+        if not last_word_found:
+            return False, f"vitola mismatch (expected '{last_word}')"
+        
+        # Also need at least one other key word to match (if there are multiple)
+        if len(key_words) > 1:
+            other_matched = False
+            for word in key_words[:-1]:
+                word_stem = get_stem(word)
+                if word in prod_name or word_stem in prod_name:
+                    other_matched = True
                     break
-    
-    if key_words and matched_words == 0:
-        return False, "no key words matched"
+                for pw in prod_name.split():
+                    pw_stem = get_stem(pw)
+                    if word_stem == pw_stem:
+                        other_matched = True
+                        break
+                if other_matched:
+                    break
+            
+            if not other_matched:
+                return False, "no other key words matched"
     
     # If we get here, it's a match
     return True, "matched"
