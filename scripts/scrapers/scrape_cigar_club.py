@@ -374,6 +374,10 @@ def scrape(brand, cigar_name, box_size):
                 # Get variants from product page
                 variants = get_product_variants(product['url'])
                 
+                if not variants:
+                    print(f"      No variants found for {product['name']}")
+                    continue
+                
                 # Find the variant matching our box size
                 for variant in variants:
                     if variant['box_size'] == box_size:
@@ -385,6 +389,12 @@ def scrape(brand, cigar_name, box_size):
                             'url': variant['url'],
                             'in_stock': variant['in_stock']
                         }
+                
+                # Log if we found the product but not the right box size
+                available_sizes = [v['box_size'] for v in variants]
+                print(f"      {product['name']}: no box {box_size} (available: {available_sizes})")
+            else:
+                pass  # Don't log rejections to keep output clean
     
     return None
 
