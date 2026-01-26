@@ -1,71 +1,11 @@
 {
-  "Trinidad|Robusto Extra|12": {
-    "brand": "Trinidad",
-    "name": "Robusto Extra",
-    "box_size": 12,
-    "price": 999.0,
-    "sources": {
-      "CGars": 999.0
-    },
-    "num_sources": 1
-  },
-  "Montecristo|Linea 1935 Leyenda|20": {
+  "Montecristo|Brillantes|18": {
     "brand": "Montecristo",
-    "name": "Linea 1935 Leyenda",
-    "box_size": 20,
-    "price": 1645.0,
+    "name": "Brillantes",
+    "box_size": 18,
+    "price": 1499.0,
     "sources": {
-      "CGars": 1645.0
-    },
-    "num_sources": 1
-  },
-  "Ramon Allones|Absolutos|20": {
-    "brand": "Ramon Allones",
-    "name": "Absolutos",
-    "box_size": 20,
-    "price": 1249.0,
-    "sources": {
-      "CGars": 1249.0
-    },
-    "num_sources": 1
-  },
-  "Hoyo de Monterrey|Double Corona|50": {
-    "brand": "Hoyo de Monterrey",
-    "name": "Double Corona",
-    "box_size": 50,
-    "price": 3823.0,
-    "sources": {
-      "CGars": 3823.0
-    },
-    "num_sources": 1
-  },
-  "Bolivar|New Gold Medal|10": {
-    "brand": "Bolivar",
-    "name": "New Gold Medal",
-    "box_size": 10,
-    "price": 899.99,
-    "sources": {
-      "CGars": 899.99
-    },
-    "num_sources": 1
-  },
-  "Partagas|Lusitanias|10": {
-    "brand": "Partagas",
-    "name": "Lusitanias",
-    "box_size": 10,
-    "price": 699.0,
-    "sources": {
-      "CGars": 699.0
-    },
-    "num_sources": 1
-  },
-  "Cohiba|Siglo VI|25": {
-    "brand": "Cohiba",
-    "name": "Siglo VI",
-    "box_size": 25,
-    "price": 3199.0,
-    "sources": {
-      "CGars": 3199.0
+      "CGars": 1499.0
     },
     "num_sources": 1
   },
@@ -73,9 +13,9 @@
     "brand": "Cohiba",
     "name": "Maduro 5 Genios",
     "box_size": 25,
-    "price": 2999.0,
+    "price": 1649.0,
     "sources": {
-      "CGars": 2999.0
+      "CGars": 1649.0
     },
     "num_sources": 1
   },
@@ -83,19 +23,9 @@
     "brand": "Cohiba",
     "name": "Maduro 5 Magicos",
     "box_size": 25,
-    "price": 2629.0,
+    "price": 1649.0,
     "sources": {
-      "CGars": 2629.0
-    },
-    "num_sources": 1
-  },
-  "Cohiba|Behike 52|10": {
-    "brand": "Cohiba",
-    "name": "Behike 52",
-    "box_size": 10,
-    "price": 3399.0,
-    "sources": {
-      "CGars": 3399.0
+      "CGars": 1649.0
     },
     "num_sources": 1
   },
@@ -103,39 +33,19 @@
     "brand": "Partagas",
     "name": "Linea Maestra Maestros",
     "box_size": 20,
-    "price": 1444.0,
+    "price": 24.99,
     "sources": {
-      "CGars": 1444.0
+      "CGars": 24.99
     },
     "num_sources": 1
   },
-  "Cohiba|Siglo I|25": {
-    "brand": "Cohiba",
-    "name": "Siglo I",
+  "Hoyo de Monterrey|Petit Robustos|25": {
+    "brand": "Hoyo de Monterrey",
+    "name": "Petit Robustos",
     "box_size": 25,
-    "price": 813.0,
+    "price": 679.0,
     "sources": {
-      "CGars": 813.0
-    },
-    "num_sources": 1
-  },
-  "Cohiba|Medio Siglo|25": {
-    "brand": "Cohiba",
-    "name": "Medio Siglo",
-    "box_size": 25,
-    "price": 1635.0,
-    "sources": {
-      "CGars": 1635.0
-    },
-    "num_sources": 1
-  },
-  "Cohiba|Behike 56|10": {
-    "brand": "Cohiba",
-    "name": "Behike 56",
-    "box_size": 10,
-    "price": 5199.0,
-    "sources": {
-      "CGars": 5199.0
+      "CGars": 679.0
     },
     "num_sources": 1
   },
@@ -143,29 +53,9 @@
     "brand": "Trinidad",
     "name": "Esmeralda",
     "box_size": 12,
-    "price": 815.0,
+    "price": 1500.0,
     "sources": {
-      "CGars": 815.0
-    },
-    "num_sources": 1
-  },
-  "Cohiba|Lanceros|25": {
-    "brand": "Cohiba",
-    "name": "Lanceros",
-    "box_size": 25,
-    "price": 3199.0,
-    "sources": {
-      "CGars": 3199.0
-    },
-    "num_sources": 1
-  },
-  "Cohiba|Siglo VI|10": {
-    "brand": "Cohiba",
-    "name": "Siglo VI",
-    "box_size": 10,
-    "price": 1355.0,
-    "sources": {
-      "CGars": 1355.0
+      "CGars": 1500.0
     },
     "num_sources": 1
   }
