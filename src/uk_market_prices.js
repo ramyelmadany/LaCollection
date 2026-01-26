@@ -1,6 +1,6 @@
 // UK Market Prices - Auto-generated
-// Updated: 2026-01-26 20:32
-// Cigars with prices: 8/21
+// Updated: 2026-01-26 21:21
+// Cigars with prices: 10/21
 
 export const ukMarketPrices = {
   "Montecristo|Brillantes|18": {
@@ -10,6 +10,17 @@ export const ukMarketPrices = {
         "price": 2250.0,
         "url": "https://www.jjfox.co.uk/montecristo-brillantes-year-of-the-dragon.html",
         "in_stock": true
+      }
+    },
+    "updated": "2026-01-26"
+  },
+  "Montecristo|Linea 1935 Leyenda|20": {
+    "price": 1570.0,
+    "sources": {
+      "JJ Fox": {
+        "price": 1570.0,
+        "url": "https://www.jjfox.co.uk/montecristo-linea-1935-leyanda.html",
+        "in_stock": false
       }
     },
     "updated": "2026-01-26"
@@ -31,6 +42,17 @@ export const ukMarketPrices = {
       "JJ Fox": {
         "price": 2700.0,
         "url": "https://www.jjfox.co.uk/cohiba-maduro-5-magicos.html",
+        "in_stock": true
+      }
+    },
+    "updated": "2026-01-26"
+  },
+  "Cohiba|Behike 52|10": {
+    "price": 5000.0,
+    "sources": {
+      "JJ Fox": {
+        "price": 5000.0,
+        "url": "https://www.jjfox.co.uk/cohiba-behike-52.html",
         "in_stock": true
       }
     },
