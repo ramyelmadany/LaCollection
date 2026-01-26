@@ -44,6 +44,7 @@ except ImportError:
 
 
 # Module state
+_playwright = None
 _browser = None
 _context = None
 _page = None
@@ -52,14 +53,14 @@ _cache = {}
 
 def init():
     """Initialize the browser for this scraper."""
-    global _browser, _context, _page
+    global _playwright, _browser, _context, _page
     if _page:
         return
     
     print("  Starting browser...")
-    playwright = sync_playwright().start()
+    _playwright = sync_playwright().start()
     
-    _browser = playwright.chromium.launch(
+    _browser = _playwright.chromium.launch(
         headless=True,
         args=['--disable-blink-features=AutomationControlled', '--no-sandbox']
     )
@@ -75,10 +76,15 @@ def init():
 
 def cleanup():
     """Clean up browser resources."""
-    global _browser, _context, _page
-    if _browser:
-        _browser.close()
-        _browser = _context = _page = None
+    global _playwright, _browser, _context, _page
+    try:
+        if _browser:
+            _browser.close()
+        if _playwright:
+            _playwright.stop()
+    except:
+        pass
+    _playwright = _browser = _context = _page = None
 
 
 def parse_price(price_str):
