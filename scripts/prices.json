@@ -132,16 +132,22 @@
     "brand": "Cohiba",
     "name": "Siglo VI",
     "box_size": 25,
-    "price": 3199.0,
+    "price": 3047.0,
     "sources": {
       "CGars": {
         "price": 3199.0,
         "url": "https://www.cgarsltd.co.uk/cohiba-siglo-cigar-cabinet-p-76.html",
         "in_stock": false,
         "product_name": "Cohiba Siglo VI Cigar - Cabinet of 25"
+      },
+      "Havana House": {
+        "price": 2895.0,
+        "url": "https://www.havanahouse.co.uk/product/cohiba-siglo-vi-cigar-box-of-25/",
+        "in_stock": false,
+        "product_name": "Cohiba Siglo VI Cigar \u2013 Box of 25"
       }
     },
-    "num_sources": 1
+    "num_sources": 2
   },
   "Cohiba|Maduro 5 Genios|25": {
     "brand": "Cohiba",
@@ -357,15 +363,21 @@
     "brand": "Cohiba",
     "name": "Siglo VI",
     "box_size": 10,
-    "price": 1355.0,
+    "price": 1302.5,
     "sources": {
       "CGars": {
         "price": 1355.0,
         "url": "https://www.cgarsltd.co.uk/cohiba-siglo-cigar-box-p-78.html",
         "in_stock": true,
         "product_name": "Cohiba Siglo VI Cigar - Box of 10"
+      },
+      "Havana House": {
+        "price": 1250.0,
+        "url": "https://www.havanahouse.co.uk/product/cohiba-siglo-vi-cigar-box-10/",
+        "in_stock": false,
+        "product_name": "Cohiba Siglo VI Cigar \u2013 Box of 10"
       }
     },
-    "num_sources": 1
+    "num_sources": 2
   }
 }

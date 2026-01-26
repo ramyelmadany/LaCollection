@@ -1,5 +1,5 @@
 // UK Market Prices - Auto-generated
-// Updated: 2026-01-26 15:57
+// Updated: 2026-01-26 16:19
 // Cigars with prices: 19/21
 
 export const ukMarketPrices = {
@@ -101,11 +101,16 @@ export const ukMarketPrices = {
     "updated": "2026-01-26"
   },
   "Cohiba|Siglo VI|25": {
-    "price": 3199.0,
+    "price": 3047.0,
     "sources": {
       "CGars": {
         "price": 3199.0,
         "url": "https://www.cgarsltd.co.uk/cohiba-siglo-cigar-cabinet-p-76.html",
+        "in_stock": false
+      },
+      "Havana House": {
+        "price": 2895.0,
+        "url": "https://www.havanahouse.co.uk/product/cohiba-siglo-vi-cigar-box-of-25/",
         "in_stock": false
       }
     },
@@ -272,12 +277,17 @@ export const ukMarketPrices = {
     "updated": "2026-01-26"
   },
   "Cohiba|Siglo VI|10": {
-    "price": 1355.0,
+    "price": 1302.5,
     "sources": {
       "CGars": {
         "price": 1355.0,
         "url": "https://www.cgarsltd.co.uk/cohiba-siglo-cigar-box-p-78.html",
         "in_stock": true
+      },
+      "Havana House": {
+        "price": 1250.0,
+        "url": "https://www.havanahouse.co.uk/product/cohiba-siglo-vi-cigar-box-10/",
+        "in_stock": false
       }
     },
     "updated": "2026-01-26"
