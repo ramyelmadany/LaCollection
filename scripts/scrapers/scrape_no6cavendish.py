@@ -2,10 +2,10 @@
 """
 No.6 Cavendish Scraper (no6cavendish.com)
 =========================================
-Shopify-based store with JSON API available.
+Shopify-based store - using Playwright for browser access.
 
 URL patterns:
-- Search: /search?q={search_term}
+- Search: /search?type=product&q={search_term}
 - Product JSON: /products/{handle}.json
 
 Variants include box sizes with prices.
@@ -23,47 +23,51 @@ def install(pkg):
     subprocess.check_call([sys.executable, "-m", "pip", "install", pkg, "-q"])
 
 try:
-    import requests
+    from playwright.sync_api import sync_playwright
 except ImportError:
-    install("requests")
-    import requests
-
-try:
-    from bs4 import BeautifulSoup
-except ImportError:
-    install("beautifulsoup4")
-    from bs4 import BeautifulSoup
+    install("playwright")
+    import subprocess
+    subprocess.run([sys.executable, "-m", "playwright", "install", "chromium"], check=True)
+    from playwright.sync_api import sync_playwright
 
 
 # Module state
-_session = None
+_playwright = None
+_browser = None
+_page = None
 _cache = {}
 
 BASE_URL = "https://www.no6cavendish.com"
 
 
 def init():
-    """Initialize the requests session."""
-    global _session
-    if _session:
+    """Initialize the browser."""
+    global _playwright, _browser, _page
+    if _page:
         return
     
-    print("  Starting session...")
-    _session = requests.Session()
-    _session.headers.update({
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    print("  Starting browser...")
+    _playwright = sync_playwright().start()
+    _browser = _playwright.chromium.launch(headless=True)
+    _page = _browser.new_page()
+    _page.set_extra_http_headers({
         'Accept-Language': 'en-GB,en;q=0.9',
     })
-    print("  Session ready")
+    print("  Browser ready")
 
 
 def cleanup():
-    """Clean up session."""
-    global _session
-    if _session:
-        _session.close()
-    _session = None
+    """Clean up browser resources."""
+    global _playwright, _browser, _page
+    if _page:
+        _page.close()
+    if _browser:
+        _browser.close()
+    if _playwright:
+        _playwright.stop()
+    _playwright = None
+    _browser = None
+    _page = None
 
 
 def normalize_name(text):
@@ -137,7 +141,7 @@ def get_search_terms(brand, name):
 
 
 def search_products(term):
-    """Search No6 Cavendish for products."""
+    """Search No6 Cavendish for products using browser."""
     cache_key = f"no6:{term}"
     if cache_key in _cache:
         return _cache[cache_key]
@@ -149,46 +153,59 @@ def search_products(term):
         time.sleep(random.uniform(0.3, 0.6))
         init()
         
-        response = _session.get(url, timeout=30)
-        response.raise_for_status()
+        _page.goto(url, wait_until='networkidle', timeout=30000)
         
-        soup = BeautifulSoup(response.text, 'html.parser')
+        # Wait for products to load
+        try:
+            _page.wait_for_selector('a[href*="/products/"]', timeout=5000)
+        except:
+            pass
         
-        # Find product links - Shopify typically uses product-card or similar
-        # Look for links containing /products/
-        links = soup.find_all('a', href=re.compile(r'/products/[^?]+'))
+        # Extract product links using JavaScript
+        product_data = _page.evaluate('''() => {
+            const links = document.querySelectorAll('a[href*="/products/"]');
+            const products = [];
+            const seen = new Set();
+            
+            links.forEach(link => {
+                const href = link.href;
+                const match = href.match(/\\/products\\/([^?/]+)/);
+                if (match) {
+                    const handle = match[1];
+                    if (!seen.has(handle)) {
+                        seen.add(handle);
+                        
+                        // Try to get name from link or parent
+                        let name = link.textContent.trim();
+                        if (!name || name.length < 3 || name.includes('Quick view')) {
+                            const parent = link.closest('.product-card, .grid-item, article, .product');
+                            if (parent) {
+                                const titleEl = parent.querySelector('h2, h3, h4, .product-title, .product-name, .title');
+                                if (titleEl) {
+                                    name = titleEl.textContent.trim();
+                                }
+                            }
+                        }
+                        
+                        if (name && name.length > 3 && !name.includes('Quick view')) {
+                            products.push({handle: handle, name: name, url: '/products/' + handle});
+                        }
+                    }
+                }
+            });
+            
+            return products;
+        }''')
         
-        seen_handles = set()
-        for link in links:
-            href = link.get('href', '')
-            
-            # Extract handle from URL
-            match = re.search(r'/products/([^?/]+)', href)
-            if not match:
-                continue
-            
-            handle = match.group(1)
-            if handle in seen_handles:
-                continue
-            seen_handles.add(handle)
-            
-            # Get product name from link text or nearby elements
-            name = link.get_text(strip=True)
-            if not name or len(name) < 3:
-                # Try to find name in parent
-                parent = link.find_parent(['div', 'article'])
-                if parent:
-                    title_el = parent.find(['h2', 'h3', 'h4', '.product-title', '.product-name'])
-                    if title_el:
-                        name = title_el.get_text(strip=True)
-            
-            if not name or len(name) < 3:
-                continue
+        # Filter and normalize
+        for p in product_data:
+            name = p['name']
+            handle = p['handle']
             
             # Skip non-cigars
             skip_words = ['humidor', 'ashtray', 'cutter', 'lighter', 'candle', 'case', 
-                          'pouch', 'gift', 'accessory', 'dupont', 'boveda', 'punch', 'flint']
-            if any(w in name.lower() for w in skip_words):
+                          'pouch', 'gift', 'accessory', 'dupont', 'boveda', 'punch', 'flint', 'gift-card']
+            if any(w in name.lower() or w in handle.lower() for w in skip_words):
                 continue
             
             products.append({
@@ -218,10 +235,14 @@ def get_product_variants(handle):
     
     try:
         time.sleep(random.uniform(0.2, 0.4))
-        response = _session.get(url, timeout=30)
-        response.raise_for_status()
+        init()
         
-        data = response.json()
+        _page.goto(url, wait_until='networkidle', timeout=30000)
+        
+        # Get JSON content
+        json_text = _page.evaluate('() => document.body.innerText')
+        
+        data = json.loads(json_text)
         product = data.get('product', {})
         
         for v in product.get('variants', []):
@@ -235,14 +256,12 @@ def get_product_variants(handle):
             
             box_size = extract_box_size_from_variant(title)
             
-            # Note: Shopify JSON doesn't always have inventory info
-            # We'll assume available unless we can check
             variants.append({
                 'title': title,
                 'price': price,
                 'box_size': box_size,
                 'variant_id': v.get('id'),
-                'available': v.get('available', True)  # Default to True
+                'available': v.get('available', True)
             })
         
     except Exception as e:
@@ -371,17 +390,8 @@ def scrape(brand, cigar_name, box_size):
                                 'in_stock': in_stock
                             }
                 
-                # Box size not available
-                print(f"  ⚠ BOX SIZE NOT AVAILABLE {brand} {cigar_name} (Box {box_size})")
-                return {
-                    'price': None,
-                    'box_size': box_size,
-                    'product_name': product['name'],
-                    'retailer': 'No6 Cavendish',
-                    'url': product['url'],
-                    'in_stock': False,
-                    'box_not_available': True
-                }
+                # Box size not available for THIS product, continue searching
+                continue
     
     return None
 
