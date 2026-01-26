@@ -493,16 +493,9 @@ def scrape(brand, cigar_name, box_size):
                             'price_unavailable': True
                         }
                     elif price_info.get('box_not_available'):
-                        print(f"  ⚠ BOX SIZE NOT AVAILABLE {brand} {cigar_name} (Box {box_size})")
-                        return {
-                            'price': None,
-                            'box_size': price_info['box_size'],
-                            'product_name': product['name'],
-                            'retailer': 'JJ Fox',
-                            'url': price_info['url'],
-                            'in_stock': False,
-                            'box_not_available': True
-                        }
+                        # Box size not available for THIS product, but keep searching others
+                        # Don't return, continue to next product
+                        pass
                     elif price_info.get('price'):
                         return {
                             'price': price_info['price'],
