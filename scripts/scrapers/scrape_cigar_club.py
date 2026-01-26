@@ -355,20 +355,37 @@ def get_product_variants(product_url):
         
         # Method 3: Simple product - single price with box size in details or URL
         if not variants:
-            # Find the main product price - look for the prominent price display
-            price_el = soup.select_one('.product-feature .price, .summary .price .woocommerce-Price-amount')
-            price_text = price_el.get_text() if price_el else ''
-            price_match = re.search(r'£([\d,]+\.?\d*)', price_text)
+            # Find the main product price - try multiple selectors
+            price = None
+            price_selectors = [
+                '.product-feature .price',
+                '.summary .price .woocommerce-Price-amount',
+                '.summary .price',
+                '.woocommerce-Price-amount',
+                'p.price'
+            ]
             
-            if not price_match:
-                # Try finding price in product-feature area specifically
-                feature_area = soup.select_one('.product-features, .product-feature')
-                if feature_area:
-                    feature_text = feature_area.get_text()
-                    price_match = re.search(r'£([\d,]+\.?\d*)', feature_text)
+            for selector in price_selectors:
+                price_el = soup.select_one(selector)
+                if price_el:
+                    price_text = price_el.get_text()
+                    price_match = re.search(r'£([\d,]+\.?\d*)', price_text)
+                    if price_match:
+                        price = float(price_match.group(1).replace(',', ''))
+                        if price > 50:  # Skip cart prices like £0.00
+                            break
+                        price = None
             
-            if price_match:
-                price = float(price_match.group(1).replace(',', ''))
+            # Fallback: find price in page text (first substantial price)
+            if not price:
+                all_prices = re.findall(r'£([\d,]+\.?\d*)', page_text)
+                for p in all_prices:
+                    val = float(p.replace(',', ''))
+                    if val > 100:  # Skip small prices (accessories, cart)
+                        price = val
+                        break
+            
+            if price:
                 
                 # Find box size from various sources
                 box_size = None
@@ -378,9 +395,15 @@ def get_product_variants(product_url):
                 if packaging_match:
                     box_size = int(packaging_match.group(1))
                 
+                # Check for "box of X" anywhere in text (more flexible)
+                if not box_size:
+                    box_match = re.search(r'box of (\d+)', page_text, re.IGNORECASE)
+                    if box_match:
+                        box_size = int(box_match.group(1))
+                
                 # Check URL for box size
                 if not box_size:
-                    url_match = re.search(r'box[- ]?(\d+)', product_url, re.IGNORECASE)
+                    url_match = re.search(r'box[- ]?of?[- ]?(\d+)', product_url, re.IGNORECASE)
                     if url_match:
                         box_size = int(url_match.group(1))
                 
@@ -393,15 +416,16 @@ def get_product_variants(product_url):
                         if title_match:
                             box_size = int(title_match.group(1))
                 
-                # Check for common box sizes in text
+                # Check for X cigars pattern
                 if not box_size:
-                    for common_size in [10, 25, 20, 12, 50]:
-                        if f'box of {common_size}' in page_text.lower() or f'{common_size} cigars' in page_text.lower():
-                            box_size = common_size
-                            break
+                    cigars_match = re.search(r'(\d+)\s*cigars', page_text, re.IGNORECASE)
+                    if cigars_match:
+                        potential_size = int(cigars_match.group(1))
+                        if 5 <= potential_size <= 50:
+                            box_size = potential_size
                 
                 # Validate price is reasonable for the box size
-                # Minimum prices: ~£30 per cigar for premium Cubans
+                # Minimum prices: ~£25 per cigar for premium Cubans
                 min_price = box_size * 25 if box_size else 100
                 
                 if box_size and price >= min_price:
