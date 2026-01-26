@@ -294,9 +294,12 @@ def match_product(product, brand, cigar_name, target_box_size):
     cigar_romans = set(re.findall(roman_pattern, cigar_name.lower()))
     prod_romans = set(re.findall(roman_pattern, prod_name))
     
-    if cigar_romans and prod_romans:
+    # If cigar name has roman numerals, product must have matching ones
+    if cigar_romans:
+        if not prod_romans:
+            return False, f"missing roman numeral (expected {cigar_romans})"
         if cigar_romans != prod_romans:
-            return False, "roman numeral mismatch"
+            return False, f"roman numeral mismatch ({cigar_romans} vs {prod_romans})"
     
     # Year numbers must match if present
     year_pattern = r'\b(19\d{2}|20\d{2})\b'
@@ -306,12 +309,23 @@ def match_product(product, brand, cigar_name, target_box_size):
     if cigar_years and not cigar_years.intersection(prod_years):
         return False, "year mismatch"
     
-    # Key words must have at least one match
+    # Key words matching - the last word (vitola name) is most important
     key_words = [w for w in cigar_normalized.split() if len(w) > 2]
-    matched = any(word in prod_name for word in key_words)
     
-    if key_words and not matched:
-        return False, "no key words matched"
+    if key_words:
+        # Last word is typically the vitola name (Maestros, Robusto, etc) - must match
+        last_word = key_words[-1]
+        last_word_stem = get_stem(last_word)
+        
+        # Check if last word or its stem is in product name
+        if last_word not in prod_name and last_word_stem not in prod_name:
+            return False, f"vitola mismatch (expected '{last_word}')"
+        
+        # Also need at least one other key word to match (if there are multiple)
+        if len(key_words) > 1:
+            other_words = key_words[:-1]
+            if not any(word in prod_name for word in other_words):
+                return False, "no other key words matched"
     
     return True, "matched"
 
