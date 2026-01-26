@@ -1,6 +1,6 @@
 // UK Market Prices - Auto-generated
-// Updated: 2026-01-26 20:00
-// Cigars with prices: 9/21
+// Updated: 2026-01-26 20:32
+// Cigars with prices: 8/21
 
 export const ukMarketPrices = {
   "Montecristo|Brillantes|18": {
@@ -9,17 +9,6 @@ export const ukMarketPrices = {
       "JJ Fox": {
         "price": 2250.0,
         "url": "https://www.jjfox.co.uk/montecristo-brillantes-year-of-the-dragon.html",
-        "in_stock": true
-      }
-    },
-    "updated": "2026-01-26"
-  },
-  "Montecristo|Linea 1935 Leyenda|20": {
-    "price": 1360.0,
-    "sources": {
-      "JJ Fox": {
-        "price": 1360.0,
-        "url": "https://www.jjfox.co.uk/montecristo-linea-1935-maltes.html",
         "in_stock": true
       }
     },
@@ -48,11 +37,11 @@ export const ukMarketPrices = {
     "updated": "2026-01-26"
   },
   "Partagas|Linea Maestra Maestros|20": {
-    "price": 1700.0,
+    "price": 1600.0,
     "sources": {
       "JJ Fox": {
-        "price": 1700.0,
-        "url": "https://www.jjfox.co.uk/partagas-linea-maestra-rito.html",
+        "price": 1600.0,
+        "url": "https://www.jjfox.co.uk/partagas-linea-maestra-maestro.html",
         "in_stock": true
       }
     },
