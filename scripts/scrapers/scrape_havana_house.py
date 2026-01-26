@@ -38,6 +38,7 @@ except ImportError:
 
 
 # Module state
+_playwright = None
 _browser = None
 _context = None
 _page = None
@@ -46,33 +47,43 @@ _cache = {}
 
 def init():
     """Initialize the browser."""
-    global _browser, _context, _page
+    global _playwright, _browser, _context, _page
     if _page:
         return
     
     print("  Starting browser...")
-    playwright = sync_playwright().start()
     
-    _browser = playwright.chromium.launch(
-        headless=True,
-        args=['--disable-blink-features=AutomationControlled', '--no-sandbox']
-    )
-    
-    _context = _browser.new_context(
-        viewport={'width': 1920, 'height': 1080},
-        user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    )
-    
-    _page = _context.new_page()
-    print("  Browser ready")
+    try:
+        _playwright = sync_playwright().start()
+        
+        _browser = _playwright.chromium.launch(
+            headless=True,
+            args=['--disable-blink-features=AutomationControlled', '--no-sandbox']
+        )
+        
+        _context = _browser.new_context(
+            viewport={'width': 1920, 'height': 1080},
+            user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        )
+        
+        _page = _context.new_page()
+        print("  Browser ready")
+    except Exception as e:
+        print(f"  Browser init error: {e}")
+        raise
 
 
 def cleanup():
     """Clean up browser resources."""
-    global _browser, _context, _page
-    if _browser:
-        _browser.close()
-        _browser = _context = _page = None
+    global _playwright, _browser, _context, _page
+    try:
+        if _browser:
+            _browser.close()
+        if _playwright:
+            _playwright.stop()
+    except:
+        pass
+    _playwright = _browser = _context = _page = None
 
 
 def parse_price(price_str):
