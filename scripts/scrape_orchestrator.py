@@ -182,7 +182,18 @@ def filter_outliers(prices_with_sources, box_size):
         # If all filtered out, return original (something is better than nothing)
         return prices_with_sources
     
-    # If we have multiple prices, also remove statistical outliers
+    # For 2 sources: if prices differ by more than 100%, exclude the lower one
+    # (likely a wrong box size match like single instead of box)
+    if len(filtered) == 2:
+        p1, s1 = filtered[0]
+        p2, s2 = filtered[1]
+        higher = max(p1, p2)
+        lower = min(p1, p2)
+        if higher > lower * 2:  # More than 100% difference
+            print(f"  ⚠ Large price discrepancy: £{lower:.2f} vs £{higher:.2f} - excluding lower price")
+            filtered = [(p, s) for p, s in filtered if p == higher]
+    
+    # If we have 3+ prices, also remove statistical outliers
     if len(filtered) >= 3:
         fprices = [p for p, s in filtered]
         median = sorted(fprices)[len(fprices) // 2]
