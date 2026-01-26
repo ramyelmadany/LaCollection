@@ -5,7 +5,12 @@
     "box_size": 18,
     "price": 1499.0,
     "sources": {
-      "CGars": 1499.0
+      "CGars": {
+        "price": 1499.0,
+        "url": "https://www.cgarsltd.co.uk/january-sale-montecristo-brillantes-year-the-dragon-limited-edition-cigar-box-p-60362.html",
+        "in_stock": true,
+        "product_name": "JANUARY SALE - Montecristo Brillantes Year of the Dragon Limited Edition Cigar - Box of 18"
+      }
     },
     "num_sources": 1
   },
@@ -15,7 +20,12 @@
     "box_size": 12,
     "price": 999.0,
     "sources": {
-      "CGars": 999.0
+      "CGars": {
+        "price": 999.0,
+        "url": "https://www.cgarsltd.co.uk/trinidad-robusto-extra-cigar-box-p-348.html",
+        "in_stock": false,
+        "product_name": "Trinidad Robusto Extra Cigar - Box of 12"
+      }
     },
     "num_sources": 1
   },
@@ -25,7 +35,12 @@
     "box_size": 20,
     "price": 1645.0,
     "sources": {
-      "CGars": 1645.0
+      "CGars": {
+        "price": 1645.0,
+        "url": "https://www.cgarsltd.co.uk/montecristo-linea-1935-leyenda-cigar-box-p-30068.html",
+        "in_stock": true,
+        "product_name": "Montecristo Linea 1935 Leyenda Cigar - Box of 20"
+      }
     },
     "num_sources": 1
   },
@@ -35,7 +50,12 @@
     "box_size": 20,
     "price": 1249.0,
     "sources": {
-      "CGars": 1249.0
+      "CGars": {
+        "price": 1249.0,
+        "url": "https://www.cgarsltd.co.uk/ramon-allones-edicion-limitada-2024-absolutos-cigar-box-p-63942.html",
+        "in_stock": true,
+        "product_name": "Ramon Allones Edicion Limitada 2024 Absolutos Cigar - Box of 20"
+      }
     },
     "num_sources": 1
   },
@@ -45,7 +65,12 @@
     "box_size": 50,
     "price": 3823.0,
     "sources": {
-      "CGars": 3823.0
+      "CGars": {
+        "price": 3823.0,
+        "url": "https://www.cgarsltd.co.uk/hoyo-monterrey-double-coronas-cigar-cabinet-p-201.html",
+        "in_stock": true,
+        "product_name": "Hoyo de Monterrey Double Coronas Cigar - Cabinet of 50"
+      }
     },
     "num_sources": 1
   },
@@ -55,7 +80,12 @@
     "box_size": 10,
     "price": 899.99,
     "sources": {
-      "CGars": 899.99
+      "CGars": {
+        "price": 899.99,
+        "url": "https://www.cgarsltd.co.uk/lcdh-bolivar-new-gold-medal-cigar-box-p-56484.html",
+        "in_stock": true,
+        "product_name": "LCDH Bolivar New Gold Medal Cigar - Box of 10"
+      }
     },
     "num_sources": 1
   },
@@ -65,7 +95,12 @@
     "box_size": 10,
     "price": 699.0,
     "sources": {
-      "CGars": 699.0
+      "CGars": {
+        "price": 699.0,
+        "url": "https://www.cgarsltd.co.uk/partagas-lusitanias-cigar-box-p-63088.html",
+        "in_stock": false,
+        "product_name": "Partagas Lusitanias Cigar - Box of 10"
+      }
     },
     "num_sources": 1
   },
@@ -75,7 +110,12 @@
     "box_size": 25,
     "price": 3199.0,
     "sources": {
-      "CGars": 3199.0
+      "CGars": {
+        "price": 3199.0,
+        "url": "https://www.cgarsltd.co.uk/cohiba-siglo-cigar-cabinet-p-76.html",
+        "in_stock": false,
+        "product_name": "Cohiba Siglo VI Cigar - Cabinet of 25"
+      }
     },
     "num_sources": 1
   },
@@ -85,7 +125,12 @@
     "box_size": 25,
     "price": 2999.0,
     "sources": {
-      "CGars": 2999.0
+      "CGars": {
+        "price": 2999.0,
+        "url": "https://www.cgarsltd.co.uk/cohiba-maduro-genios-cigar-box-p-4217.html",
+        "in_stock": false,
+        "product_name": "Cohiba Maduro 5 Genios Cigar - Box of 25"
+      }
     },
     "num_sources": 1
   },
@@ -95,7 +140,12 @@
     "box_size": 25,
     "price": 2629.0,
     "sources": {
-      "CGars": 2629.0
+      "CGars": {
+        "price": 2629.0,
+        "url": "https://www.cgarsltd.co.uk/cohiba-maduro-magicos-cigar-box-p-46177.html",
+        "in_stock": true,
+        "product_name": "Cohiba Maduro 5 Magicos Cigar - Box of 25"
+      }
     },
     "num_sources": 1
   },
@@ -105,7 +155,12 @@
     "box_size": 10,
     "price": 3399.0,
     "sources": {
-      "CGars": 3399.0
+      "CGars": {
+        "price": 3399.0,
+        "url": "https://www.cgarsltd.co.uk/cohiba-behike-bhk-cigar-box-ems-p-8636.html",
+        "in_stock": true,
+        "product_name": "Cohiba Behike BHK 52 Cigar - Box of 10 - EMS"
+      }
     },
     "num_sources": 1
   },
@@ -115,7 +170,12 @@
     "box_size": 20,
     "price": 1444.0,
     "sources": {
-      "CGars": 1444.0
+      "CGars": {
+        "price": 1444.0,
+        "url": "https://www.cgarsltd.co.uk/partagas-linea-maestra-maestro-cigar-box-p-60837.html",
+        "in_stock": true,
+        "product_name": "Partagas Linea Maestra Maestro Cigar - Box of 20"
+      }
     },
     "num_sources": 1
   },
@@ -125,7 +185,12 @@
     "box_size": 25,
     "price": 679.0,
     "sources": {
-      "CGars": 679.0
+      "CGars": {
+        "price": 679.0,
+        "url": "https://www.cgarsltd.co.uk/january-sale-hoyo-monterrey-petit-robusto-cigar-cabinet-p-215.html",
+        "in_stock": true,
+        "product_name": "JANUARY SALE - Hoyo de Monterrey Petit Robusto Cigar - Cabinet of 25"
+      }
     },
     "num_sources": 1
   },
@@ -135,7 +200,12 @@
     "box_size": 25,
     "price": 813.0,
     "sources": {
-      "CGars": 813.0
+      "CGars": {
+        "price": 813.0,
+        "url": "https://www.cgarsltd.co.uk/cohiba-siglo-cigar-cabinet-p-71.html",
+        "in_stock": true,
+        "product_name": "Cohiba Siglo I Cigar - Cabinet of 25"
+      }
     },
     "num_sources": 1
   },
@@ -145,7 +215,12 @@
     "box_size": 25,
     "price": 1635.0,
     "sources": {
-      "CGars": 1635.0
+      "CGars": {
+        "price": 1635.0,
+        "url": "https://www.cgarsltd.co.uk/cohiba-medio-siglo-cigar-cabinet-p-23350.html",
+        "in_stock": true,
+        "product_name": "Cohiba Medio Siglo Cigar - Cabinet of 25"
+      }
     },
     "num_sources": 1
   },
@@ -155,7 +230,12 @@
     "box_size": 10,
     "price": 5199.0,
     "sources": {
-      "CGars": 5199.0
+      "CGars": {
+        "price": 5199.0,
+        "url": "https://www.cgarsltd.co.uk/cohiba-behike-bhk-cigar-box-ems-p-8634.html",
+        "in_stock": true,
+        "product_name": "Cohiba Behike BHK 56 Cigar - Box of 10 - EMS"
+      }
     },
     "num_sources": 1
   },
@@ -165,7 +245,12 @@
     "box_size": 12,
     "price": 815.0,
     "sources": {
-      "CGars": 815.0
+      "CGars": {
+        "price": 815.0,
+        "url": "https://www.cgarsltd.co.uk/trinidad-esmeralda-cigar-box-p-39450.html",
+        "in_stock": true,
+        "product_name": "Trinidad Esmeralda Cigar - Box of 12"
+      }
     },
     "num_sources": 1
   },
@@ -175,7 +260,12 @@
     "box_size": 25,
     "price": 3199.0,
     "sources": {
-      "CGars": 3199.0
+      "CGars": {
+        "price": 3199.0,
+        "url": "https://www.cgarsltd.co.uk/cohiba-lanceros-cigar-box-p-68.html",
+        "in_stock": false,
+        "product_name": "Cohiba Lanceros Cigar - Box of 25"
+      }
     },
     "num_sources": 1
   },
@@ -185,7 +275,12 @@
     "box_size": 10,
     "price": 1355.0,
     "sources": {
-      "CGars": 1355.0
+      "CGars": {
+        "price": 1355.0,
+        "url": "https://www.cgarsltd.co.uk/cohiba-siglo-cigar-box-p-78.html",
+        "in_stock": true,
+        "product_name": "Cohiba Siglo VI Cigar - Box of 10"
+      }
     },
     "num_sources": 1
   }
