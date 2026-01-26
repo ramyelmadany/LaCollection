@@ -287,8 +287,8 @@ def get_product_price(product_url, target_box_size):
                 _page.select_option('select.super-attribute-select, select[id*="attribute"]', 
                                    target_option['value'])
                 
-                # Wait for price to update
-                time.sleep(0.5)
+                # Wait for price to update - needs longer delay
+                time.sleep(1.0)
                 
                 # Get the updated price
                 price_el = _page.query_selector('.price')
@@ -298,12 +298,21 @@ def get_product_price(product_url, target_box_size):
                     if price_match:
                         price = float(price_match.group(1).replace(',', ''))
                         
-                        result = {
-                            'price': price,
-                            'box_size': target_box_size,
-                            'in_stock': not is_out_of_stock,
-                            'url': product_url
-                        }
+                        # Validate price is reasonable for the box size
+                        # Minimum ~£15 per cigar for premium Cubans
+                        min_price = target_box_size * 15
+                        
+                        if price >= min_price:
+                            result = {
+                                'price': price,
+                                'box_size': target_box_size,
+                                'in_stock': not is_out_of_stock,
+                                'url': product_url
+                            }
+                        else:
+                            # Price too low - likely showing single cigar price
+                            # Don't return this result
+                            pass
         else:
             # No dropdown - might be a simple product
             # Check if there's a price displayed
@@ -341,6 +350,7 @@ def get_product_price(product_url, target_box_size):
 def match_product(product, brand, cigar_name):
     """Check if product matches brand and cigar name."""
     prod_name = product['normalized']
+    prod_name_original = product['name'].lower()
     
     # Brand check
     brand_lower = brand.lower()
@@ -350,6 +360,16 @@ def match_product(product, brand, cigar_name):
     
     # Cigar name matching
     cigar_normalized = normalize_name(cigar_name.lower())
+    
+    # Special handling for Behike - the number is critical
+    if 'behike' in cigar_name.lower():
+        behike_num = re.search(r'behike\s*(\d+)', cigar_name.lower())
+        if behike_num:
+            target_num = behike_num.group(1)
+            # Check if the EXACT Behike number is in the product name
+            prod_behike = re.search(r'behike\s*(?:bhk\s*)?(\d+)', prod_name_original)
+            if not prod_behike or prod_behike.group(1) != target_num:
+                return False, f"Behike number mismatch (want {target_num})"
     
     # Roman numerals must match exactly
     roman_pattern = r'\b(i{1,3}|iv|v|vi{1,3}|ix|x{1,3})\b'
