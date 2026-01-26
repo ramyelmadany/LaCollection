@@ -31,12 +31,12 @@ jobs:
           playwright install chromium
           playwright install-deps chromium
 
-      - name: Run scraper
+      - name: Run scraper orchestrator
         env:
           GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
         run: |
           cd scripts
-          python uk_price_scraper_v23.py
+          python scrape_orchestrator.py
 
       - name: Copy prices to src
         run: |
@@ -46,6 +46,6 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add src/uk_market_prices.js scripts/prices.json scripts/price_history.json
+          git add src/uk_market_prices.js scripts/prices.json
           git diff --staged --quiet || git commit -m "Update UK market prices"
           git push
