@@ -241,12 +241,19 @@ def search_products(term):
                 name_el = box.select_one('.product-name')
                 # Try both price selectors
                 price_el = box.select_one('.now_price') or box.select_one('.new_price')
+                # Get product URL
+                link_el = box.select_one('a[href]')
                 
                 if not name_el:
                     continue
                 
                 name = name_el.get_text(strip=True)
                 price = parse_price(price_el.get_text() if price_el else '')
+                url = link_el.get('href', '') if link_el else ''
+                
+                # Check stock status
+                box_text = box.get_text().lower()
+                in_stock = 'sold out' not in box_text and 'out of stock' not in box_text
                 
                 # Skip non-cigar products
                 skip_words = ['humidor', 'ashtray', 'cutter', 'lighter', 'case', 
@@ -262,7 +269,9 @@ def search_products(term):
                         'name': name,
                         'price': price,
                         'box_size': box_size,
-                        'normalized': normalize_name(name)
+                        'normalized': normalize_name(name),
+                        'url': url,
+                        'in_stock': in_stock
                     })
             except Exception as e:
                 continue
@@ -386,7 +395,9 @@ def scrape(brand, cigar_name, box_size):
                     'price': product['price'],
                     'box_size': product['box_size'],
                     'product_name': product['name'],
-                    'retailer': 'CGars'
+                    'retailer': 'CGars',
+                    'url': product.get('url', ''),
+                    'in_stock': product.get('in_stock', True)
                 }
             elif products:  # Log first rejection reason for debugging
                 print(f"      Rejected '{product['name'][:50]}...' - {reason}")
