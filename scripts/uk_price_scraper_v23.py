@@ -180,11 +180,10 @@ def load_inventory_from_api():
         # Build the Sheets API service
         service = build('sheets', 'v4', credentials=credentials)
         
-        # Get the data from the sheet (adjust range as needed)
-        # Using the inventory tab (gid=1253000469 corresponds to a specific sheet)
+        # Get the data from the sheet
         result = service.spreadsheets().values().get(
             spreadsheetId=SHEET_ID,
-            range='Inventory!A:S'  # Adjust sheet name if different
+            range='Cigar Inventory!A:S'
         ).execute()
         
         rows = result.get('values', [])
