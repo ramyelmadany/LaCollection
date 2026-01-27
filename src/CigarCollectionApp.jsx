@@ -2646,13 +2646,12 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
   }
   
   const findGroupForBox = (boxNum, brand, name) => {
-    if (boxNum === 'EXT') return null;
-    const box = boxes.find(b => b.boxNum === boxNum);
-    if (!box) return null;
-    const key = `${brand}|${name}`;
-    const groupBoxes = boxes.filter(b => `${b.brand}|${b.name}` === key);
-    return { brand, name, boxes: groupBoxes };
-  };
+  if (boxNum === 'EXT') return null;
+  const key = `${brand}|${name}`;
+  const groupBoxes = boxes.filter(b => `${b.brand}|${b.name}` === key);
+  if (groupBoxes.length === 0) return null;
+  return { brand, name, boxes: groupBoxes };
+};
   
   return (
     <div className="px-4 pt-4 space-y-3">
@@ -4194,8 +4193,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
       )}
       
       {/* History View */}
-      {view === 'history' && <HistoryView history={history} boxes={boxes} onDelete={isSignedIn ? handleDeleteHistory : () => setShowSignInPrompt(true)} onEdit={isSignedIn ? handleEditHistory : () => setShowSignInPrompt(true)} />}
-      
+{view === 'history' && <HistoryView history={history} boxes={boxes} onDelete={isSignedIn ? handleDeleteHistory : () => setShowSignInPrompt(true)} onEdit={isSignedIn ? handleEditHistory : () => setShowSignInPrompt(true)} onBoxClick={(group) => setSelectedGroup(group)} />}      
       {/* Prices View */}
       {view === 'prices' && <PricesView boxes={boxes} currency={currency} FX={FX} fmtCurrency={fmtCurrency} fmtFromGBP={fmtFromGBP} />}
       
