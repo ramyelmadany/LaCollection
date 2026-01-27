@@ -1485,32 +1485,42 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
         {boxes.length > 1 && (
           <div className="px-4 py-3 flex gap-2 overflow-x-auto" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {boxes.map((b, i) => (
-              <button 
-                key={b.id} 
-                onClick={() => setSelectedIdx(i)} 
-                className="px-4 py-2 text-base whitespace-nowrap"
-                style={{
-                  background: selectedIdx === i ? '#6B1E1E' : 'rgba(107,30,30,0.3)',
-                  color: selectedIdx === i ? '#F5DEB3' : '#1a120b',
-                  borderRadius: '4px',
-                  fontFamily: 'tt-ricordi-allegria, Georgia, serif',
-                  border: 'none'
-                }}
-              >
-                Box {b.boxNum}
-              </button>
+              <div key={b.id} className="relative pb-2">
+                <button 
+                  onClick={() => setSelectedIdx(i)} 
+                  className="px-4 py-2 text-base whitespace-nowrap"
+                  style={{
+                    background: '#6B1E1E',
+                    color: '#F5DEB3',
+                    borderRadius: '4px',
+                    fontFamily: 'tt-ricordi-allegria, Georgia, serif',
+                    border: 'none'
+                  }}
+                >
+                  Box {b.boxNum}
+                </button>
+                {selectedIdx === i && (
+                  <div 
+                    className="absolute left-1/2 -translate-x-1/2 w-3 h-3 rounded-full"
+                    style={{ 
+                      background: '#1a5a1a',
+                      bottom: '-2px'
+                    }}
+                  />
+                )}
+              </div>
             ))}
           </div>
         )}
         
         <div className="p-4">
           {/* Box Status Row */}
-          <div className="py-4 border-b-2 text-center" style={{ borderColor: '#6B1E1E' }}>
-            <div className="text-2xl font-medium" style={{ color: '#1a120b' }}>
-              {isFullBox 
-                ? `Box of ${box.perBox} – Full Box`
-                : `Box of ${box.perBox} – ${box.remaining} Remaining`
-              }
+          <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
+            <div className="flex justify-between items-baseline">
+              <span className="text-2xl font-medium" style={{ color: '#1a120b' }}>Box of {box.perBox}</span>
+              <span className="text-2xl font-medium" style={{ color: '#1a120b' }}>
+                {isFullBox ? `${box.perBox} Remaining` : `${box.remaining} Remaining`}
+              </span>
             </div>
             {boxAge && (
               <div className="text-lg font-medium mt-1" style={{ color: '#1a120b' }}>
@@ -1537,12 +1547,11 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
               <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtFromGBP(marketGBP)}</span>
             </div>
             {savingsInBase > 0 && (
-              <div className="flex justify-between items-center mb-2">
+              <div className="flex justify-between items-center">
                 <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Savings</span>
                 <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtFromGBP(savingsInBase)} ({Math.round(savingsInBase/marketInBase*100)}%)</span>
               </div>
             )}
-            <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.status}</div>
           </div>
 
           {/* Details Grid */}
@@ -1648,7 +1657,7 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
       )}
     </div>
   );
-};
+};;
 
 // Edit History Modal
 const EditHistoryModal = ({ entry, index, onClose, onSave }) => {
