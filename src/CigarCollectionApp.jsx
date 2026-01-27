@@ -3152,8 +3152,9 @@ setBoxes(boxData);
         consumed: thisConsumed,
         remaining: thisRemaining,
         ringGauge: row[16] || '',
-        length: row[17] || '',
-        notes: row[18] || '',
+length: row[17] || '',
+vitola: row[18] || '',
+boxNotes: row[19] || '',
       });
     }
     return boxes;
