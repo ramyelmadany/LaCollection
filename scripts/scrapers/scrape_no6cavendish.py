@@ -157,42 +157,69 @@ def search_products(term):
         
         # Wait for products to load
         try:
-            _page.wait_for_selector('a[href*="/products/"]', timeout=5000)
+            _page.wait_for_selector('.grid-product, a[href*="/products/"]', timeout=5000)
         except:
             pass
         
-        # Extract product links using JavaScript
+        # Extract product data using the grid-product structure
         product_data = _page.evaluate('''() => {
-            const links = document.querySelectorAll('a[href*="/products/"]');
             const products = [];
             const seen = new Set();
             
-            links.forEach(link => {
-                const href = link.href;
-                const match = href.match(/\\/products\\/([^?/]+)/);
-                if (match) {
-                    const handle = match[1];
-                    if (!seen.has(handle)) {
-                        seen.add(handle);
-                        
-                        // Try to get name from link or parent
-                        let name = link.textContent.trim();
-                        if (!name || name.length < 3 || name.includes('Quick view')) {
-                            const parent = link.closest('.product-card, .grid-item, article, .product');
-                            if (parent) {
-                                const titleEl = parent.querySelector('h2, h3, h4, .product-title, .product-name, .title');
-                                if (titleEl) {
-                                    name = titleEl.textContent.trim();
-                                }
+            // Method 1: Use grid-product cards (preferred for No6 Cavendish)
+            const gridProducts = document.querySelectorAll('.grid-product');
+            gridProducts.forEach(card => {
+                const link = card.querySelector('a[href*="/products/"]');
+                const titleEl = card.querySelector('.grid-product__title');
+                
+                if (link && titleEl) {
+                    const href = link.href;
+                    const match = href.match(/\\/products\\/([^?]+)/);
+                    if (match) {
+                        const handle = match[1];
+                        if (!seen.has(handle)) {
+                            seen.add(handle);
+                            const name = titleEl.textContent.trim();
+                            if (name && name.length > 3) {
+                                products.push({handle: handle, name: name, url: '/products/' + handle});
                             }
-                        }
-                        
-                        if (name && name.length > 3 && !name.includes('Quick view')) {
-                            products.push({handle: handle, name: name, url: '/products/' + handle});
                         }
                     }
                 }
             });
+            
+            // Method 2: Fallback to scanning all product links
+            if (products.length === 0) {
+                const links = document.querySelectorAll('a[href*="/products/"]');
+                links.forEach(link => {
+                    const href = link.href;
+                    const match = href.match(/\\/products\\/([^?/]+)/);
+                    if (match) {
+                        const handle = match[1];
+                        if (!seen.has(handle)) {
+                            seen.add(handle);
+                            
+                            // Try to get name from parent
+                            let name = '';
+                            const parent = link.closest('.grid-product, .product-card, article');
+                            if (parent) {
+                                const titleEl = parent.querySelector('.grid-product__title, .product-title, h2, h3');
+                                if (titleEl) {
+                                    name = titleEl.textContent.trim();
+                                }
+                            }
+                            
+                            if (!name) {
+                                name = link.textContent.trim();
+                            }
+                            
+                            if (name && name.length > 3 && !name.includes('Quick') && !name.includes('Gift')) {
+                                products.push({handle: handle, name: name, url: '/products/' + handle});
+                            }
+                        }
+                    }
+                });
+            }
             
             return products;
         }''')
