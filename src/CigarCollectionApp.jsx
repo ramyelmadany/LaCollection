@@ -1456,19 +1456,19 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
   };
   
   // Calculate box age
-  const calculateAge = (dateStr) => {
-    if (!dateStr) return null;
-    const boxDate = new Date(dateStr);
-    const now = new Date();
-    const diffMs = now - boxDate;
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const years = Math.floor(diffDays / 365);
-    const months = Math.floor((diffDays % 365) / 30);
-    return { years, months };
-  };
-  
-  const boxAgeData = calculateAge(box.dateOfBox);
-  const isFullBox = box.remaining === box.perBox;
+const calculateAge = (dateStr) => {
+  if (!dateStr) return null;
+  const boxDate = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now - boxDate;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const years = Math.floor(diffDays / 365);
+  const months = Math.floor((diffDays % 365) / 30);
+  return { years, months };
+};
+
+const boxAgeData = calculateAge(box.dateOfBox);
+const isFullBox = box.remaining === box.perBox;
   
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
