@@ -1730,7 +1730,15 @@ const isFullBox = box.remaining === box.perBox;
 
 // Edit History Modal
 const EditHistoryModal = ({ entry, index, onClose, onSave, onDelete }) => {
-  const [date, setDate] = useState(entry.date || new Date().toISOString().split('T')[0]);
+  // Format date for input (needs YYYY-MM-DD format)
+  const formatDateForInput = (dateStr) => {
+    if (!dateStr) return new Date().toISOString().split('T')[0];
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return new Date().toISOString().split('T')[0];
+    return d.toISOString().split('T')[0];
+  };
+  
+  const [date, setDate] = useState(formatDateForInput(entry.date));
   const [qty, setQty] = useState(entry.qty || 1);
   const [notes, setNotes] = useState(entry.notes || '');
   const [brand, setBrand] = useState(entry.brand || '');
@@ -1760,11 +1768,6 @@ const EditHistoryModal = ({ entry, index, onClose, onSave, onDelete }) => {
         </div>
         
         <div className="p-4 space-y-4">
-          <div>
-            <label className="text-sm font-medium block mb-2" style={{ color: 'rgba(26,18,11,0.5)' }}>Date</label>
-            <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full px-3 py-2 rounded-lg text-lg font-medium" style={{ background: 'rgba(26,18,11,0.1)', border: '1px solid rgba(26,18,11,0.2)', color: '#1a120b' }} />
-          </div>
-          
           {isExternal ? (
             <>
               <div>
@@ -1783,6 +1786,11 @@ const EditHistoryModal = ({ entry, index, onClose, onSave, onDelete }) => {
               <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box {entry.boxNum}</div>
             </div>
           )}
+          
+          <div>
+            <label className="text-sm font-medium block mb-2" style={{ color: 'rgba(26,18,11,0.5)' }}>Date</label>
+            <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full px-3 py-2 rounded-lg text-lg font-medium" style={{ background: 'rgba(26,18,11,0.1)', border: '1px solid rgba(26,18,11,0.2)', color: '#1a120b' }} />
+          </div>
           
           <div>
             <label className="text-sm font-medium block mb-2" style={{ color: 'rgba(26,18,11,0.5)' }}>Quantity</label>
