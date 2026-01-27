@@ -4251,12 +4251,8 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
           </div>
         </div>
       )}
+
       {editingHistory && <EditHistoryModal 
-        entry={editingHistory.entry} 
-        index={editingHistory.index}
-        onClose={() => setEditingHistory(null)} 
-        onSave={async (index, oldEntry, newEntry) => {
-          {editingHistory && <EditHistoryModal 
   entry={editingHistory.entry} 
   index={editingHistory.index}
   onClose={() => setEditingHistory(null)} 
@@ -4295,6 +4291,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
     setEditingHistory(null);
   }}
 />}
+      
           // Delete old entry and add new one
           await deleteHistoryEntry(oldEntry, accessToken);
           await addHistoryEntry(newEntry, accessToken);
