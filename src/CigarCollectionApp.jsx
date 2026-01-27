@@ -1499,159 +1499,178 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
           </div>
         )}
         
-        <div className="p-4 space-y-4">
-          <div className="grid grid-cols-3 gap-2">
-            <div className="rounded-lg p-3 text-center" style={{ background: '#1a120b' }}>
-              <div className="text-xs text-gray-500">Per Box</div>
-              <div className="text-2xl font-light" style={{ color: '#1a1a1a' }}>{box.perBox}</div>
+        <div className="p-4">
+          {/* Counts Row */}
+          <div className="flex justify-around py-4 border-b" style={{ borderColor: 'rgba(0,0,0,0.2)' }}>
+            <div className="text-center">
+              <div className="text-3xl font-light" style={{ color: '#1a1a1a' }}>{box.perBox}</div>
+              <div className="text-xs" style={{ color: 'rgba(0,0,0,0.5)' }}>Per Box</div>
             </div>
-            <div className="rounded-lg p-3 text-center" style={{ background: '#1a120b' }}>
-              <div className="text-xs text-gray-500">Remaining</div>
-              <div className="text-2xl font-light text-green-400">{box.remaining}</div>
+            <div className="text-center">
+              <div className="text-3xl font-light" style={{ color: '#1a5a1a' }}>{box.remaining}</div>
+              <div className="text-xs" style={{ color: 'rgba(0,0,0,0.5)' }}>Remaining</div>
             </div>
-            <div className="rounded-lg p-3 text-center" style={{ background: '#1a120b' }}>
-              <div className="text-xs text-gray-500">Smoked</div>
-              <div className="text-2xl font-light text-orange-400">{box.consumed}</div>
+            <div className="text-center">
+              <div className="text-3xl font-light" style={{ color: '#8B4513' }}>{box.consumed}</div>
+              <div className="text-xs" style={{ color: 'rgba(0,0,0,0.5)' }}>Smoked</div>
             </div>
           </div>
-          
-          <div className="rounded-lg p-4" style={{ background: '#1a120b' }}>
-            <div className="text-xs text-gray-500 mb-3" style={{ fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Pricing ({baseCurrency})</div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Your cost:</span>
-                <span className="text-green-400 font-semibold">{fmtCurrencyWithOriginal(box.price, box.currency)}</span>
+
+          {/* Pricing Row */}
+          <div className="py-4 border-b" style={{ borderColor: 'rgba(0,0,0,0.2)' }}>
+            <div className="flex justify-between items-center mb-2">
+              <span style={{ color: 'rgba(0,0,0,0.6)' }}>Your cost</span>
+              <span className="font-semibold" style={{ color: '#1a5a1a' }}>{fmtCurrencyWithOriginal(box.price, box.currency)}</span>
+            </div>
+            <div className="flex justify-between items-center mb-2">
+              <span style={{ color: 'rgba(0,0,0,0.6)' }}>UK market</span>
+              <span style={{ color: '#1a1a1a' }}>{fmtFromGBP(marketGBP)}</span>
+            </div>
+            {savingsInBase > 0 && (
+              <div className="flex justify-between items-center">
+                <span style={{ color: 'rgba(0,0,0,0.6)' }}>Savings</span>
+                <span className="font-semibold" style={{ color: '#1a5a1a' }}>{fmtFromGBP(savingsInBase)} ({Math.round(savingsInBase/marketInBase*100)}%)</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-400">UK market:</span>
-                <span className="text-blue-400">{fmtFromGBP(marketGBP)}</span>
-              </div>
-              <div className="flex justify-between text-sm items-center">
-                <span className="text-gray-400 text-xs">Source: {market?.source || 'estimate'}</span>
-                {isSignedIn && (
-                  <div className="flex items-center gap-1">
-                    <input
-                      type="number"
-                      step="0.01"
-                      placeholder="Override £"
-                      defaultValue={getManualUKPrice(box.brand, box.name, box.perBox) || ''}
-                      className="w-20 px-1 py-0.5 text-xs bg-gray-700 border border-gray-600 rounded text-white"
-                      onBlur={(e) => {
-                        setManualUKPrice(box.brand, box.name, box.perBox, e.target.value);
+            )}
+            <div className="flex justify-between items-center mt-2 pt-2 border-t" style={{ borderColor: 'rgba(0,0,0,0.1)' }}>
+              <span className="text-xs" style={{ color: 'rgba(0,0,0,0.4)' }}>Source: {market?.source || 'estimate'}</span>
+              {isSignedIn && (
+                <div className="flex items-center gap-1">
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder="Override £"
+                    defaultValue={getManualUKPrice(box.brand, box.name, box.perBox) || ''}
+                    className="w-20 px-1 py-0.5 text-xs rounded"
+                    style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(0,0,0,0.3)', color: '#1a1a1a' }}
+                    onBlur={(e) => {
+                      setManualUKPrice(box.brand, box.name, box.perBox, e.target.value);
+                      window.location.reload();
+                    }}
+                  />
+                  {getManualUKPrice(box.brand, box.name, box.perBox) && (
+                    <button
+                      onClick={() => {
+                        clearManualUKPrice(box.brand, box.name, box.perBox);
                         window.location.reload();
                       }}
-                    />
-                    {getManualUKPrice(box.brand, box.name, box.perBox) && (
-                      <button
-                        onClick={() => {
-                          clearManualUKPrice(box.brand, box.name, box.perBox);
-                          window.location.reload();
-                        }}
-                        className="text-xs text-red-400 hover:text-red-300"
-                      >
-                        ✕
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-              {savingsInBase > 0 && (
-                <div className="flex justify-between text-sm pt-2 border-t border-gray-700">
-                  <span className="text-gray-400">Savings:</span>
-                  <span className="text-green-500 font-semibold">{fmtFromGBP(savingsInBase)} ({Math.round(savingsInBase/marketInBase*100)}%)</span>
+                      className="text-xs"
+                      style={{ color: '#8B0000' }}
+                    >
+                      ✕
+                    </button>
+                  )}
                 </div>
               )}
             </div>
           </div>
-          
-         <div className="rounded-lg p-4" style={{ background: '#1a120b' }}>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div><div className="text-xs text-gray-500">Box ID</div><div className="text-gray-300">{box.boxNum}</div></div>
-              <div><div className="text-xs text-gray-500">Location</div><div className="text-gray-300">{box.location}</div></div>
-              <div><div className="text-xs text-gray-500">Purchased</div><div className="text-gray-300">{fmt.date(box.datePurchased)}</div></div>
-              {box.code && <div><div className="text-xs text-gray-500">Factory Code</div><div className="text-gray-300 font-mono">{box.code}</div></div>}
-              <div><div className="text-xs text-gray-500">Release Date</div><div className="text-gray-300">{box.dateOfBox ? fmt.date(box.dateOfBox) : 'Unknown'}</div></div>
-            </div>
-            <div className="mt-4 pt-4 border-t border-gray-700">
-              <div className="text-xs text-gray-500 mb-2">Status</div>
-              <div className="flex flex-col gap-2">
-                <span className="px-3 py-1.5 rounded-lg text-xs text-center" style={{ 
-                  background: box.received ? '#1c3a1c' : '#3a3a1c', 
-                  color: box.received ? '#99ff99' : '#ffff99'
-                }}>
-                  {box.received ? 'Received into collection' : 'Receipt pending'}
-                </span>
-                <span className="px-3 py-1.5 rounded-lg text-xs text-center" style={{ 
-                  background: box.status === 'Ageing' ? '#4a1c1c' : box.status === 'Immediate' ? '#1c3a1c' : '#3a3a1c',
-                  color: box.status === 'Ageing' ? '#ff9999' : box.status === 'Immediate' ? '#99ff99' : '#ffff99'
-                }}>
-                  {box.status}
-                </span>
+
+          {/* Details Grid */}
+          <div className="py-4 border-b" style={{ borderColor: 'rgba(0,0,0,0.2)' }}>
+            <div className="grid grid-cols-2 gap-y-3 gap-x-4">
+              <div>
+                <div className="text-xs" style={{ color: 'rgba(0,0,0,0.5)' }}>Box ID</div>
+                <div style={{ color: '#1a1a1a' }}>{box.boxNum}</div>
+              </div>
+              <div>
+                <div className="text-xs" style={{ color: 'rgba(0,0,0,0.5)' }}>Location</div>
+                <div style={{ color: '#1a1a1a' }}>{box.location}</div>
+              </div>
+              <div>
+                <div className="text-xs" style={{ color: 'rgba(0,0,0,0.5)' }}>Purchased</div>
+                <div style={{ color: '#1a1a1a' }}>{fmt.date(box.datePurchased)}</div>
+              </div>
+              {box.code && (
+                <div>
+                  <div className="text-xs" style={{ color: 'rgba(0,0,0,0.5)' }}>Factory Code</div>
+                  <div className="font-mono" style={{ color: '#1a1a1a' }}>{box.code}</div>
+                </div>
+              )}
+              <div>
+                <div className="text-xs" style={{ color: 'rgba(0,0,0,0.5)' }}>Release Date</div>
+                <div style={{ color: '#1a1a1a' }}>{box.dateOfBox ? fmt.date(box.dateOfBox) : 'Unknown'}</div>
               </div>
             </div>
           </div>
 
+          {/* Age Row */}
+          {(boxAge || purchaseAge) && (
+            <div className="flex justify-around py-4 border-b" style={{ borderColor: 'rgba(0,0,0,0.2)' }}>
+              {boxAge && (
+                <div className="text-center">
+                  <div className="text-2xl font-light" style={{ color: '#1a1a1a' }}>{boxAge}</div>
+                  <div className="text-xs" style={{ color: 'rgba(0,0,0,0.5)' }}>Cigar Age</div>
+                </div>
+              )}
+              {purchaseAge && (
+                <div className="text-center">
+                  <div className="text-2xl font-light" style={{ color: '#1a1a1a' }}>{purchaseAge}</div>
+                  <div className="text-xs" style={{ color: 'rgba(0,0,0,0.5)' }}>Time Owned</div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Vitola */}
           {box.notes && (
-            <div className="rounded-lg p-4" style={{ background: '#1a120b' }}>
-              <div className="text-xs text-gray-500 mb-2" style={{ fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Vitola</div>
-              <div className="text-sm text-gray-300">{box.notes}</div>
+            <div className="py-4 border-b" style={{ borderColor: 'rgba(0,0,0,0.2)' }}>
+              <div className="text-xs mb-1" style={{ color: 'rgba(0,0,0,0.5)' }}>Vitola</div>
+              <div style={{ color: '#1a1a1a' }}>{box.notes}</div>
             </div>
           )}
-          
-          {/* Age Information */}
-          {(boxAge || purchaseAge) && (
-            <div className="rounded-lg p-4" style={{ background: '#1a120b' }}>
-              <div className="text-xs text-gray-500 mb-3" style={{ fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Age</div>
-              <div className="grid grid-cols-2 gap-4">
-                {boxAge && (
-                  <div className="text-center">
-                    <div className="text-2xl font-light" style={{ color: '#1a1a1a' }}>{boxAge}</div>
-                    <div className="text-xs text-gray-500">Cigar Age (from release)</div>
-                  </div>
-                )}
-                {purchaseAge && (
-                  <div className="text-center">
-                    <div className="text-2xl font-light text-blue-400">{purchaseAge}</div>
-                    <div className="text-xs text-gray-500">Time Owned</div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-          
+
+          {/* Status Tags */}
+          <div className="flex gap-2 py-4">
+            <span className="px-3 py-1 rounded-full text-xs" style={{ 
+              background: box.received ? 'rgba(0,100,0,0.2)' : 'rgba(180,180,0,0.2)', 
+              color: box.received ? '#1a5a1a' : '#6a6a00'
+            }}>
+              {box.received ? 'Received' : 'Pending'}
+            </span>
+            <span className="px-3 py-1 rounded-full text-xs" style={{ 
+              background: box.status === 'Ageing' ? 'rgba(139,69,19,0.2)' : 'rgba(0,100,0,0.2)',
+              color: box.status === 'Ageing' ? '#8B4513' : '#1a5a1a'
+            }}>
+              {box.status}
+            </span>
+          </div>
+
+          {/* Action Buttons */}
           {isSignedIn && !showDeleteConfirm && (
-            <div className="flex flex-col gap-2 mt-3">
+            <div className="flex gap-2 pt-2">
               <button
                 onClick={() => setShowEditModal(true)}
-                className="w-full py-2 rounded-lg text-sm"
-                style={{ background: '#252525', color: '#F5DEB3', border: '1px solid #F5DEB3' }}
+                className="flex-1 py-3 rounded-lg text-sm font-medium"
+                style={{ background: '#1a120b', color: '#F5DEB3' }}
               >
-                Edit Box
+                Edit
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(true)}
-                className="w-full py-2 rounded-lg text-sm bg-red-900 hover:bg-red-800 text-red-200"
+                className="flex-1 py-3 rounded-lg text-sm font-medium"
+                style={{ background: 'rgba(139,0,0,0.3)', color: '#8B0000' }}
               >
-                Delete Box
+                Delete
               </button>
             </div>
           )}
           {showDeleteConfirm && (
-            <div className="mt-3 p-3 rounded-lg" style={{ background: '#3a1c1c', border: '1px solid #ff6666' }}>
-              <p className="text-sm text-red-200 mb-3">Are you sure you want to delete this box?</p>
+            <div className="pt-2">
+              <p className="text-sm mb-3" style={{ color: '#8B0000' }}>Delete this box?</p>
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
-                  className="flex-1 py-2 rounded-lg text-sm bg-gray-700 hover:bg-gray-600 text-white"
+                  className="flex-1 py-3 rounded-lg text-sm"
+                  style={{ background: 'rgba(0,0,0,0.2)', color: '#1a1a1a' }}
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="flex-1 py-2 rounded-lg text-sm bg-red-700 hover:bg-red-600 text-white"
+                  className="flex-1 py-3 rounded-lg text-sm"
+                  style={{ background: '#8B0000', color: '#fff' }}
                 >
-                  {isDeleting ? 'Deleting...' : 'Yes, Delete'}
+                  {isDeleting ? 'Deleting...' : 'Delete'}
                 </button>
               </div>
             </div>
