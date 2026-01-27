@@ -1427,13 +1427,16 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
 };
 
 // Box Detail Modal
-const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, fmtFromGBP, onDelete, onEdit, isSignedIn, availableLocations = [], baseCurrency, fxRates }) => {
+  const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, fmtFromGBP, onDelete, onEdit, isSignedIn, availableLocations = [], baseCurrency, fxRates }) => {
   const [selectedIdx, setSelectedIdx] = useState(0);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showNotesModal, setShowNotesModal] = useState(false);
-  const [noteText, setNoteText] = useState(box.notes || '');
+  const [noteText, setNoteText] = useState('');
+  const [showNotesModal, setShowNotesModal] = useState(false);
+  const [noteText, setNoteText] = useState('');
+  
   const box = boxes[selectedIdx];
   const s = brandStyles[box.brand] || brandStyles['Cohiba'];
   const market = getMarket(box.brand, box.name, box.perBox);
@@ -1454,19 +1457,17 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
   
   // Calculate box age
   const calculateAge = (dateStr) => {
-  if (!dateStr) return null;
-  const boxDate = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now - boxDate;
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  const years = Math.floor(diffDays / 365);
-  const months = Math.floor((diffDays % 365) / 30);
-  return { years, months };
-};
-
-const boxAgeData = calculateAge(box.dateOfBox);
+    if (!dateStr) return null;
+    const boxDate = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now - boxDate;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const years = Math.floor(diffDays / 365);
+    const months = Math.floor((diffDays % 365) / 30);
+    return { years, months };
+  };
   
-  const boxAge = calculateAge(box.dateOfBox);
+  const boxAgeData = calculateAge(box.dateOfBox);
   const isFullBox = box.remaining === box.perBox;
   
   return (
