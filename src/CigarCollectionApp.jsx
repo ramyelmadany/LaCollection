@@ -1432,6 +1432,8 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showNotesModal, setShowNotesModal] = useState(false);
+  const [noteText, setNoteText] = useState(box.notes || '');
   const box = boxes[selectedIdx];
   const s = brandStyles[box.brand] || brandStyles['Cohiba'];
   const market = getMarket(box.brand, box.name, box.perBox);
@@ -1452,18 +1454,17 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
   
   // Calculate box age
   const calculateAge = (dateStr) => {
-    if (!dateStr) return null;
-    const boxDate = new Date(dateStr);
-    const now = new Date();
-    const diffMs = now - boxDate;
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    const years = Math.floor(diffDays / 365);
-    const months = Math.floor((diffDays % 365) / 30);
-    if (years > 0) {
-      return `${years}y ${months}m`;
-    }
-    return `${months}m`;
-  };
+  if (!dateStr) return null;
+  const boxDate = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now - boxDate;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const years = Math.floor(diffDays / 365);
+  const months = Math.floor((diffDays % 365) / 30);
+  return { years, months };
+};
+
+const boxAgeData = calculateAge(box.dateOfBox);
   
   const boxAge = calculateAge(box.dateOfBox);
   const isFullBox = box.remaining === box.perBox;
@@ -1523,9 +1524,18 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
       <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.remaining}</div>
     </div>
     <div className="text-center">
-      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>{box.status}</div>
-      <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{boxAge || '–'}</div>
-    </div>
+  <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>{box.status}</div>
+  <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
+    {boxAgeData ? (
+      <>
+        {boxAgeData.years > 0 && (
+          <><span>{boxAgeData.years}</span><span className="text-lg"> years </span></>
+        )}
+        <span>{boxAgeData.months}</span><span className="text-lg"> months</span>
+      </>
+    ) : '–'}
+  </div>
+</div>
   </div>
 </div>
 
@@ -1551,46 +1561,71 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
   )}
 </div>
 
-          {/* Details Grid */}
+          {/* Details Section */}
 <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-  <div className="grid grid-cols-2 gap-y-4 gap-x-4">
-    {box.ringGauge && (
-      <div>
-        <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)', lineHeight: '1' }}>Ring Gauge</div>
-        <div className="text-lg font-medium" style={{ color: '#1a120b', lineHeight: '1.2' }}>{box.ringGauge}</div>
-      </div>
-    )}
-    {box.length && (
-      <div>
-        <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)', lineHeight: '1' }}>Length</div>
-        <div className="text-lg font-medium" style={{ color: '#1a120b', lineHeight: '1.2' }}>{box.length}"</div>
-      </div>
-    )}
-    <div>
-      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)', lineHeight: '1' }}>Release Date</div>
-      <div className="text-lg font-medium" style={{ color: '#1a120b', lineHeight: '1.2' }}>{box.dateOfBox ? fmt.date(box.dateOfBox) : 'Unknown'}</div>
+  {box.ringGauge && (
+    <div className="flex justify-between items-center mb-3">
+      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Ring Gauge</span>
+      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.ringGauge}</span>
     </div>
-    {box.code && (
-      <div>
-        <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)', lineHeight: '1' }}>Factory Code</div>
-        <div className="text-lg font-medium" style={{ color: '#1a120b', lineHeight: '1.2' }}>{box.code}</div>
-      </div>
-    )}
-    <div>
-      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)', lineHeight: '1' }}>Box ID</div>
-      <div className="text-lg font-medium" style={{ color: '#1a120b', lineHeight: '1.2' }}>{box.boxNum}</div>
+  )}
+  {box.length && (
+    <div className="flex justify-between items-center mb-3">
+      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Length</span>
+      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.length}"</span>
     </div>
-    <div>
-      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)', lineHeight: '1' }}>Location</div>
-      <div className="text-lg font-medium" style={{ color: '#1a120b', lineHeight: '1.2' }}>{box.location}</div>
-    </div>
-    {box.notes && (
-      <div className="col-span-2">
-        <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)', lineHeight: '1' }}>Vitola</div>
-        <div className="text-lg font-medium" style={{ color: '#1a120b', lineHeight: '1.2' }}>{box.notes}</div>
-      </div>
-    )}
+  )}
+  <div className="flex justify-between items-center mb-3">
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Release Date</span>
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.dateOfBox ? fmt.date(box.dateOfBox) : 'Unknown'}</span>
   </div>
+  {box.code && (
+    <div className="flex justify-between items-center mb-3">
+      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Factory Code</span>
+      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.code}</span>
+    </div>
+  )}
+  <div className="flex justify-between items-center mb-3">
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Box ID</span>
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.boxNum}</span>
+  </div>
+  <div className="flex justify-between items-center mb-3">
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Location</span>
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.location}</span>
+  </div>
+  {box.notes && (
+    <div className="flex justify-between items-center">
+      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Vitola</span>
+      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.notes}</span>
+    </div>
+  )}
+</div>
+
+{/* Notes Section */}
+<div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
+  {box.boxNotes ? (
+    <div>
+      <div className="flex justify-between items-start">
+        <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Notes</span>
+        <button 
+          onClick={() => { setNoteText(box.boxNotes || ''); setShowNotesModal(true); }}
+          className="text-lg font-medium"
+          style={{ color: '#1a120b', background: 'none', border: 'none', textDecoration: 'underline', cursor: 'pointer' }}
+        >
+          Edit
+        </button>
+      </div>
+      <p className="text-lg font-medium mt-2" style={{ color: '#1a120b' }}>{box.boxNotes}</p>
+    </div>
+  ) : (
+    <button 
+      onClick={() => { setNoteText(''); setShowNotesModal(true); }}
+      className="text-lg font-medium w-full text-left"
+      style={{ color: '#1a120b', background: 'none', border: 'none', cursor: 'pointer' }}
+    >
+      Add Note
+    </button>
+  )}
 </div>
 
           {/* Action Buttons */}
@@ -1635,6 +1670,40 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
           )}
         </div>
       </div>
+
+{/* Notes Modal */}
+{showNotesModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setShowNotesModal(false)} style={{ background: 'rgba(0,0,0,0.9)' }}>
+    <div className="w-full max-w-sm mx-4 rounded-xl p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }} onClick={e => e.stopPropagation()}>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
+          {box.boxNotes ? 'Edit Note' : 'Add Note'}
+        </h3>
+        <button onClick={() => setShowNotesModal(false)} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(26,18,11,0.1)', color: '#1a120b', fontSize: '1.25rem' }}>×</button>
+      </div>
+      <textarea
+        value={noteText}
+        onChange={(e) => setNoteText(e.target.value)}
+        className="w-full p-3 rounded-lg text-lg"
+        style={{ background: 'rgba(26,18,11,0.1)', border: '1px solid rgba(26,18,11,0.2)', color: '#1a120b', minHeight: '150px', resize: 'vertical' }}
+        placeholder="Enter your note..."
+      />
+      <button
+        onClick={async () => {
+          const success = await onEdit(box, { ...box, boxNotes: noteText });
+          if (success) {
+            setShowNotesModal(false);
+            onClose();
+          }
+        }}
+        className="w-full py-3 mt-4 text-lg font-bold rounded-lg"
+        style={{ background: '#1a120b', color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}
+      >
+        Save
+      </button>
+    </div>
+  </div>
+)}
       
       {/* Edit Modal */}
       {showEditModal && (
