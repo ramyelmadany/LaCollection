@@ -3142,25 +3142,25 @@ setBoxes(boxData);
       const collectionRows = await fetchSheetData(googleAccessToken);
       if (collectionRows) {
         const boxData = collectionRows
-          .filter(row => {
-            const brand = row[3]?.trim();
-            const name = row[4]?.trim();
-            const perBox = parseInt(row[6]);
-            return brand && name && validBrands.some(vb => brand.includes(vb) || vb.includes(brand)) && perBox > 0;
-          })
-          .flatMap((row, idx) => expandRowToBoxesRefresh(row, idx));
-        setBoxes(boxData);
+  .filter(row => {
+    const brand = row[3]?.trim();
+    const name = row[4]?.trim();
+    const perBox = parseInt(row[6]);
+    return brand && name && perBox > 0;
+  })
+  .flatMap((row, idx) => expandRowToBoxesRefresh(row, idx));
+setBoxes(boxData);
       }
       
       const onwardsRows = await fetchOnwardsData(googleAccessToken);
       if (onwardsRows) {
         const onwardsData = onwardsRows
-          .filter(row => {
-            const brand = row[2]?.trim();
-            const name = row[3]?.trim();
-            return brand && name && validBrands.some(vb => brand.includes(vb) || vb.includes(brand));
-          })
-          .map((row, idx) => rowToOnwards(row, idx));
+  .filter(row => {
+    const brand = row[2]?.trim();
+    const name = row[3]?.trim();
+    return brand && name;
+  })
+  .map((row, idx) => rowToOnwards(row, idx));
         setOnwards(onwardsData);
       }
       
