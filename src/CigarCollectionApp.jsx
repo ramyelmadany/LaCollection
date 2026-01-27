@@ -1512,7 +1512,7 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
         
         <div className="p-4">
           {/* Box Status Row */}
-<div className="py-3 border-b-2" style={{ borderColor: '#6B1E1E' }}>
+<div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
   <div className="flex justify-around">
     <div className="text-center">
       <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box of</div>
@@ -1530,7 +1530,7 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
 </div>
 
           {/* Pricing Row */}
-<div className="py-3 border-b-2" style={{ borderColor: '#6B1E1E' }}>
+<div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
   <div className="flex justify-between items-center mb-2">
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Date of Purchase</span>
     <div className="flex items-center gap-2">
@@ -1557,46 +1557,46 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
 </div>
 
           {/* Details Grid */}
-<div className="py-3 border-b-2" style={{ borderColor: '#6B1E1E' }}>
+<div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
   <div className="grid grid-cols-2 gap-y-2 gap-x-4">
-              {box.ringGauge && (
-                <div>
-                  <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Ring Gauge</div>
-                  <div className="text-lg font-medium -mt-0.5" style={{ color: '#1a120b' }}>{box.ringGauge}</div>
-                </div>
-              )}
-              {box.length && (
-                <div>
-                  <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Length</div>
-                  <div className="text-lg font-medium -mt-0.5" style={{ color: '#1a120b' }}>{box.length}"</div>
-                </div>
-              )}
-              <div>
-                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Release Date</div>
-                <div className="text-lg font-medium -mt-0.5" style={{ color: '#1a120b' }}>{box.dateOfBox ? fmt.date(box.dateOfBox) : 'Unknown'}</div>
-              </div>
-              {box.code && (
-                <div>
-                  <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Factory Code</div>
-                  <div className="text-lg font-medium -mt-0.5" style={{ color: '#1a120b' }}>{box.code}</div>
-                </div>
-              )}
-              <div>
-                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box ID</div>
-                <div className="text-lg font-medium -mt-0.5" style={{ color: '#1a120b' }}>{box.boxNum}</div>
-              </div>
-              <div>
-                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Location</div>
-                <div className="text-lg font-medium -mt-0.5" style={{ color: '#1a120b' }}>{box.location}</div>
-              </div>
-              {box.notes && (
-                <div className="col-span-2">
-                  <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Vitola</div>
-                  <div className="text-lg font-medium -mt-0.5" style={{ color: '#1a120b' }}>{box.notes}</div>
-                </div>
-              )}
-            </div>
-          </div>
+    {box.ringGauge && (
+      <div>
+        <div className="text-sm font-medium leading-tight" style={{ color: 'rgba(26,18,11,0.5)' }}>Ring Gauge</div>
+        <div className="text-lg font-medium leading-tight" style={{ color: '#1a120b' }}>{box.ringGauge}</div>
+      </div>
+    )}
+    {box.length && (
+      <div>
+        <div className="text-sm font-medium leading-tight" style={{ color: 'rgba(26,18,11,0.5)' }}>Length</div>
+        <div className="text-lg font-medium leading-tight" style={{ color: '#1a120b' }}>{box.length}"</div>
+      </div>
+    )}
+    <div>
+      <div className="text-sm font-medium leading-tight" style={{ color: 'rgba(26,18,11,0.5)' }}>Release Date</div>
+      <div className="text-lg font-medium leading-tight" style={{ color: '#1a120b' }}>{box.dateOfBox ? fmt.date(box.dateOfBox) : 'Unknown'}</div>
+    </div>
+    {box.code && (
+      <div>
+        <div className="text-sm font-medium leading-tight" style={{ color: 'rgba(26,18,11,0.5)' }}>Factory Code</div>
+        <div className="text-lg font-medium leading-tight" style={{ color: '#1a120b' }}>{box.code}</div>
+      </div>
+    )}
+    <div>
+      <div className="text-sm font-medium leading-tight" style={{ color: 'rgba(26,18,11,0.5)' }}>Box ID</div>
+      <div className="text-lg font-medium leading-tight" style={{ color: '#1a120b' }}>{box.boxNum}</div>
+    </div>
+    <div>
+      <div className="text-sm font-medium leading-tight" style={{ color: 'rgba(26,18,11,0.5)' }}>Location</div>
+      <div className="text-lg font-medium leading-tight" style={{ color: '#1a120b' }}>{box.location}</div>
+    </div>
+    {box.notes && (
+      <div className="col-span-2">
+        <div className="text-sm font-medium leading-tight" style={{ color: 'rgba(26,18,11,0.5)' }}>Vitola</div>
+        <div className="text-lg font-medium leading-tight" style={{ color: '#1a120b' }}>{box.notes}</div>
+      </div>
+    )}
+  </div>
+</div>
 
           {/* Action Buttons */}
           {isSignedIn && !showDeleteConfirm && (
