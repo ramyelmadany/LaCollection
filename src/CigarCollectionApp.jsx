@@ -2665,9 +2665,16 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
           </div>
           
           {/* Submit Button */}
-          <button onClick={handleSubmit} disabled={!brand || !name || !perBox || !price} className="w-full py-3 rounded-lg font-semibold mt-4" style={{ background: (!brand || !name || !perBox || !price) ? '#333' : '#d4af37', color: (!brand || !name || !perBox || !price) ? '#666' : '#000' }}>
-            Add {quantity} Box{quantity > 1 ? 'es' : ''}
-          </button>
+{(() => {
+  const finalBrand = brand === '__custom__' ? customBrand : brand;
+  const finalName = (brand === '__custom__' || name === '__custom__') ? customName : name;
+  const isValid = finalBrand && finalName && perBox && price;
+  return (
+    <button onClick={handleSubmit} disabled={!isValid} className="w-full py-3 rounded-lg font-semibold mt-4" style={{ background: !isValid ? '#333' : '#d4af37', color: !isValid ? '#666' : '#000' }}>
+      Add {quantity} Box{quantity > 1 ? 'es' : ''}
+    </button>
+  );
+})()}
         </div>
       </div>
     </div>
