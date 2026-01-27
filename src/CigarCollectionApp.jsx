@@ -1481,11 +1481,11 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
           <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(245,222,179,0.1)', color: '#F5DEB3', fontSize: '1.25rem' }}>×</button>
         </div>
         
-        {/* Box Selector Buttons */}
+        {{/* Box Selector Buttons */}
 {boxes.length > 1 && (
-  <div className="px-4 py-3 pb-5 flex gap-2 overflow-x-auto" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+  <div className="px-4 py-3 flex gap-2 overflow-x-auto items-start" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
     {boxes.map((b, i) => (
-      <div key={b.id} className="relative">
+      <div key={b.id} className="flex flex-col items-center gap-1.5">
         <button 
           onClick={() => setSelectedIdx(i)} 
           className="px-4 py-2 text-base whitespace-nowrap"
@@ -1499,15 +1499,12 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
         >
           Box {b.boxNum}
         </button>
-        {selectedIdx === i && (
-          <div 
-            className="absolute left-1/2 -translate-x-1/2 w-5 h-5 rounded-full"
-            style={{ 
-              background: '#d4af37',
-              bottom: '-10px'
-            }}
-          />
-        )}
+        <div 
+          className="w-2 h-2 rounded-full"
+          style={{ 
+            background: selectedIdx === i ? '#1a120b' : 'transparent'
+          }}
+        />
       </div>
     ))}
   </div>
@@ -1516,17 +1513,22 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
         <div className="p-4">
           {/* Box Status Row */}
 <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-  <div className="flex justify-between items-baseline">
-    <span className="text-2xl font-medium" style={{ color: '#1a120b' }}>Box of {box.perBox}</span>
-    <span className="text-2xl font-medium" style={{ color: '#1a120b' }}>
-      {isFullBox ? `${box.perBox} Remaining` : `${box.remaining} Remaining`}
-    </span>
-  </div>
-  {boxAge && (
-    <div className="text-lg font-medium mt-1" style={{ color: '#1a120b' }}>
-      Ageing {boxAge}
+  <div className="flex justify-around">
+    <div className="text-center">
+      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box of</div>
+      <div className="text-4xl font-medium -mt-1" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.perBox}</div>
     </div>
-  )}
+    <div className="text-center">
+      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Remaining</div>
+      <div className="text-4xl font-medium -mt-1" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.remaining}</div>
+    </div>
+    {boxAge && (
+      <div className="text-center">
+        <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Ageing</div>
+        <div className="text-4xl font-medium -mt-1" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{boxAge}</div>
+      </div>
+    )}
+  </div>
 </div>
 
           {/* Pricing Row */}
