@@ -1483,7 +1483,7 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
         
         {/* Box Selector Buttons */}
 {boxes.length > 1 && (
-  <div className="px-4 py-3 flex gap-2 overflow-x-auto items-start" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+  <div className="px-4 py-2 flex gap-2 overflow-x-auto items-start" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
     {boxes.map((b, i) => (
       <div key={b.id} className="flex flex-col items-center gap-1.5">
         <button 
@@ -1522,24 +1522,24 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
       <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Remaining</div>
       <div className="text-4xl font-medium -mt-1" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.remaining}</div>
     </div>
-    {boxAge && (
-      <div className="text-center">
-        <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Ageing</div>
-        <div className="text-4xl font-medium -mt-1" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{boxAge}</div>
-      </div>
-    )}
+    <div className="text-center">
+      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>{box.status}</div>
+      <div className="text-4xl font-medium -mt-1" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{boxAge || '–'}</div>
+    </div>
   </div>
 </div>
 
           {/* Pricing Row */}
           <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
             <div className="flex justify-between items-center mb-2">
-              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Date of Purchase</span>
-              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmt.date(box.datePurchased)}</span>
-            </div>
-            {!box.received && (
-              <div className="text-base font-medium mb-2" style={{ color: 'rgba(26,18,11,0.6)' }}>(Pending Receipt)</div>
-            )}
+  <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Date of Purchase</span>
+  <div className="text-right">
+    {!box.received && (
+      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>(Pending Receipt)</div>
+    )}
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmt.date(box.datePurchased)}</span>
+  </div>
+</div>
             <div className="flex justify-between items-center mb-2">
               <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Your cost</span>
               <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtCurrencyWithOriginal(box.price, box.currency)}</span>
@@ -1558,7 +1558,7 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
 
           {/* Details Grid */}
           <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-            <div className="grid grid-cols-2 gap-y-3 gap-x-4">
+            <div className="grid grid-cols-2 gap-y-2 gap-x-4">
               {box.ringGauge && (
                 <div>
                   <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Ring Gauge</div>
