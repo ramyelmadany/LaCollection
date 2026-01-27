@@ -285,13 +285,17 @@ def match_product(product, brand, cigar_name):
     cigar_normalized = normalize_name(cigar_name.lower())
     
     # Special handling for Behike - the number is critical
+    # Handle both "Behike 52" and "BHK 52" formats
     if 'behike' in cigar_name.lower():
         behike_num = re.search(r'behike\s*(\d+)', cigar_name.lower())
         if behike_num:
             target_num = behike_num.group(1)
-            prod_behike = re.search(r'behike\s*(?:bhk\s*)?(\d+)', prod_name)
+            # Match "behike 52", "bhk 52", or just the number after bhk/behike
+            prod_behike = re.search(r'(?:behike|bhk)\s*(\d+)', prod_name)
             if not prod_behike or prod_behike.group(1) != target_num:
                 return False, f"Behike number mismatch"
+            # If we matched the Behike number, that's a strong match - return success
+            return True, "behike matched"
     
     # Roman numerals must match exactly
     roman_pattern = r'\b(i{1,3}|iv|v|vi{1,3}|ix|x{1,3})\b'
@@ -365,6 +369,10 @@ def scrape(brand, cigar_name, box_size):
             if is_match:
                 # Get variants from JSON API
                 variants = get_product_variants(product['handle'])
+                
+                if not variants:
+                    print(f"    No variants found for {product['handle']}")
+                    continue
                 
                 # Find matching box size
                 for variant in variants:
