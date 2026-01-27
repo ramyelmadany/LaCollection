@@ -4292,45 +4292,14 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
   }}
 />}
       
-          // Delete old entry and add new one
-          await deleteHistoryEntry(oldEntry, accessToken);
-          await addHistoryEntry(newEntry, accessToken);
-          
-          // Update local state
-          setHistory(prev => prev.map((h, i) => i === index ? { ...newEntry, timestamp: Date.now() } : h));
-          
-          // If collection cigar and qty changed, update box counts
-          if (oldEntry.boxNum !== 'EXT' && oldEntry.source !== 'external') {
-            const qtyDiff = newEntry.qty - oldEntry.qty;
-            if (qtyDiff !== 0) {
-              const box = boxes.find(b => b.boxNum === oldEntry.boxNum);
-              if (box) {
-                const newRemaining = box.remaining - qtyDiff;
-                const newConsumed = box.consumed + qtyDiff;
-                setBoxes(prev => prev.map(b => 
-                  b.boxNum === oldEntry.boxNum 
-                    ? { ...b, remaining: newRemaining, consumed: newConsumed }
-                    : b
-                ));
-                if (isSignedIn && accessToken) {
-                  await updateBoxConsumed({ ...box, remaining: newRemaining, consumed: newConsumed });
-                }
-              }
-            }
-          }
-          
-          setEditingHistory(null);
-        }}
-      />}
-      
       {/* Bottom buttons */}
       <div className="fixed bottom-4 left-4 right-4 z-30 flex gap-3">
         <button onClick={() => isSignedIn ? setShowAddModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#F5DEB3', border: '1px solid #F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
-  Add Box
-</button>
-<button onClick={() => isSignedIn ? setShowLogModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#F5DEB3', border: '1px solid #F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
-  Log Smoke
-</button>
+          Add Box
+        </button>
+        <button onClick={() => isSignedIn ? setShowLogModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#F5DEB3', border: '1px solid #F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
+          Log Smoke
+        </button>
       </div>
     </div>
   );
