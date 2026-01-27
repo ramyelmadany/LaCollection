@@ -1485,33 +1485,31 @@ const isFullBox = box.remaining === box.perBox;
         </div>
         
         {/* Box Selector Buttons */}
-{boxes.length > 1 && (
-  <div className="px-4 pt-3 pb-2 flex gap-2 overflow-x-auto items-start" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-    {boxes.map((b, i) => (
-      <div key={b.id} className="flex flex-col items-center gap-1.5">
-        <button 
-          onClick={() => setSelectedIdx(i)} 
-          className="px-4 py-2 text-base whitespace-nowrap"
-          style={{
-            background: '#6B1E1E',
-            color: '#F5DEB3',
-            borderRadius: '4px',
-            fontFamily: 'tt-ricordi-allegria, Georgia, serif',
-            border: 'none'
-          }}
-        >
-          Box {b.boxNum}
-        </button>
-        <div 
-          className="w-2 h-2 rounded-full"
-          style={{ 
-            background: selectedIdx === i ? '#1a120b' : 'transparent'
-          }}
-        />
-      </div>
-    ))}
-  </div>
-)}
+<div className="px-4 pt-3 pb-2 flex gap-2 overflow-x-auto items-start" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+  {boxes.map((b, i) => (
+    <div key={b.id} className="flex flex-col items-center gap-1.5">
+      <button 
+        onClick={() => setSelectedIdx(i)} 
+        className="px-4 py-2 text-base whitespace-nowrap"
+        style={{
+          background: '#6B1E1E',
+          color: '#F5DEB3',
+          borderRadius: '4px',
+          fontFamily: 'tt-ricordi-allegria, Georgia, serif',
+          border: 'none'
+        }}
+      >
+        Box {b.boxNum}
+      </button>
+      <div 
+        className="w-2 h-2 rounded-full"
+        style={{ 
+          background: selectedIdx === i ? '#1a120b' : 'transparent'
+        }}
+      />
+    </div>
+  ))}
+</div>
         
         <div className="p-4 pb-6">
           {/* Box Status Row */}
