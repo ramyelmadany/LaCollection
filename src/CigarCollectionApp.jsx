@@ -1105,7 +1105,7 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
   const [dateOfBox, setDateOfBox] = useState(box.dateOfBox || '');
   const [ringGauge, setRingGauge] = useState(box.ringGauge || '');
   const [length, setLength] = useState(box.length || '');
-  const [notes, setNotes] = useState(box.notes || '');
+  const [vitola, setVitola] = useState(box.vitola || '');
   const [consumed, setConsumed] = useState(box.consumed || 0);
   const [remaining, setRemaining] = useState(box.remaining || 0);
 
@@ -1130,24 +1130,25 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
     const finalLocation = location === '__new__' ? newLocation : location;
     
     const updatedData = {
-      brand,
-      name,
-      boxNum,
-      perBox: parseInt(perBox),
-      price: parseFloat(price),
-      currency: priceCurrency,
-      datePurchased,
-      location: finalLocation,
-      status,
-      received,
-      code,
-      dateOfBox,
-      ringGauge,
-      length,
-      notes,
-      consumed: parseInt(consumed),
-      remaining: parseInt(remaining),
-    };
+  brand,
+  name,
+  boxNum,
+  perBox: parseInt(perBox),
+  price: parseFloat(price),
+  currency: priceCurrency,
+  datePurchased,
+  location: finalLocation,
+  status,
+  received,
+  code,
+  dateOfBox,
+  ringGauge,
+  length,
+  vitola,
+  boxNotes: box.boxNotes || '',
+  consumed: parseInt(consumed),
+  remaining: parseInt(remaining),
+};
     
     console.log('Saving updatedData:', updatedData);
     await onSave(updatedData);
@@ -1212,16 +1213,16 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
           </div>
           
           {/* Vitola Notes */}
-          <div>
-            <label className="text-xs text-gray-500 block mb-2">Vitola Notes</label>
-            <input 
-              type="text" 
-              value={notes} 
-              onChange={e => setNotes(e.target.value)} 
-              className="w-full px-3 py-2 rounded-lg text-base" 
-              style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
-            />
-          </div>
+<div>
+  <label className="text-xs text-gray-500 block mb-2">Vitola Notes</label>
+  <input 
+    type="text" 
+    value={vitola} 
+    onChange={e => setVitola(e.target.value)} 
+    className="w-full px-3 py-2 rounded-lg text-base" 
+    style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+  />
+</div>
           
           {/* Box Number and Per Box */}
           <div className="grid grid-cols-2 gap-3">
