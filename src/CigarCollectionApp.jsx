@@ -2455,25 +2455,26 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
       const newBoxNum = quantity > 1 ? `${baseNum}.${i + 1}` : baseNum;
       
       newBoxes.push({
-        id: newId,
-        boxNum: newBoxNum,
-        brand: finalBrand,
-        name: finalName,
-        datePurchased,
-        received,
-        perBox: parseInt(perBox),
-        price: parseFloat(price),
-        currency: priceCurrency,
-        status,
-        dateOfBox: dateOfBox || '',
-        code: code || '',
-        location,
-        consumed: 0,
-        remaining: parseInt(perBox),
-        ringGauge: ringGauge,
-        length: length,
-        notes: notes,
-      });
+  id: newId,
+  boxNum: newBoxNum,
+  brand: finalBrand,
+  name: finalName,
+  datePurchased,
+  received,
+  perBox: parseInt(perBox),
+  price: parseFloat(price),
+  currency: priceCurrency,
+  status,
+  dateOfBox: dateOfBox || '',
+  code: code || '',
+  location,
+  consumed: 0,
+  remaining: parseInt(perBox),
+  ringGauge: ringGauge,
+  length: length,
+  vitola: notes,
+  boxNotes: '',
+});
     }
     
     onAdd(newBoxes);
