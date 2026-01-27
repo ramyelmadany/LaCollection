@@ -3772,7 +3772,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
 
       {/* Value View */}
       {view === 'value' && (
-        <div className="px-4 pb-8">
+        <div className="px-4 pb-8 pt-4">
           {(() => {
             const remainingBoxes = boxes.filter(b => b.remaining > 0);
             
@@ -3880,39 +3880,39 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
             return (
               <>
                 <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Collection Summary</h2>
+                  <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Collection Summary</h2>
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="rounded-lg p-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-                      <div className="text-xs text-gray-500 mb-2">Current Collection</div>
+                    <div className="rounded-lg p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+                      <div className="text-sm font-medium mb-2" style={{ color: 'rgba(26,18,11,0.5)' }}>Current Collection</div>
                       <div className="space-y-1">
                         <div className="flex justify-between">
-                          <span className="text-xs text-gray-500">Your Cost</span>
-                          <span className="text-sm text-green-400">{fmtCurrency(stats.remainingCostUSD)}</span>
+                          <span className="text-sm font-medium" style={{ color: '#1a120b' }}>Your Cost</span>
+                          <span className="text-sm font-medium" style={{ color: '#1a120b' }}>{fmtCurrency(stats.remainingCostUSD)}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-xs text-gray-500">UK Market</span>
-                          <span className="text-sm text-blue-400">{fmtCurrency(stats.remainingMarketUSD)}</span>
+                          <span className="text-sm font-medium" style={{ color: '#1a120b' }}>UK Market</span>
+                          <span className="text-sm font-medium" style={{ color: '#1a120b' }}>{fmtCurrency(stats.remainingMarketUSD)}</span>
                         </div>
-                        <div className="flex justify-between pt-1 border-t border-gray-700">
-                          <span className="text-xs text-gray-500">Savings</span>
-                          <span className="text-sm text-green-400">{fmtCurrency(stats.remainingSavingsUSD)}</span>
+                        <div className="flex justify-between pt-1 border-t" style={{ borderColor: '#6B1E1E' }}>
+                          <span className="text-sm font-medium" style={{ color: '#1a120b' }}>Savings</span>
+                          <span className="text-sm font-medium" style={{ color: '#1a120b' }}>{fmtCurrency(stats.remainingSavingsUSD)}</span>
                         </div>
                       </div>
                     </div>
-                    <div className="rounded-lg p-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-                      <div className="text-xs text-gray-500 mb-2">Historical Collection</div>
+                    <div className="rounded-lg p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+                      <div className="text-sm font-medium mb-2" style={{ color: 'rgba(26,18,11,0.5)' }}>Historical Collection</div>
                       <div className="space-y-1">
                         <div className="flex justify-between">
-                          <span className="text-xs text-gray-500">Your Cost</span>
-                          <span className="text-sm text-green-400">{fmtCurrency(stats.totalCostUSD)}</span>
+                          <span className="text-sm font-medium" style={{ color: '#1a120b' }}>Your Cost</span>
+                          <span className="text-sm font-medium" style={{ color: '#1a120b' }}>{fmtCurrency(stats.totalCostUSD)}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-xs text-gray-500">UK Market</span>
-                          <span className="text-sm text-blue-400">{fmtCurrency(stats.totalMarketUSD)}</span>
+                          <span className="text-sm font-medium" style={{ color: '#1a120b' }}>UK Market</span>
+                          <span className="text-sm font-medium" style={{ color: '#1a120b' }}>{fmtCurrency(stats.totalMarketUSD)}</span>
                         </div>
-                        <div className="flex justify-between pt-1 border-t border-gray-700">
-                          <span className="text-xs text-gray-500">Savings</span>
-                          <span className="text-sm text-green-400">{fmtCurrency(stats.totalSavingsUSD)}</span>
+                        <div className="flex justify-between pt-1 border-t" style={{ borderColor: '#6B1E1E' }}>
+                          <span className="text-sm font-medium" style={{ color: '#1a120b' }}>Savings</span>
+                          <span className="text-sm font-medium" style={{ color: '#1a120b' }}>{fmtCurrency(stats.totalSavingsUSD)}</span>
                         </div>
                       </div>
                     </div>
@@ -3920,37 +3920,37 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                 </div>
                 
                 <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Most Valuable Box</h2>
+                  <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Most Valuable Box</h2>
                   <div className="space-y-2">
                     {mostValuableBox.map((v, i) => (
-                      <div key={i} className="rounded-lg p-3 flex justify-between items-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+                      <div key={i} className="rounded-lg p-3 flex justify-between items-center" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
                         <div>
-                          <div className="text-sm font-semibold" style={{ color: '#d4af37' }}>{v.brand}</div>
-                          <div className="text-sm text-gray-300">{v.name}</div>
-                          <div className="text-xs text-gray-500">Box {v.boxIds.join(', ')}</div>
+                          <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{v.brand}</div>
+                          <div className="text-base font-medium" style={{ color: '#1a120b' }}>{v.name}</div>
+                          <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box {v.boxIds.join(', ')}</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-lg text-green-400">{fmtCurrency(v.marketValue)}</div>
+                          <div className="text-xl font-medium" style={{ color: '#1a120b' }}>{fmtCurrency(v.marketValue)}</div>
                         </div>
                       </div>
                     ))}
-                    {mostValuableBox.length === 0 && <div className="text-sm text-gray-500">No full boxes in collection</div>}
+                    {mostValuableBox.length === 0 && <div className="text-sm font-medium" style={{ color: 'rgba(245,222,179,0.5)' }}>No full boxes in collection</div>}
                   </div>
                 </div>
                 
                 <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Most Valuable Cigar</h2>
+                  <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Most Valuable Cigar</h2>
                   <div className="space-y-2">
                     {mostValuableCigar.map((v, i) => (
-                      <div key={i} className="rounded-lg p-3 flex justify-between items-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+                      <div key={i} className="rounded-lg p-3 flex justify-between items-center" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
                         <div>
-                          <div className="text-sm font-semibold" style={{ color: '#d4af37' }}>{v.brand}</div>
-                          <div className="text-sm text-gray-300">{v.name}</div>
-                          <div className="text-xs text-gray-500">Box {v.boxIds.join(', ')}</div>
+                          <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{v.brand}</div>
+                          <div className="text-base font-medium" style={{ color: '#1a120b' }}>{v.name}</div>
+                          <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box {v.boxIds.join(', ')}</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-lg text-green-400">{fmtCurrency(v.cigarValue)}</div>
-                          <div className="text-xs text-gray-500">per cigar</div>
+                          <div className="text-xl font-medium" style={{ color: '#1a120b' }}>{fmtCurrency(v.cigarValue)}</div>
+                          <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>per cigar</div>
                         </div>
                       </div>
                     ))}
@@ -3958,20 +3958,20 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                 </div>
                 
                 <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Best Performer</h2>
+                  <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Best Performer</h2>
                   <div className="space-y-2">
                     {bestPerformer.map((v, i) => (
-                      <div key={i} className="rounded-lg p-3 flex justify-between items-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+                      <div key={i} className="rounded-lg p-3 flex justify-between items-center" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
                         <div>
-                          <div className="text-sm font-semibold" style={{ color: '#d4af37' }}>{v.brand}</div>
-                          <div className="text-sm text-gray-300">{v.name}</div>
-                          <div className="text-xs text-gray-500">Box {v.boxIds.join(', ')}</div>
+                          <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{v.brand}</div>
+                          <div className="text-base font-medium" style={{ color: '#1a120b' }}>{v.name}</div>
+                          <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box {v.boxIds.join(', ')}</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-lg" style={{ color: v.returnPct >= 0 ? '#4ade80' : '#f87171' }}>
+                          <div className="text-xl font-medium" style={{ color: v.returnPct >= 0 ? '#1a5a1a' : '#6B1E1E' }}>
                             {v.returnPct >= 0 ? '+' : ''}{v.returnPct.toFixed(1)}%
                           </div>
-                          <div className="text-xs text-gray-500">{fmtCurrency(v.purchasePrice)} → {fmtCurrency(v.marketValue)}</div>
+                          <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>{fmtCurrency(v.purchasePrice)} → {fmtCurrency(v.marketValue)}</div>
                         </div>
                       </div>
                     ))}
@@ -3979,20 +3979,20 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                 </div>
                 
                 <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Worst Performer</h2>
+                  <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Worst Performer</h2>
                   <div className="space-y-2">
                     {worstPerformer.map((v, i) => (
-                      <div key={i} className="rounded-lg p-3 flex justify-between items-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+                      <div key={i} className="rounded-lg p-3 flex justify-between items-center" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
                         <div>
-                          <div className="text-sm font-semibold" style={{ color: '#d4af37' }}>{v.brand}</div>
-                          <div className="text-sm text-gray-300">{v.name}</div>
-                          <div className="text-xs text-gray-500">Box {v.boxIds.join(', ')}</div>
+                          <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{v.brand}</div>
+                          <div className="text-base font-medium" style={{ color: '#1a120b' }}>{v.name}</div>
+                          <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box {v.boxIds.join(', ')}</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-lg" style={{ color: v.returnPct >= 0 ? '#4ade80' : '#f87171' }}>
+                          <div className="text-xl font-medium" style={{ color: v.returnPct >= 0 ? '#1a5a1a' : '#6B1E1E' }}>
                             {v.returnPct >= 0 ? '+' : ''}{v.returnPct.toFixed(1)}%
                           </div>
-                          <div className="text-xs text-gray-500">{fmtCurrency(v.purchasePrice)} → {fmtCurrency(v.marketValue)}</div>
+                          <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>{fmtCurrency(v.purchasePrice)} → {fmtCurrency(v.marketValue)}</div>
                         </div>
                       </div>
                     ))}
@@ -4000,68 +4000,68 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                 </div>
                 
                 <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Average Cigar Value</h2>
-                  <div className="rounded-lg p-4 text-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-                    <div className="text-3xl font-light text-green-400">{fmtCurrency(avgCigarValue)}</div>
-                    <div className="text-sm text-gray-500">per cigar (market value)</div>
+                  <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Average Cigar Value</h2>
+                  <div className="rounded-lg p-4 text-center" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+                    <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{fmtCurrency(avgCigarValue)}</div>
+                    <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>per cigar (market value)</div>
                   </div>
                 </div>
                 
                 <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Cigars Enjoyed</h2>
-                  <div className="rounded-lg p-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+                  <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Cigars Enjoyed</h2>
+                  <div className="rounded-lg p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
                     <div className="flex justify-between items-center">
                       <div>
-                        <div className="text-3xl font-light" style={{ color: '#ff9999' }}>{totalSmoked}</div>
-                        <div className="text-sm text-gray-500">cigars smoked</div>
+                        <div className="text-4xl font-medium" style={{ color: '#6B1E1E', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{totalSmoked}</div>
+                        <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>cigars smoked</div>
                       </div>
                       <div className="text-right">
-                        <div className="text-xl font-light text-blue-400">{fmtCurrency(valueEnjoyed)}</div>
-                        <div className="text-sm text-gray-500">estimated value</div>
+                        <div className="text-2xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{fmtCurrency(valueEnjoyed)}</div>
+                        <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>estimated value</div>
                       </div>
                     </div>
                   </div>
                 </div>
                 
                 <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Oldest Box</h2>
+                  <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Oldest Box</h2>
                   {oldestBox ? (
-                    <div className="rounded-lg p-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+                    <div className="rounded-lg p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
                       <div className="flex justify-between items-center">
                         <div>
-                          <div className="text-sm font-semibold" style={{ color: '#d4af37' }}>{oldestBox.brand}</div>
-                          <div className="text-sm text-gray-300">{oldestBox.name}</div>
-                          <div className="text-xs text-gray-500">Box {oldestBox.boxNum}</div>
+                          <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{oldestBox.brand}</div>
+                          <div className="text-base font-medium" style={{ color: '#1a120b' }}>{oldestBox.name}</div>
+                          <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box {oldestBox.boxNum}</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-lg text-gray-300">{fmt.date(oldestBox.dateOfBox)}</div>
-                          <div className="text-xs text-gray-500">release date</div>
+                          <div className="text-xl font-medium" style={{ color: '#1a120b' }}>{fmt.date(oldestBox.dateOfBox)}</div>
+                          <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>release date</div>
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <div className="text-sm text-gray-500">No release dates recorded</div>
+                    <div className="text-sm font-medium" style={{ color: 'rgba(245,222,179,0.5)' }}>No release dates recorded</div>
                   )}
                 </div>
                 
                 <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Newest Addition</h2>
+                  <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Newest Addition</h2>
                   {newestAddition ? (
-                    <div className="rounded-lg p-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+                    <div className="rounded-lg p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
                       <div className="flex justify-between items-center">
                         <div>
-                          <div className="text-sm font-semibold" style={{ color: '#d4af37' }}>{newestAddition.brand}</div>
-                          <div className="text-sm text-gray-300">{newestAddition.name}</div>
-                          <div className="text-xs text-gray-500">Box {newestAddition.boxNum}</div>
+                          <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{newestAddition.brand}</div>
+                          <div className="text-base font-medium" style={{ color: '#1a120b' }}>{newestAddition.name}</div>
+                          <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box {newestAddition.boxNum}</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-lg text-gray-300">{fmt.date(newestAddition.datePurchased)}</div>
-                          <div className="text-xs text-gray-500">purchased</div>
+                          <div className="text-xl font-medium" style={{ color: '#1a120b' }}>{fmt.date(newestAddition.datePurchased)}</div>
+                          <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>purchased</div>
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <div className="text-sm text-gray-500">No purchase dates recorded</div>
+                    <div className="text-sm font-medium" style={{ color: 'rgba(245,222,179,0.5)' }}>No purchase dates recorded</div>
                   )}
                 </div>
               </>
@@ -4069,7 +4069,6 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
           })()}
         </div>
       )}
-
 {/* Settings View */}
       {view === 'settings' && (
         <div className="px-4 pb-8">
