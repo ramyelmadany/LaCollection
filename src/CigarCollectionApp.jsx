@@ -1481,7 +1481,7 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
           <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(245,222,179,0.1)', color: '#F5DEB3', fontSize: '1.25rem' }}>×</button>
         </div>
         
-        {{/* Box Selector Buttons */}
+        {/* Box Selector Buttons */}
 {boxes.length > 1 && (
   <div className="px-4 py-3 flex gap-2 overflow-x-auto items-start" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
     {boxes.map((b, i) => (
