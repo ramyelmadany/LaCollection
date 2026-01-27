@@ -5,7 +5,7 @@ import { ukMarketPrices } from './uk_market_prices.js';
 const GOOGLE_SHEETS_CONFIG = {
   clientId: '945855470299-l1is4q9t6lb1ak8v5n0871hsk6kt8ihl.apps.googleusercontent.com',
   sheetId: '10A_FMj8eotx-xlzAlCNFxjOr3xEOuO4p5GxAZjHC86A',
-  collectionRange: 'A:S',
+  collectionRange: 'A:T',
   onwardsRange: 'Onwards!A:L',
   onwardsSheetId: 1785734797,
   historyRange: 'History!A:F',
@@ -120,7 +120,7 @@ const fetchOnwardsData = async (accessToken) => {
 
 // Transform sheet row to box object
 const rowToBox = (row, index) => {
-  // Columns: Date of Purchase | Box Number | Received | Brand | Name | Quantity Purchased | Number / Box | Currency | Price / Box | Price / Cigar | Ageing / Immediate | Date of Box | Code | Location | Number Consumed | Number Remaining | Ring Gauge | Length | Notes
+  // Columns: Date of Purchase | Box Number | Received | Brand | Name | Quantity Purchased | Number / Box | Currency | Price / Box | Price / Cigar | Ageing / Immediate | Date of Box | Code | Location | Number Consumed | Number Remaining | Ring Gauge | Length | Vitola | Notes
   return {
     id: index + 1,
     datePurchased: parseDate(row[0]),
@@ -141,7 +141,8 @@ const rowToBox = (row, index) => {
     remaining: parseInt(row[15]) || 0,
     ringGauge: row[16] || '',
     length: row[17] || '',
-    notes: row[18] || '',
+    vitola: row[18] || '',
+    boxNotes: row[19] || '',
   };
 };
 
@@ -170,7 +171,7 @@ const rowToOnwards = (row, index) => {
 
 // Transform box object to sheet row
 const boxToRow = (box) => {
-  // Columns: Date of Purchase | Box Number | Received | Brand | Name | Quantity Purchased | Number / Box | Currency | Price / Box | Price / Cigar | Ageing / Immediate | Date of Box | Code | Location | Number Consumed | Number Remaining | Ring Gauge | Length | Notes
+  // Columns: Date of Purchase | Box Number | Received | Brand | Name | Quantity Purchased | Number / Box | Currency | Price / Box | Price / Cigar | Ageing / Immediate | Date of Box | Code | Location | Number Consumed | Number Remaining | Ring Gauge | Length | Vitola | Notes
   const pricePerCigar = box.perBox > 0 ? box.price / box.perBox : 0;
   return [
     formatDateForSheet(box.datePurchased),
@@ -191,7 +192,8 @@ const boxToRow = (box) => {
     box.remaining,
     box.ringGauge || '',
     box.length || '',
-    box.notes || '',
+    box.vitola || '',
+    box.boxNotes || '',
   ];
 };
 
@@ -306,7 +308,7 @@ const appendSheetRow = async (values, accessToken) => {
     }
     
     // Now write the data to that row
-    const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'Cigar Inventory'!A${insertRowIndex}:S${insertRowIndex}?valueInputOption=USER_ENTERED`;
+    const writeUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'Cigar Inventory'!A${insertRowIndex}:T${insertRowIndex}?valueInputOption=USER_ENTERED`;
     const writeResponse = await fetch(writeUrl, {
       method: 'PUT',
       headers: {
@@ -314,7 +316,7 @@ const appendSheetRow = async (values, accessToken) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        range: `'Cigar Inventory'!A${insertRowIndex}:S${insertRowIndex}`,
+        range: `'Cigar Inventory'!A${insertRowIndex}:T${insertRowIndex}`,
         values: [values],
       }),
     });
@@ -426,7 +428,7 @@ const updateBoxInSheet = async (boxNum, updatedData, accessToken) => {
       throw new Error(`Box number ${boxNum} not found in sheet`);
     }
     
-   // Build the row data in the correct order (A:S)
+   // Build the row data in the correct order (A:T)
     const pricePerCigar = updatedData.perBox > 0 ? updatedData.price / updatedData.perBox : 0;
     const rowData = [
       updatedData.datePurchased ? formatDateForSheet(updatedData.datePurchased) : '',  // A - Date of Purchase
@@ -447,11 +449,12 @@ const updateBoxInSheet = async (boxNum, updatedData, accessToken) => {
       updatedData.remaining || 0,  // P - Number Remaining
       updatedData.ringGauge || '',  // Q - Ring Gauge
       updatedData.length || '',  // R - Length
-      updatedData.notes || '',  // S - Notes
+      updatedData.vitola || '',  // S - Vitola
+      updatedData.boxNotes || '',  // T - Notes
     ];
     
     // Update the row
-    const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'Cigar Inventory'!A${rowIndex}:S${rowIndex}?valueInputOption=USER_ENTERED`;
+    const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'Cigar Inventory'!A${rowIndex}:T${rowIndex}?valueInputOption=USER_ENTERED`;
     const response = await fetch(updateUrl, {
       method: 'PUT',
       headers: {
@@ -1592,12 +1595,12 @@ const isFullBox = box.remaining === box.perBox;
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Location</span>
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.location}</span>
   </div>
-  {box.notes && (
-    <div className="flex justify-between items-center">
-      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Vitola</span>
-      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.notes}</span>
-    </div>
-  )}
+  {box.vitola && (
+  <div className="flex justify-between items-center">
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Vitola</span>
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.vitola}</span>
+  </div>
+)}
 </div>
 
 {/* Notes Section */}
