@@ -2634,7 +2634,7 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
 };
 
 // History View
-const HistoryView = ({ history, boxes, onDelete, onEdit }) => {
+const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
   if (history.length === 0) {
     return (
       <div className="px-4 py-12 text-center">
@@ -2645,17 +2645,44 @@ const HistoryView = ({ history, boxes, onDelete, onEdit }) => {
     );
   }
   
+  const findGroupForBox = (boxNum, brand, name) => {
+    if (boxNum === 'EXT') return null;
+    const box = boxes.find(b => b.boxNum === boxNum);
+    if (!box) return null;
+    const key = `${brand}|${name}`;
+    const groupBoxes = boxes.filter(b => `${b.brand}|${b.name}` === key);
+    return { brand, name, boxes: groupBoxes };
+  };
+  
   return (
     <div className="px-4 pt-4 space-y-3">
       {history.slice().reverse().map((h, i) => {
         const actualIndex = history.length - 1 - i;
+        const group = findGroupForBox(h.boxNum, h.brand, h.name);
         return (
           <div key={i} className="p-4 rounded-lg" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
             <div className="flex justify-between items-start">
               <div>
                 <div className="text-xl font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{h.brand}</div>
                 <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{h.name}</div>
-                <div className="text-base font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>{h.boxNum === 'EXT' ? 'External' : `Box ${h.boxNum}`}</div>
+                {h.boxNum === 'EXT' ? (
+                  <div className="text-base font-medium mt-1" style={{ color: 'rgba(26,18,11,0.5)' }}>External</div>
+                ) : (
+                  <button
+                    onClick={() => group && onBoxClick && onBoxClick(group)}
+                    className="mt-2 px-3 py-1.5 text-sm font-medium"
+                    style={{
+                      background: '#6B1E1E',
+                      color: '#F5DEB3',
+                      borderRadius: '4px',
+                      fontFamily: 'tt-ricordi-allegria, Georgia, serif',
+                      border: 'none',
+                      cursor: group ? 'pointer' : 'default'
+                    }}
+                  >
+                    Box {h.boxNum}
+                  </button>
+                )}
                 {h.notes && <div className="text-base mt-2 italic" style={{ color: 'rgba(26,18,11,0.7)' }}>{h.notes}</div>}
               </div>
               <div className="text-right">
@@ -2689,7 +2716,6 @@ const HistoryView = ({ history, boxes, onDelete, onEdit }) => {
     </div>
   );
 };
-
 // Prices View
 const PricesView = ({ boxes, currency, FX, fmtCurrency, fmtFromGBP }) => {
   // Get unique cigars from collection for comparison
