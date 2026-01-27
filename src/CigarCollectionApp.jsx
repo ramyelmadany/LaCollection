@@ -2679,12 +2679,12 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
   }
   
   const findGroupForBox = (boxNum, brand, name) => {
-  if (boxNum === 'EXT') return null;
-  const key = `${brand}|${name}`;
-  const groupBoxes = boxes.filter(b => `${b.brand}|${b.name}` === key);
-  if (groupBoxes.length === 0) return null;
-  return { brand, name, boxes: groupBoxes };
-};
+    if (boxNum === 'EXT') return null;
+    const key = `${brand}|${name}`;
+    const groupBoxes = boxes.filter(b => `${b.brand}|${b.name}` === key);
+    if (groupBoxes.length === 0) return null;
+    return { brand, name, boxes: groupBoxes };
+  };
   
   return (
     <div className="px-4 pt-4 space-y-3">
@@ -2698,39 +2698,38 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
                 <div className="text-xl font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{h.brand}</div>
                 <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{h.name}</div>
                 {h.boxNum === 'EXT' ? (
-  <div className="text-base font-medium mt-1" style={{ color: 'rgba(26,18,11,0.5)' }}>External</div>
-) : (
-  <button
-    onClick={() => group && onBoxClick && onBoxClick(group, h.boxNum)}
-    className="mt-2 px-3 py-1.5 text-sm font-medium"
-    style={{
-      background: '#6B1E1E',
-      color: '#F5DEB3',
-      borderRadius: '4px',
-      fontFamily: 'tt-ricordi-allegria, Georgia, serif',
-      border: 'none',
-      cursor: group ? 'pointer' : 'default'
-    }}
-  >
-    Box {h.boxNum}
-  </button>
-)}
+                  <div className="text-base font-medium mt-1" style={{ color: 'rgba(26,18,11,0.5)' }}>External</div>
+                ) : (
+                  <button
+                    onClick={() => group && onBoxClick && onBoxClick(group, h.boxNum)}
+                    className="mt-2 px-3 py-1.5 text-sm font-medium"
+                    style={{
+                      background: '#6B1E1E',
+                      color: '#F5DEB3',
+                      borderRadius: '4px',
+                      fontFamily: 'tt-ricordi-allegria, Georgia, serif',
+                      border: 'none',
+                      cursor: group ? 'pointer' : 'default'
+                    }}
+                  >
+                    Box {h.boxNum}
+                  </button>
+                )}
                 {h.notes && <div className="text-base mt-2 italic" style={{ color: 'rgba(26,18,11,0.7)' }}>{h.notes}</div>}
               </div>
               <div className="text-right">
                 <div className="text-2xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>x{h.qty}</div>
                 <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>{fmt.date(h.date)}</div>
                 <div className="mt-3 flex gap-2 justify-end">
-  {onEdit && (
-    <button
-      onClick={() => onEdit(actualIndex, h)}
-      className="px-3 py-1.5 text-sm font-medium rounded-lg"
-      style={{ background: '#1a120b', color: '#F5DEB3' }}
-    >
-      Edit
-    </button>
-  )}
-</div>
+                  {onEdit && (
+                    <button
+                      onClick={() => onEdit(actualIndex, h)}
+                      className="px-3 py-1.5 text-sm font-medium rounded-lg"
+                      style={{ background: '#1a120b', color: '#F5DEB3' }}
+                    >
+                      Edit
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -2740,6 +2739,7 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
     </div>
   );
 };
+
 // Prices View
 const PricesView = ({ boxes, currency, FX, fmtCurrency, fmtFromGBP }) => {
   // Get unique cigars from collection for comparison
