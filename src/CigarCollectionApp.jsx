@@ -1470,8 +1470,8 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
   
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
-      <div className="w-full max-w-md rounded-t-2xl max-h-[90vh] overflow-y-auto" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', border: '1px solid #333' }} onClick={e => e.stopPropagation()}>
-        <div className="sticky top-0 z-10 p-4 flex justify-between items-start" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', borderBottom: '1px solid #4A1515' }}>
+      <div className="w-full max-w-md rounded-t-2xl max-h-[90vh] overflow-y-auto" style={{ background: 'rgba(184,132,76,1)', border: '1px solid #333' }} onClick={e => e.stopPropagation()}>
+        <div className="sticky top-0 z-10 p-4 flex justify-between items-start" style={{ background: 'rgba(184,132,76,1)', borderBottom: '1px solid #4A1515' }}>
   <div>
     <h3 className="text-4xl font-bold" style={{ color: '#1a1a1a', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.brand}</h3>
 <p className="text-2xl" style={{ color: '#1a1a1a' }}>{box.name}</p>
@@ -1491,10 +1491,10 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
             {boxes.map((b, i) => (
               <button key={b.id} onClick={() => setSelectedIdx(i)} className="px-3 py-1.5 rounded-lg text-sm whitespace-nowrap" 
                 style={{
-                  background: selectedIdx === i ? '#F5DEB3' : '#252525',
-                  color: selectedIdx === i ? '#000' : '#888',
-                  border: `1px solid ${selectedIdx === i ? '#F5DEB3' : '#333'}`
-              }}>Box {b.boxNum} | {fmt.currency(b.price || 0, b.currency || 'USD')}</button>
+                background: selectedIdx === i ? '#6B1E1E' : '#252525',
+                color: selectedIdx === i ? '#F5DEB3' : '#888',
+                border: `1px solid ${selectedIdx === i ? '#6B1E1E' : '#333'}`
+              }}>Box {b.boxNum}</button>
             ))}
           </div>
         )}
