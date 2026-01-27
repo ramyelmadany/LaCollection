@@ -2665,23 +2665,23 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
                 <div className="text-xl font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{h.brand}</div>
                 <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{h.name}</div>
                 {h.boxNum === 'EXT' ? (
-                  <div className="text-base font-medium mt-1" style={{ color: 'rgba(26,18,11,0.5)' }}>External</div>
-                ) : (
-                  <button
-                    onClick={() => group && onBoxClick && onBoxClick(group)}
-                    className="mt-2 px-3 py-1.5 text-sm font-medium"
-                    style={{
-                      background: '#6B1E1E',
-                      color: '#F5DEB3',
-                      borderRadius: '4px',
-                      fontFamily: 'tt-ricordi-allegria, Georgia, serif',
-                      border: 'none',
-                      cursor: group ? 'pointer' : 'default'
-                    }}
-                  >
-                    Box {h.boxNum}
-                  </button>
-                )}
+  <div className="text-base font-medium mt-1" style={{ color: 'rgba(26,18,11,0.5)' }}>External</div>
+) : (
+  <button
+    onClick={() => group && onBoxClick && onBoxClick(group, h.boxNum)}
+    className="mt-2 px-3 py-1.5 text-sm font-medium"
+    style={{
+      background: '#6B1E1E',
+      color: '#F5DEB3',
+      borderRadius: '4px',
+      fontFamily: 'tt-ricordi-allegria, Georgia, serif',
+      border: 'none',
+      cursor: group ? 'pointer' : 'default'
+    }}
+  >
+    Box {h.boxNum}
+  </button>
+)}
                 {h.notes && <div className="text-base mt-2 italic" style={{ color: 'rgba(26,18,11,0.7)' }}>{h.notes}</div>}
               </div>
               <div className="text-right">
