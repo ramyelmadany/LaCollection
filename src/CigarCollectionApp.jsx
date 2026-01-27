@@ -2639,33 +2639,34 @@ const HistoryView = ({ history, boxes, onDelete, onEdit }) => {
     return (
       <div className="px-4 py-12 text-center">
         <div className="text-4xl mb-4 opacity-50">~</div>
-        <p className="text-gray-500">No smokes logged yet</p>
-        <p className="text-gray-600 text-sm mt-2">Use the Log Smoke button to record your sessions</p>
+        <p style={{ color: 'rgba(245,222,179,0.5)' }}>No smokes logged yet</p>
+        <p className="text-sm mt-2" style={{ color: 'rgba(245,222,179,0.3)' }}>Use the Log Smoke button to record your sessions</p>
       </div>
     );
   }
   
   return (
-    <div className="px-4 space-y-3">
+    <div className="px-4 pt-4 space-y-3">
       {history.slice().reverse().map((h, i) => {
-        const st = brandStyles[h.brand] || brandStyles['Cohiba'];
         const actualIndex = history.length - 1 - i;
         return (
-          <div key={i} className="p-3 rounded-lg" style={{ background: '#1a1a1a', border: '1px solid #333', borderLeft: `3px solid ${st.accent}` }}>
+          <div key={i} className="p-4 rounded-lg" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
             <div className="flex justify-between items-start">
               <div>
-                <div className="text-xl font-medium" style={{ color: st.accent }}>{h.brand} {h.name}</div>
-                <div className="text-lg text-gray-400">{h.boxNum === 'EXT' ? 'External' : `Box ${h.boxNum}`}</div>
-                {h.notes && <div className="text-base text-gray-500 mt-1 italic">{h.notes}</div>}
+                <div className="text-xl font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{h.brand}</div>
+                <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{h.name}</div>
+                <div className="text-base font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>{h.boxNum === 'EXT' ? 'External' : `Box ${h.boxNum}`}</div>
+                {h.notes && <div className="text-base mt-2 italic" style={{ color: 'rgba(26,18,11,0.7)' }}>{h.notes}</div>}
               </div>
               <div className="text-right">
-                <div className="text-lg font-light text-gray-300">x{h.qty}</div>
-                <div className="text-xs text-gray-500">{fmt.date(h.date)}</div>
-                <div className="mt-2 flex gap-2 justify-end">
+                <div className="text-2xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>x{h.qty}</div>
+                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>{fmt.date(h.date)}</div>
+                <div className="mt-3 flex gap-2 justify-end">
                   {onEdit && (
                     <button
                       onClick={() => onEdit(actualIndex, h)}
-                      className="px-2 py-1 text-xs rounded bg-gray-700 hover:bg-gray-600 text-gray-300"
+                      className="px-3 py-1.5 text-sm font-medium rounded-lg"
+                      style={{ background: '#1a120b', color: '#F5DEB3' }}
                     >
                       Edit
                     </button>
@@ -2673,7 +2674,8 @@ const HistoryView = ({ history, boxes, onDelete, onEdit }) => {
                   {onDelete && (
                     <button
                       onClick={() => onDelete(actualIndex, h)}
-                      className="px-2 py-1 text-xs rounded bg-red-900 hover:bg-red-800 text-red-200"
+                      className="px-3 py-1.5 text-sm font-medium rounded-lg"
+                      style={{ background: '#6B1E1E', color: '#F5DEB3' }}
                     >
                       Delete
                     </button>
@@ -2687,6 +2689,7 @@ const HistoryView = ({ history, boxes, onDelete, onEdit }) => {
     </div>
   );
 };
+
 // Prices View
 const PricesView = ({ boxes, currency, FX, fmtCurrency, fmtFromGBP }) => {
   // Get unique cigars from collection for comparison
