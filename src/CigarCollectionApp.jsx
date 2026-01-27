@@ -36,18 +36,44 @@ const convertCurrency = (amount, fromCurrency, toCurrency, rates) => {
 // Google Auth State (will be set by OAuth)
 let googleAccessToken = null;
 
-// Parse date from various formats including "Month Year" (e.g., "May 2025")
+// Parse date from various formats including "Month Year" (e.g., "May 2025", "Jan 25")
 const parseDate = (dateStr) => {
   if (!dateStr) return '';
   
-  // Try parsing "Month Year" format (e.g., "May 2025", "January 2025")
-  const monthYearMatch = dateStr.match(/^([A-Za-z]+)\s+(\d{4})$/);
-  if (monthYearMatch) {
-    const monthNames = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
-    const monthIndex = monthNames.indexOf(monthYearMatch[1].toLowerCase());
-    if (monthIndex !== -1) {
-      // Use the 1st of the month
-      return `${monthYearMatch[2]}-${String(monthIndex + 1).padStart(2, '0')}-01`;
+  const monthNamesFull = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+  const monthNamesShort = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+  
+  // Try parsing "Month Year" format with full year (e.g., "May 2025", "January 2025")
+  const monthYearFullMatch = dateStr.match(/^([A-Za-z]+)\s+(\d{4})$/);
+  if (monthYearFullMatch) {
+    const monthIndex = monthNamesFull.indexOf(monthYearFullMatch[1].toLowerCase());
+    const shortIndex = monthNamesShort.indexOf(monthYearFullMatch[1].toLowerCase());
+    const finalIndex = monthIndex !== -1 ? monthIndex : shortIndex;
+    if (finalIndex !== -1) {
+      return `${monthYearFullMatch[2]}-${String(finalIndex + 1).padStart(2, '0')}-01`;
+    }
+  }
+  
+  // Try parsing "Month Year" format with short year (e.g., "Jan 25", "May 24")
+  const monthYearShortMatch = dateStr.match(/^([A-Za-z]+)\s+(\d{2})$/);
+  if (monthYearShortMatch) {
+    const monthIndex = monthNamesFull.indexOf(monthYearShortMatch[1].toLowerCase());
+    const shortIndex = monthNamesShort.indexOf(monthYearShortMatch[1].toLowerCase());
+    const finalIndex = monthIndex !== -1 ? monthIndex : shortIndex;
+    if (finalIndex !== -1) {
+      const year = parseInt(monthYearShortMatch[2]) + 2000;
+      return `${year}-${String(finalIndex + 1).padStart(2, '0')}-01`;
+    }
+  }
+  
+  // Try parsing "Day Month Year" format (e.g., "17 Jul 2025", "1 January 2024")
+  const dayMonthYearMatch = dateStr.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/);
+  if (dayMonthYearMatch) {
+    const monthIndex = monthNamesFull.indexOf(dayMonthYearMatch[2].toLowerCase());
+    const shortIndex = monthNamesShort.indexOf(dayMonthYearMatch[2].toLowerCase());
+    const finalIndex = monthIndex !== -1 ? monthIndex : shortIndex;
+    if (finalIndex !== -1) {
+      return `${dayMonthYearMatch[3]}-${String(finalIndex + 1).padStart(2, '0')}-${String(dayMonthYearMatch[1]).padStart(2, '0')}`;
     }
   }
   
