@@ -2728,19 +2728,19 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
               <div className="text-right">
                 <div className="text-2xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>x{h.qty}</div>
                 <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>{fmt.date(h.date)}</div>
-                <div className="mt-3 flex gap-2 justify-end">
-                  {onEdit && (
-                    <button
-                      onClick={() => onEdit(actualIndex, h)}
-                      className="px-3 py-1.5 text-sm font-medium rounded-lg"
-                      style={{ background: '#1a120b', color: '#F5DEB3' }}
-                    >
-                      Edit
-                    </button>
-                  )}
-                </div>
               </div>
             </div>
+            {onEdit && (
+              <div className="mt-3 pt-3 border-t" style={{ borderColor: '#6B1E1E' }}>
+                <button
+                  onClick={() => onEdit(actualIndex, h)}
+                  className="w-full py-2 text-sm font-medium rounded-lg"
+                  style={{ background: '#1a120b', color: '#F5DEB3' }}
+                >
+                  Edit
+                </button>
+              </div>
+            )}
           </div>
         );
       })}
