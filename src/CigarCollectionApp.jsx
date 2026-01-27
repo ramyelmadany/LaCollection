@@ -1430,8 +1430,8 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
 };
 
 // Box Detail Modal
-  const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, fmtFromGBP, onDelete, onEdit, isSignedIn, availableLocations = [], baseCurrency, fxRates }) => {
-  const [selectedIdx, setSelectedIdx] = useState(0);
+  const BoxDetailModal = ({ boxes, initialBoxIndex = 0, onClose, fmtCurrency, fmtCurrencyWithOriginal, fmtFromGBP, onDelete, onEdit, isSignedIn, availableLocations = [], baseCurrency, fxRates }) => {
+  const [selectedIdx, setSelectedIdx] = useState(initialBoxIndex);
 const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 const [isDeleting, setIsDeleting] = useState(false);
 const [showEditModal, setShowEditModal] = useState(false);
@@ -4193,12 +4193,12 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
       )}
       
       {/* History View */}
-{view === 'history' && <HistoryView history={history} boxes={boxes} onDelete={isSignedIn ? handleDeleteHistory : () => setShowSignInPrompt(true)} onEdit={isSignedIn ? handleEditHistory : () => setShowSignInPrompt(true)} onBoxClick={(group) => setSelectedGroup(group)} />}      
+{view === 'history' && <HistoryView history={history} boxes={boxes} onDelete={isSignedIn ? handleDeleteHistory : () => setShowSignInPrompt(true)} onEdit={isSignedIn ? handleEditHistory : () => setShowSignInPrompt(true)} onBoxClick={(group, boxNum) => { const boxIndex = group.boxes.findIndex(b => b.boxNum === boxNum); setSelectedGroup({ ...group, initialBoxIndex: boxIndex >= 0 ? boxIndex : 0 }); }} />}      
       {/* Prices View */}
       {view === 'prices' && <PricesView boxes={boxes} currency={currency} FX={FX} fmtCurrency={fmtCurrency} fmtFromGBP={fmtFromGBP} />}
       
       {/* Modals */}
-      {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} onClose={() => setSelectedGroup(null)} fmtCurrency={fmtCurrency} fmtCurrencyWithOriginal={fmtCurrencyWithOriginal} fmtFromGBP={fmtFromGBP} baseCurrency={baseCurrency} fxRates={fxRates} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { await refreshData(); } return success; }} onEdit={async (box, updatedData) => { if (!googleAccessToken) return false; const success = await updateBoxInSheet(box.boxNum, updatedData, googleAccessToken); if (success) { await refreshData(); } return success; }} availableLocations={availableLocations} />}
+      {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} initialBoxIndex={selectedGroup.initialBoxIndex || 0} onClose={() => setSelectedGroup(null)} fmtCurrency={fmtCurrency} fmtCurrencyWithOriginal={fmtCurrencyWithOriginal} fmtFromGBP={fmtFromGBP} baseCurrency={baseCurrency} fxRates={fxRates} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { await refreshData(); } return success; }} onEdit={async (box, updatedData) => { if (!googleAccessToken) return false; const success = await updateBoxInSheet(box.boxNum, updatedData, googleAccessToken); if (success) { await refreshData(); } return success; }} availableLocations={availableLocations} />}
       {showLogModal && <SmokeLogModal boxes={boxes} onClose={() => setShowLogModal(false)} onLog={handleLog} />}
       {showAddModal && <AddBoxModal boxes={boxes} onClose={() => setShowAddModal(false)} onAdd={handleAddBoxes} highestBoxNum={highestBoxNum} />}
       {showSignInPrompt && (
