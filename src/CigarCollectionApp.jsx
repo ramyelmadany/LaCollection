@@ -3799,6 +3799,14 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
               return Object.values(groups);
             };
             
+            const findGroupForBox = (boxNum) => {
+              const box = remainingBoxes.find(b => b.boxNum === boxNum);
+              if (!box) return null;
+              const key = `${box.brand}|${box.name}`;
+              const groupBoxes = remainingBoxes.filter(b => `${b.brand}|${b.name}` === key);
+              return { brand: box.brand, name: box.name, boxes: groupBoxes };
+            };
+            
             const fullBoxes = remainingBoxes.filter(b => b.remaining === b.perBox);
             const fullBoxVitolas = groupByVitola(fullBoxes);
             const mostValuableBox = fullBoxVitolas
@@ -3923,7 +3931,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                   <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Most Valuable Box</h2>
                   <div className="space-y-2">
                     {mostValuableBox.map((v, i) => (
-                      <div key={i} className="rounded-lg p-3 flex justify-between items-center" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+                      <div key={i} className="rounded-lg p-3 flex justify-between items-center cursor-pointer" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }} onClick={() => { const group = findGroupForBox(v.boxIds[0]); if (group) setSelectedGroup(group); }}>
                         <div>
                           <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{v.brand}</div>
                           <div className="text-base font-medium" style={{ color: '#1a120b' }}>{v.name}</div>
@@ -3942,7 +3950,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                   <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Most Valuable Cigar</h2>
                   <div className="space-y-2">
                     {mostValuableCigar.map((v, i) => (
-                      <div key={i} className="rounded-lg p-3 flex justify-between items-center" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+                      <div key={i} className="rounded-lg p-3 flex justify-between items-center cursor-pointer" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }} onClick={() => { const group = findGroupForBox(v.boxIds[0]); if (group) setSelectedGroup(group); }}>
                         <div>
                           <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{v.brand}</div>
                           <div className="text-base font-medium" style={{ color: '#1a120b' }}>{v.name}</div>
@@ -3961,7 +3969,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                   <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Best Performer</h2>
                   <div className="space-y-2">
                     {bestPerformer.map((v, i) => (
-                      <div key={i} className="rounded-lg p-3 flex justify-between items-center" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+                      <div key={i} className="rounded-lg p-3 flex justify-between items-center cursor-pointer" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }} onClick={() => { const group = findGroupForBox(v.boxIds[0]); if (group) setSelectedGroup(group); }}>
                         <div>
                           <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{v.brand}</div>
                           <div className="text-base font-medium" style={{ color: '#1a120b' }}>{v.name}</div>
@@ -3982,7 +3990,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                   <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Worst Performer</h2>
                   <div className="space-y-2">
                     {worstPerformer.map((v, i) => (
-                      <div key={i} className="rounded-lg p-3 flex justify-between items-center" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+                      <div key={i} className="rounded-lg p-3 flex justify-between items-center cursor-pointer" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }} onClick={() => { const group = findGroupForBox(v.boxIds[0]); if (group) setSelectedGroup(group); }}>
                         <div>
                           <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{v.brand}</div>
                           <div className="text-base font-medium" style={{ color: '#1a120b' }}>{v.name}</div>
@@ -4026,7 +4034,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                 <div className="mb-6">
                   <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Oldest Box</h2>
                   {oldestBox ? (
-                    <div className="rounded-lg p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+                    <div className="rounded-lg p-4 cursor-pointer" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }} onClick={() => { const group = findGroupForBox(oldestBox.boxNum); if (group) setSelectedGroup(group); }}>
                       <div className="flex justify-between items-center">
                         <div>
                           <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{oldestBox.brand}</div>
@@ -4047,7 +4055,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
                 <div className="mb-6">
                   <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Newest Addition</h2>
                   {newestAddition ? (
-                    <div className="rounded-lg p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+                    <div className="rounded-lg p-4 cursor-pointer" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }} onClick={() => { const group = findGroupForBox(newestAddition.boxNum); if (group) setSelectedGroup(group); }}>
                       <div className="flex justify-between items-center">
                         <div>
                           <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{newestAddition.brand}</div>
