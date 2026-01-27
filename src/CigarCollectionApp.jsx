@@ -1532,14 +1532,11 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
           {/* Pricing Row */}
 <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
   <div className="flex justify-between items-center mb-2">
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Date of Purchase</span>
-    <div className="flex items-center gap-2">
-      {!box.received && (
-        <span className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>(Pending Receipt)</span>
-      )}
-      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmt.date(box.datePurchased)}</span>
-    </div>
-  </div>
+  <span className="text-lg font-medium" style={{ color: '#1a120b' }}>
+    Date of Purchase{!box.received && ' (Pending Receipt)'}
+  </span>
+  <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmt.date(box.datePurchased)}</span>
+</div>
   <div className="flex justify-between items-center mb-2">
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Your Cost</span>
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtCurrencyWithOriginal(box.price, box.currency)}</span>
@@ -1558,41 +1555,41 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
 
           {/* Details Grid */}
 <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-  <div className="grid grid-cols-2 gap-y-2 gap-x-4">
+  <div className="grid grid-cols-2 gap-y-3 gap-x-4">
     {box.ringGauge && (
       <div>
-        <div className="text-sm font-medium leading-tight" style={{ color: 'rgba(26,18,11,0.5)' }}>Ring Gauge</div>
-        <div className="text-lg font-medium leading-tight" style={{ color: '#1a120b' }}>{box.ringGauge}</div>
+        <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)', lineHeight: '1' }}>Ring Gauge</div>
+        <div className="text-lg font-medium" style={{ color: '#1a120b', lineHeight: '1.2' }}>{box.ringGauge}</div>
       </div>
     )}
     {box.length && (
       <div>
-        <div className="text-sm font-medium leading-tight" style={{ color: 'rgba(26,18,11,0.5)' }}>Length</div>
-        <div className="text-lg font-medium leading-tight" style={{ color: '#1a120b' }}>{box.length}"</div>
+        <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)', lineHeight: '1' }}>Length</div>
+        <div className="text-lg font-medium" style={{ color: '#1a120b', lineHeight: '1.2' }}>{box.length}"</div>
       </div>
     )}
     <div>
-      <div className="text-sm font-medium leading-tight" style={{ color: 'rgba(26,18,11,0.5)' }}>Release Date</div>
-      <div className="text-lg font-medium leading-tight" style={{ color: '#1a120b' }}>{box.dateOfBox ? fmt.date(box.dateOfBox) : 'Unknown'}</div>
+      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)', lineHeight: '1' }}>Release Date</div>
+      <div className="text-lg font-medium" style={{ color: '#1a120b', lineHeight: '1.2' }}>{box.dateOfBox ? fmt.date(box.dateOfBox) : 'Unknown'}</div>
     </div>
     {box.code && (
       <div>
-        <div className="text-sm font-medium leading-tight" style={{ color: 'rgba(26,18,11,0.5)' }}>Factory Code</div>
-        <div className="text-lg font-medium leading-tight" style={{ color: '#1a120b' }}>{box.code}</div>
+        <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)', lineHeight: '1' }}>Factory Code</div>
+        <div className="text-lg font-medium" style={{ color: '#1a120b', lineHeight: '1.2' }}>{box.code}</div>
       </div>
     )}
     <div>
-      <div className="text-sm font-medium leading-tight" style={{ color: 'rgba(26,18,11,0.5)' }}>Box ID</div>
-      <div className="text-lg font-medium leading-tight" style={{ color: '#1a120b' }}>{box.boxNum}</div>
+      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)', lineHeight: '1' }}>Box ID</div>
+      <div className="text-lg font-medium" style={{ color: '#1a120b', lineHeight: '1.2' }}>{box.boxNum}</div>
     </div>
     <div>
-      <div className="text-sm font-medium leading-tight" style={{ color: 'rgba(26,18,11,0.5)' }}>Location</div>
-      <div className="text-lg font-medium leading-tight" style={{ color: '#1a120b' }}>{box.location}</div>
+      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)', lineHeight: '1' }}>Location</div>
+      <div className="text-lg font-medium" style={{ color: '#1a120b', lineHeight: '1.2' }}>{box.location}</div>
     </div>
     {box.notes && (
       <div className="col-span-2">
-        <div className="text-sm font-medium leading-tight" style={{ color: 'rgba(26,18,11,0.5)' }}>Vitola</div>
-        <div className="text-lg font-medium leading-tight" style={{ color: '#1a120b' }}>{box.notes}</div>
+        <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)', lineHeight: '1' }}>Vitola</div>
+        <div className="text-lg font-medium" style={{ color: '#1a120b', lineHeight: '1.2' }}>{box.notes}</div>
       </div>
     )}
   </div>
