@@ -1531,17 +1531,15 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
 
           {/* Pricing Row */}
 <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-  <div className="flex justify-between items-center mb-2">
-  <span className="text-lg font-medium" style={{ color: '#1a120b' }}>
-    Date of Purchase{!box.received && ' (Pending Receipt)'}
-  </span>
-  <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmt.date(box.datePurchased)}</span>
-</div>
-  <div className="flex justify-between items-center mb-2">
+  <div className="flex justify-between items-center mb-3">
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Date of Purchase</span>
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmt.date(box.datePurchased)}</span>
+  </div>
+  <div className="flex justify-between items-center mb-3">
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Your Cost</span>
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtCurrencyWithOriginal(box.price, box.currency)}</span>
   </div>
-  <div className="flex justify-between items-center mb-2">
+  <div className="flex justify-between items-center mb-3">
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>UK Market</span>
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtFromGBP(marketGBP)}</span>
   </div>
@@ -1555,7 +1553,7 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
 
           {/* Details Grid */}
 <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-  <div className="grid grid-cols-2 gap-y-3 gap-x-4">
+  <div className="grid grid-cols-2 gap-y-4 gap-x-4">
     {box.ringGauge && (
       <div>
         <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)', lineHeight: '1' }}>Ring Gauge</div>
