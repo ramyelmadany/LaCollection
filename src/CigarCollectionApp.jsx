@@ -1472,8 +1472,8 @@ const boxAgeData = calculateAge(box.dateOfBox);
 const isFullBox = box.remaining === box.perBox;
   
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
-      <div className="w-full max-w-md rounded-t-2xl max-h-[90vh] overflow-y-auto" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', border: '1px solid #333', scrollbarWidth: 'none', msOverflowStyle: 'none' }} onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
+      <div className="w-full max-w-md rounded-2xl max-h-[85vh] overflow-y-auto" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', border: '1px solid #333', scrollbarWidth: 'none', msOverflowStyle: 'none' }} onClick={e => e.stopPropagation()}>
         
         {/* Header */}
         <div className="sticky top-0 z-10 p-4 flex justify-between items-start" style={{ background: '#1a120b', borderBottom: '2px solid #6B1E1E' }}>
@@ -1513,7 +1513,7 @@ const isFullBox = box.remaining === box.perBox;
   </div>
 )}
         
-        <div className="p-4">
+        <div className="p-4 pb-6">
           {/* Box Status Row */}
 <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
   <div className="flex justify-around">
@@ -1691,13 +1691,12 @@ const isFullBox = box.remaining === box.perBox;
         placeholder="Enter your note..."
       />
       <button
-        onClick={async () => {
-          const success = await onEdit(box, { ...box, boxNotes: noteText });
-          if (success) {
-            setShowNotesModal(false);
-            onClose();
-          }
-        }}
+  onClick={async () => {
+    const success = await onEdit(box, { ...box, boxNotes: noteText });
+    if (success) {
+      setShowNotesModal(false);
+    }
+  }}
         className="w-full py-3 mt-4 text-lg font-bold rounded-lg"
         style={{ background: '#1a120b', color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}
       >
