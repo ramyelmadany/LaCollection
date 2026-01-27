@@ -1596,9 +1596,9 @@ const isFullBox = box.remaining === box.perBox;
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.location}</span>
   </div>
   {box.vitola && (
-  <div className="flex justify-between items-center">
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Vitola</span>
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.vitola}</span>
+  <div className="flex justify-between items-start">
+    <span className="text-lg font-medium flex-shrink-0" style={{ color: '#1a120b' }}>Vitola</span>
+    <span className="text-lg font-medium text-right" style={{ color: '#1a120b' }}>{box.vitola}</span>
   </div>
 )}
 </div>
