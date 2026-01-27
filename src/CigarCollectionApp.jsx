@@ -1729,12 +1729,13 @@ const isFullBox = box.remaining === box.perBox;
 };;
 
 // Edit History Modal
-const EditHistoryModal = ({ entry, index, onClose, onSave }) => {
+const EditHistoryModal = ({ entry, index, onClose, onSave, onDelete }) => {
   const [date, setDate] = useState(entry.date || new Date().toISOString().split('T')[0]);
   const [qty, setQty] = useState(entry.qty || 1);
   const [notes, setNotes] = useState(entry.notes || '');
   const [brand, setBrand] = useState(entry.brand || '');
   const [name, setName] = useState(entry.name || '');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
   const isExternal = entry.boxNum === 'EXT' || entry.source === 'external';
   
@@ -1752,53 +1753,81 @@ const EditHistoryModal = ({ entry, index, onClose, onSave }) => {
   
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.9)' }}>
-      <div className="w-full max-w-sm rounded-xl max-h-[85vh] overflow-y-auto" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-        <div className="sticky top-0 p-4 flex justify-between items-center" style={{ background: '#1a1a1a', borderBottom: '1px solid #333' }}>
-          <h3 className="text-lg font-semibold" style={{ color: '#d4af37' }}>Edit Log</h3>
-          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#333', color: '#888' }}>x</button>
+      <div className="w-full max-w-sm rounded-xl max-h-[85vh] overflow-y-auto" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', border: '1px solid #333', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="sticky top-0 p-4 flex justify-between items-center" style={{ background: '#1a120b', borderBottom: '2px solid #6B1E1E' }}>
+          <h3 className="text-lg font-bold" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Edit Log</h3>
+          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(245,222,179,0.1)', color: '#F5DEB3', fontSize: '1.25rem' }}>×</button>
         </div>
         
         <div className="p-4 space-y-4">
           <div>
-            <label className="text-xs text-gray-500 block mb-2">Date</label>
-            <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+            <label className="text-sm font-medium block mb-2" style={{ color: 'rgba(26,18,11,0.5)' }}>Date</label>
+            <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full px-3 py-2 rounded-lg text-lg font-medium" style={{ background: 'rgba(26,18,11,0.1)', border: '1px solid rgba(26,18,11,0.2)', color: '#1a120b' }} />
           </div>
           
           {isExternal ? (
             <>
               <div>
-                <label className="text-xs text-gray-500 block mb-2">Brand</label>
-                <input type="text" value={brand} onChange={e => setBrand(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+                <label className="text-sm font-medium block mb-2" style={{ color: 'rgba(26,18,11,0.5)' }}>Brand</label>
+                <input type="text" value={brand} onChange={e => setBrand(e.target.value)} className="w-full px-3 py-2 rounded-lg text-lg font-medium" style={{ background: 'rgba(26,18,11,0.1)', border: '1px solid rgba(26,18,11,0.2)', color: '#1a120b' }} />
               </div>
               <div>
-                <label className="text-xs text-gray-500 block mb-2">Cigar Name</label>
-                <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+                <label className="text-sm font-medium block mb-2" style={{ color: 'rgba(26,18,11,0.5)' }}>Cigar Name</label>
+                <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full px-3 py-2 rounded-lg text-lg font-medium" style={{ background: 'rgba(26,18,11,0.1)', border: '1px solid rgba(26,18,11,0.2)', color: '#1a120b' }} />
               </div>
             </>
           ) : (
-            <div className="p-3 rounded-lg" style={{ background: '#252525', border: '1px solid #333' }}>
-              <div className="text-sm font-medium" style={{ color: '#d4af37' }}>{entry.brand} {entry.name}</div>
-              <div className="text-xs text-gray-500">Box {entry.boxNum}</div>
+            <div className="p-3 rounded-lg" style={{ background: 'rgba(26,18,11,0.1)', border: '1px solid rgba(26,18,11,0.2)' }}>
+              <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{entry.brand}</div>
+              <div className="text-base font-medium" style={{ color: '#1a120b' }}>{entry.name}</div>
+              <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box {entry.boxNum}</div>
             </div>
           )}
           
           <div>
-            <label className="text-xs text-gray-500 block mb-2">Quantity</label>
+            <label className="text-sm font-medium block mb-2" style={{ color: 'rgba(26,18,11,0.5)' }}>Quantity</label>
             <div className="flex items-center gap-4">
-              <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-10 h-10 rounded-lg text-lg" style={{ background: '#252525', border: '1px solid #333', color: '#d4af37' }}>-</button>
-              <span className="text-2xl font-light" style={{ color: '#d4af37', minWidth: 40, textAlign: 'center' }}>{qty}</span>
-              <button onClick={() => setQty(qty + 1)} className="w-10 h-10 rounded-lg text-lg" style={{ background: '#252525', border: '1px solid #333', color: '#d4af37' }}>+</button>
+              <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-10 h-10 rounded-lg text-lg font-bold" style={{ background: '#1a120b', color: '#F5DEB3' }}>-</button>
+              <span className="text-3xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif', minWidth: 40, textAlign: 'center' }}>{qty}</span>
+              <button onClick={() => setQty(qty + 1)} className="w-10 h-10 rounded-lg text-lg font-bold" style={{ background: '#1a120b', color: '#F5DEB3' }}>+</button>
             </div>
           </div>
           
           <div>
-            <label className="text-xs text-gray-500 block mb-2">Notes (optional)</label>
-            <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Tasting notes, occasion..." className="w-full px-3 py-2 rounded-lg text-sm resize-none" rows={2} style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+            <label className="text-sm font-medium block mb-2" style={{ color: 'rgba(26,18,11,0.5)' }}>Notes (optional)</label>
+            <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Tasting notes, occasion..." className="w-full px-3 py-2 rounded-lg text-lg font-medium resize-none" rows={2} style={{ background: 'rgba(26,18,11,0.1)', border: '1px solid rgba(26,18,11,0.2)', color: '#1a120b' }} />
           </div>
           
-          <button onClick={handleSave} className="w-full py-3 rounded-lg font-semibold" style={{ background: '#d4af37', color: '#000' }}>
-            Save Changes
-          </button>
+          {!showDeleteConfirm ? (
+            <div className="flex gap-2 pt-2">
+              <button onClick={handleSave} className="flex-1 py-3 rounded-lg text-lg font-bold" style={{ background: '#1a120b', color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
+                Save Changes
+              </button>
+              <button onClick={() => setShowDeleteConfirm(true)} className="flex-1 py-3 rounded-lg text-lg font-bold" style={{ background: '#6B1E1E', color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
+                Delete
+              </button>
+            </div>
+          ) : (
+            <div className="pt-2">
+              <p className="text-lg font-bold mb-3" style={{ color: '#6B1E1E', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Delete this log?</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1 py-3 text-lg font-bold rounded-lg"
+                  style={{ background: 'rgba(26,18,11,0.2)', color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => onDelete(index, entry)}
+                  className="flex-1 py-3 text-lg font-bold rounded-lg"
+                  style={{ background: '#6B1E1E', color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -2692,24 +2721,16 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
                 <div className="text-2xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>x{h.qty}</div>
                 <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>{fmt.date(h.date)}</div>
                 <div className="mt-3 flex gap-2 justify-end">
-                  {onEdit && (
-                    <button
-                      onClick={() => onEdit(actualIndex, h)}
-                      className="px-3 py-1.5 text-sm font-medium rounded-lg"
-                      style={{ background: '#1a120b', color: '#F5DEB3' }}
-                    >
-                      Edit
-                    </button>
-                  )}
-                  {onDelete && (
-                    <button
-                      onClick={() => onDelete(actualIndex, h)}
-                      className="px-3 py-1.5 text-sm font-medium rounded-lg"
-                      style={{ background: '#6B1E1E', color: '#F5DEB3' }}
-                    >
-                      Delete
-                    </button>
-                  )}
+  {onEdit && (
+    <button
+      onClick={() => onEdit(actualIndex, h)}
+      className="px-3 py-1.5 text-sm font-medium rounded-lg"
+      style={{ background: '#1a120b', color: '#F5DEB3' }}
+    >
+      Edit
+    </button>
+  )}
+</div>
                 </div>
               </div>
             </div>
@@ -4235,6 +4256,45 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
         index={editingHistory.index}
         onClose={() => setEditingHistory(null)} 
         onSave={async (index, oldEntry, newEntry) => {
+          {editingHistory && <EditHistoryModal 
+  entry={editingHistory.entry} 
+  index={editingHistory.index}
+  onClose={() => setEditingHistory(null)} 
+  onSave={async (index, oldEntry, newEntry) => {
+    // Delete old entry and add new one
+    await deleteHistoryEntry(oldEntry, accessToken);
+    await addHistoryEntry(newEntry, accessToken);
+    
+    // Update local state
+    setHistory(prev => prev.map((h, i) => i === index ? { ...newEntry, timestamp: Date.now() } : h));
+    
+    // If collection cigar and qty changed, update box counts
+    if (oldEntry.boxNum !== 'EXT' && oldEntry.source !== 'external') {
+      const qtyDiff = newEntry.qty - oldEntry.qty;
+      if (qtyDiff !== 0) {
+        const box = boxes.find(b => b.boxNum === oldEntry.boxNum);
+        if (box) {
+          const newRemaining = box.remaining - qtyDiff;
+          const newConsumed = box.consumed + qtyDiff;
+          setBoxes(prev => prev.map(b => 
+            b.boxNum === oldEntry.boxNum 
+              ? { ...b, remaining: newRemaining, consumed: newConsumed }
+              : b
+          ));
+          if (isSignedIn && accessToken) {
+            await updateBoxConsumed({ ...box, remaining: newRemaining, consumed: newConsumed });
+          }
+        }
+      }
+    }
+    
+    setEditingHistory(null);
+  }}
+  onDelete={async (index, entry) => {
+    await handleDeleteHistory(index, entry);
+    setEditingHistory(null);
+  }}
+/>}
           // Delete old entry and add new one
           await deleteHistoryEntry(oldEntry, accessToken);
           await addHistoryEntry(newEntry, accessToken);
