@@ -1483,7 +1483,7 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
         
         {/* Box Selector Buttons */}
 {boxes.length > 1 && (
-  <div className="px-4 py-2 flex gap-2 overflow-x-auto items-start" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+  <div className="px-4 pt-3 pb-2 flex gap-2 overflow-x-auto items-start" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
     {boxes.map((b, i) => (
       <div key={b.id} className="flex flex-col items-center gap-1.5">
         <button 
@@ -1512,53 +1512,53 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
         
         <div className="p-4">
           {/* Box Status Row */}
-<div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
+<div className="py-3 border-b-2" style={{ borderColor: '#6B1E1E' }}>
   <div className="flex justify-around">
     <div className="text-center">
       <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box of</div>
-      <div className="text-4xl font-medium -mt-1" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.perBox}</div>
+      <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.perBox}</div>
     </div>
     <div className="text-center">
       <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Remaining</div>
-      <div className="text-4xl font-medium -mt-1" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.remaining}</div>
+      <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.remaining}</div>
     </div>
     <div className="text-center">
       <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>{box.status}</div>
-      <div className="text-4xl font-medium -mt-1" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{boxAge || '–'}</div>
+      <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{boxAge || '–'}</div>
     </div>
   </div>
 </div>
 
           {/* Pricing Row */}
-          <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-            <div className="flex justify-between items-center mb-2">
-  <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Date of Purchase</span>
-  <div className="text-right">
-    {!box.received && (
-      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>(Pending Receipt)</div>
-    )}
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmt.date(box.datePurchased)}</span>
+<div className="py-3 border-b-2" style={{ borderColor: '#6B1E1E' }}>
+  <div className="flex justify-between items-center mb-2">
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Date of Purchase</span>
+    <div className="flex items-center gap-2">
+      {!box.received && (
+        <span className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>(Pending Receipt)</span>
+      )}
+      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmt.date(box.datePurchased)}</span>
+    </div>
   </div>
+  <div className="flex justify-between items-center mb-2">
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Your Cost</span>
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtCurrencyWithOriginal(box.price, box.currency)}</span>
+  </div>
+  <div className="flex justify-between items-center mb-2">
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>UK Market</span>
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtFromGBP(marketGBP)}</span>
+  </div>
+  {savingsInBase > 0 && (
+    <div className="flex justify-between items-center">
+      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Savings</span>
+      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtFromGBP(savingsInBase)} ({Math.round(savingsInBase/marketInBase*100)}%)</span>
+    </div>
+  )}
 </div>
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Your cost</span>
-              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtCurrencyWithOriginal(box.price, box.currency)}</span>
-            </div>
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>UK market</span>
-              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtFromGBP(marketGBP)}</span>
-            </div>
-            {savingsInBase > 0 && (
-              <div className="flex justify-between items-center">
-                <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Savings</span>
-                <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtFromGBP(savingsInBase)} ({Math.round(savingsInBase/marketInBase*100)}%)</span>
-              </div>
-            )}
-          </div>
 
           {/* Details Grid */}
-          <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-            <div className="grid grid-cols-2 gap-y-2 gap-x-4">
+<div className="py-3 border-b-2" style={{ borderColor: '#6B1E1E' }}>
+  <div className="grid grid-cols-2 gap-y-2 gap-x-4">
               {box.ringGauge && (
                 <div>
                   <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Ring Gauge</div>
