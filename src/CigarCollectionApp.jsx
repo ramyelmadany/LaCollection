@@ -1474,15 +1474,15 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
         {/* Header */}
         <div className="sticky top-0 z-10 p-4 flex justify-between items-start" style={{ background: '#1a120b', borderBottom: '2px solid #6B1E1E' }}>
           <div>
-            <h3 className="text-3xl font-bold" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.brand}</h3>
-            <p className="text-xl" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif', opacity: 0.9 }}>{box.name}</p>
+            <h3 className="text-4xl font-bold" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.brand}</h3>
+            <p className="text-2xl" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif', opacity: 0.9 }}>{box.name}</p>
           </div>
           <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(245,222,179,0.1)', color: '#F5DEB3', fontSize: '1.25rem' }}>×</button>
         </div>
         
         {/* Box Selector Buttons */}
         {boxes.length > 1 && (
-          <div className="px-4 py-3 flex gap-2 overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div className="px-4 py-3 flex gap-2 overflow-x-auto" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {boxes.map((b, i) => (
               <button 
                 key={b.id} 
@@ -1491,12 +1491,12 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
                 style={{
                   background: selectedIdx === i ? '#6B1E1E' : 'rgba(107,30,30,0.3)',
                   color: selectedIdx === i ? '#F5DEB3' : '#1a120b',
-                  borderRadius: '8px',
+                  borderRadius: '4px',
                   fontFamily: 'tt-ricordi-allegria, Georgia, serif',
                   border: 'none'
                 }}
               >
-                Box {b.boxNum}
+                Box {b.boxNum}{!b.received && ' (Pending Receipt)'}
               </button>
             ))}
           </div>
@@ -1524,51 +1524,21 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
           {/* Pricing Row */}
           <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
             <div className="flex justify-between items-center mb-2">
-              <span className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Date of Purchase</span>
-              <span className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{fmt.date(box.datePurchased)}</span>
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Date of Purchase</span>
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmt.date(box.datePurchased)}</span>
             </div>
             <div className="flex justify-between items-center mb-2">
-              <span className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Your cost</span>
-              <span className="text-lg font-bold" style={{ color: '#1a5a1a', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{fmtCurrencyWithOriginal(box.price, box.currency)}</span>
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Your cost</span>
+              <span className="text-lg font-medium" style={{ color: '#1a5a1a' }}>{fmtCurrencyWithOriginal(box.price, box.currency)}</span>
             </div>
             <div className="flex justify-between items-center mb-2">
-              <span className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>UK market</span>
-              <span className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{fmtFromGBP(marketGBP)}</span>
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>UK market</span>
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtFromGBP(marketGBP)}</span>
             </div>
             {savingsInBase > 0 && (
               <div className="flex justify-between items-center">
-                <span className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Savings</span>
-                <span className="text-lg font-bold" style={{ color: '#1a5a1a', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{fmtFromGBP(savingsInBase)} ({Math.round(savingsInBase/marketInBase*100)}%)</span>
-              </div>
-            )}
-            {isSignedIn && (
-              <div className="flex justify-end items-center mt-3 pt-3 border-t" style={{ borderColor: 'rgba(107,30,30,0.3)' }}>
-                <div className="flex items-center gap-1">
-                  <input
-                    type="number"
-                    step="0.01"
-                    placeholder="Override £"
-                    defaultValue={getManualUKPrice(box.brand, box.name, box.perBox) || ''}
-                    className="w-24 px-2 py-1 text-sm font-bold"
-                    style={{ background: 'rgba(26,18,11,0.1)', border: '1px solid rgba(26,18,11,0.3)', borderRadius: '4px', color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}
-                    onBlur={(e) => {
-                      setManualUKPrice(box.brand, box.name, box.perBox, e.target.value);
-                      window.location.reload();
-                    }}
-                  />
-                  {getManualUKPrice(box.brand, box.name, box.perBox) && (
-                    <button
-                      onClick={() => {
-                        clearManualUKPrice(box.brand, box.name, box.perBox);
-                        window.location.reload();
-                      }}
-                      className="text-sm font-bold"
-                      style={{ color: '#6B1E1E' }}
-                    >
-                      ✕
-                    </button>
-                  )}
-                </div>
+                <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Savings</span>
+                <span className="text-lg font-medium" style={{ color: '#1a5a1a' }}>{fmtFromGBP(savingsInBase)} ({Math.round(savingsInBase/marketInBase*100)}%)</span>
               </div>
             )}
           </div>
@@ -1577,54 +1547,46 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
           <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
             <div className="grid grid-cols-2 gap-y-4 gap-x-4">
               <div>
-                <div className="text-sm font-bold" style={{ color: 'rgba(26,18,11,0.5)', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Box ID</div>
-                <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.boxNum}</div>
+                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box ID</div>
+                <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.boxNum}</div>
               </div>
               <div>
-                <div className="text-sm font-bold" style={{ color: 'rgba(26,18,11,0.5)', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Location</div>
-                <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.location}</div>
+                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Location</div>
+                <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.location}</div>
               </div>
               {box.code && (
                 <div>
-                  <div className="text-sm font-bold" style={{ color: 'rgba(26,18,11,0.5)', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Factory Code</div>
-                  <div className="text-lg font-bold font-mono" style={{ color: '#1a120b' }}>{box.code}</div>
+                  <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Factory Code</div>
+                  <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.code}</div>
                 </div>
               )}
               <div>
-                <div className="text-sm font-bold" style={{ color: 'rgba(26,18,11,0.5)', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Release Date</div>
-                <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.dateOfBox ? fmt.date(box.dateOfBox) : 'Unknown'}</div>
+                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Release Date</div>
+                <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.dateOfBox ? fmt.date(box.dateOfBox) : 'Unknown'}</div>
               </div>
               {box.ringGauge && (
                 <div>
-                  <div className="text-sm font-bold" style={{ color: 'rgba(26,18,11,0.5)', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Ring Gauge</div>
-                  <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.ringGauge}</div>
+                  <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Ring Gauge</div>
+                  <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.ringGauge}</div>
                 </div>
               )}
               {box.length && (
                 <div>
-                  <div className="text-sm font-bold" style={{ color: 'rgba(26,18,11,0.5)', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Length</div>
-                  <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.length}"</div>
+                  <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Length</div>
+                  <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.length}"</div>
                 </div>
               )}
               {box.notes && (
                 <div className="col-span-2">
-                  <div className="text-sm font-bold" style={{ color: 'rgba(26,18,11,0.5)', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Vitola</div>
-                  <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.notes}</div>
+                  <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Vitola</div>
+                  <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.notes}</div>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Status Tags */}
+          {/* Status Tag */}
           <div className="flex gap-2 py-4">
-            <span className="px-4 py-2 text-base font-bold" style={{ 
-              background: box.received ? 'rgba(26,90,26,0.2)' : 'rgba(107,30,30,0.2)', 
-              color: box.received ? '#1a5a1a' : '#6B1E1E',
-              borderRadius: '8px',
-              fontFamily: 'tt-ricordi-allegria, Georgia, serif'
-            }}>
-              {box.received ? 'Received into Collection' : 'Pending Receipt'}
-            </span>
             <span className="px-4 py-2 text-base font-bold" style={{ 
               background: box.status === 'Ageing' ? 'rgba(107,30,30,0.2)' : 'rgba(26,90,26,0.2)',
               color: box.status === 'Ageing' ? '#6B1E1E' : '#1a5a1a',
