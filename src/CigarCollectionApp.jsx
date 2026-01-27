@@ -1466,6 +1466,7 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
   };
   
   const boxAge = calculateAge(box.dateOfBox);
+  const isFullBox = box.remaining === box.perBox;
   
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
@@ -1496,27 +1497,24 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
                   border: 'none'
                 }}
               >
-                Box {b.boxNum}{!b.received && ' (Pending Receipt)'}
+                Box {b.boxNum}
               </button>
             ))}
           </div>
         )}
         
         <div className="p-4">
-          {/* Counts Row */}
-          <div className="flex justify-around py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-            <div className="text-center">
-              <div className="text-4xl font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.perBox}</div>
-              <div className="text-base font-bold" style={{ color: 'rgba(26,18,11,0.6)', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Per Box</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold" style={{ color: '#1a5a1a', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.remaining}</div>
-              <div className="text-base font-bold" style={{ color: 'rgba(26,18,11,0.6)', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Remaining</div>
+          {/* Box Status Row */}
+          <div className="py-4 border-b-2 text-center" style={{ borderColor: '#6B1E1E' }}>
+            <div className="text-2xl font-medium" style={{ color: '#1a120b' }}>
+              {isFullBox 
+                ? `Box of ${box.perBox} – Full Box`
+                : `Box of ${box.perBox} – ${box.remaining} Remaining`
+              }
             </div>
             {boxAge && (
-              <div className="text-center">
-                <div className="text-4xl font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{boxAge}</div>
-                <div className="text-base font-bold" style={{ color: 'rgba(26,18,11,0.6)', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Cigar Age</div>
+              <div className="text-lg font-medium mt-1" style={{ color: '#1a120b' }}>
+                {boxAge} old
               </div>
             )}
           </div>
@@ -1527,79 +1525,71 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
               <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Date of Purchase</span>
               <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmt.date(box.datePurchased)}</span>
             </div>
+            {!box.received && (
+              <div className="text-base font-medium mb-2" style={{ color: 'rgba(26,18,11,0.6)' }}>(Pending Receipt)</div>
+            )}
             <div className="flex justify-between items-center mb-2">
               <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Your cost</span>
-              <span className="text-lg font-medium" style={{ color: '#1a5a1a' }}>{fmtCurrencyWithOriginal(box.price, box.currency)}</span>
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtCurrencyWithOriginal(box.price, box.currency)}</span>
             </div>
             <div className="flex justify-between items-center mb-2">
               <span className="text-lg font-medium" style={{ color: '#1a120b' }}>UK market</span>
               <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtFromGBP(marketGBP)}</span>
             </div>
             {savingsInBase > 0 && (
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center mb-2">
                 <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Savings</span>
-                <span className="text-lg font-medium" style={{ color: '#1a5a1a' }}>{fmtFromGBP(savingsInBase)} ({Math.round(savingsInBase/marketInBase*100)}%)</span>
+                <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtFromGBP(savingsInBase)} ({Math.round(savingsInBase/marketInBase*100)}%)</span>
               </div>
             )}
+            <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.status}</div>
           </div>
 
           {/* Details Grid */}
           <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-            <div className="grid grid-cols-2 gap-y-4 gap-x-4">
-              <div>
-                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box ID</div>
-                <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.boxNum}</div>
-              </div>
-              <div>
-                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Location</div>
-                <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.location}</div>
-              </div>
-              {box.code && (
-                <div>
-                  <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Factory Code</div>
-                  <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.code}</div>
-                </div>
-              )}
-              <div>
-                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Release Date</div>
-                <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.dateOfBox ? fmt.date(box.dateOfBox) : 'Unknown'}</div>
-              </div>
+            <div className="grid grid-cols-2 gap-y-3 gap-x-4">
               {box.ringGauge && (
                 <div>
                   <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Ring Gauge</div>
-                  <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.ringGauge}</div>
+                  <div className="text-lg font-medium -mt-0.5" style={{ color: '#1a120b' }}>{box.ringGauge}</div>
                 </div>
               )}
               {box.length && (
                 <div>
                   <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Length</div>
-                  <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.length}"</div>
+                  <div className="text-lg font-medium -mt-0.5" style={{ color: '#1a120b' }}>{box.length}"</div>
                 </div>
               )}
+              <div>
+                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Release Date</div>
+                <div className="text-lg font-medium -mt-0.5" style={{ color: '#1a120b' }}>{box.dateOfBox ? fmt.date(box.dateOfBox) : 'Unknown'}</div>
+              </div>
+              {box.code && (
+                <div>
+                  <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Factory Code</div>
+                  <div className="text-lg font-medium -mt-0.5" style={{ color: '#1a120b' }}>{box.code}</div>
+                </div>
+              )}
+              <div>
+                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box ID</div>
+                <div className="text-lg font-medium -mt-0.5" style={{ color: '#1a120b' }}>{box.boxNum}</div>
+              </div>
+              <div>
+                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Location</div>
+                <div className="text-lg font-medium -mt-0.5" style={{ color: '#1a120b' }}>{box.location}</div>
+              </div>
               {box.notes && (
                 <div className="col-span-2">
                   <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Vitola</div>
-                  <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.notes}</div>
+                  <div className="text-lg font-medium -mt-0.5" style={{ color: '#1a120b' }}>{box.notes}</div>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Status Tag */}
-          <div className="flex gap-2 py-4">
-            <span className="px-4 py-2 text-base font-bold" style={{ 
-              background: box.status === 'Ageing' ? 'rgba(107,30,30,0.2)' : 'rgba(26,90,26,0.2)',
-              color: box.status === 'Ageing' ? '#6B1E1E' : '#1a5a1a',
-              borderRadius: '8px',
-              fontFamily: 'tt-ricordi-allegria, Georgia, serif'
-            }}>
-              {box.status}
-            </span>
-          </div>
-
           {/* Action Buttons */}
           {isSignedIn && !showDeleteConfirm && (
-            <div className="flex gap-2 pt-2">
+            <div className="flex gap-2 pt-4">
               <button
                 onClick={() => setShowEditModal(true)}
                 className="flex-1 py-3 text-lg font-bold"
@@ -1617,7 +1607,7 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
             </div>
           )}
           {showDeleteConfirm && (
-            <div className="pt-2">
+            <div className="pt-4">
               <p className="text-lg font-bold mb-3" style={{ color: '#6B1E1E', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Delete this box?</p>
               <div className="flex gap-2">
                 <button
