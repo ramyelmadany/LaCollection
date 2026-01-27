@@ -366,6 +366,9 @@ def scrape(brand, cigar_name, box_size):
         for product in products:
             is_match, reason = match_product(product, brand, cigar_name)
             
+            # Debug: show match results
+            print(f"      -> '{product['name'][:40]}' match={is_match} ({reason})")
+            
             if is_match:
                 # Get variants from JSON API
                 variants = get_product_variants(product['handle'])
@@ -373,6 +376,9 @@ def scrape(brand, cigar_name, box_size):
                 if not variants:
                     print(f"    No variants found for {product['handle']}")
                     continue
+                
+                # Debug: show variants
+                print(f"      Variants: {[(v['title'], v['box_size'], v['price']) for v in variants]}")
                 
                 # Find matching box size
                 for variant in variants:
@@ -399,6 +405,7 @@ def scrape(brand, cigar_name, box_size):
                             }
                 
                 # Box size not available for THIS product, continue searching
+                print(f"      Box size {box_size} not found in variants")
                 continue
     
     return None
