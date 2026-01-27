@@ -41,12 +41,12 @@ SHEET_ID = "10A_FMj8eotx-xlzAlCNFxjOr3xEOuO4p5GxAZjHC86A"
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # List of retailer scrapers to run (in order)
-# NOTE: Testing JJ Fox and No6 Cavendish
+# NOTE: Testing No6 Cavendish only
 RETAILER_SCRAPERS = [
     # ('CGars', 'scrapers/scrape_cgars.py'),
     # ('Havana House', 'scrapers/scrape_havana_house.py'),
     # ('Cigar Club', 'scrapers/scrape_cigar_club.py'),
-    ('JJ Fox', 'scrapers/scrape_jjfox.py'),
+    # ('JJ Fox', 'scrapers/scrape_jjfox.py'),
     ('No6 Cavendish', 'scrapers/scrape_no6cavendish.py'),
     ('My Smoking Shop', 'scrapers/scrape_mysmokingshop.py'),
     ('Davidoff London', 'scrapers/scrape_davidoff.py'),
