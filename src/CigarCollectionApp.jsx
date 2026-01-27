@@ -1429,13 +1429,11 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
 // Box Detail Modal
   const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, fmtFromGBP, onDelete, onEdit, isSignedIn, availableLocations = [], baseCurrency, fxRates }) => {
   const [selectedIdx, setSelectedIdx] = useState(0);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [showNotesModal, setShowNotesModal] = useState(false);
-  const [noteText, setNoteText] = useState('');
-  const [showNotesModal, setShowNotesModal] = useState(false);
-  const [noteText, setNoteText] = useState('');
+const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+const [isDeleting, setIsDeleting] = useState(false);
+const [showEditModal, setShowEditModal] = useState(false);
+const [showNotesModal, setShowNotesModal] = useState(false);
+const [noteText, setNoteText] = useState('');
   
   const box = boxes[selectedIdx];
   const s = brandStyles[box.brand] || brandStyles['Cohiba'];
