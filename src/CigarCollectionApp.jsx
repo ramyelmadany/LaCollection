@@ -1470,20 +1470,20 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
   
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
-      <div className="w-full max-w-md rounded-t-2xl max-h-[90vh] overflow-y-auto" style={{ background: '#1a120b', border: '1px solid #333' }} onClick={e => e.stopPropagation()}>
-        <div className="sticky top-0 z-10 p-4 flex justify-between items-start" style={{ background: '#1a120b', borderBottom: '1px solid #4A1515' }}>
+      <div className="w-full max-w-md rounded-t-2xl max-h-[90vh] overflow-y-auto" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', border: '1px solid #333' }} onClick={e => e.stopPropagation()}>
+        <div className="sticky top-0 z-10 p-4 flex justify-between items-start" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', borderBottom: '1px solid #4A1515' }}>
   <div>
-    <h3 className="text-4xl font-bold" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.brand}</h3>
-    <p className="text-2xl text-gray-300">{box.name}</p>
+    <h3 className="text-4xl font-bold" style={{ color: '#1a1a1a', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.brand}</h3>
+<p className="text-2xl" style={{ color: '#1a1a1a' }}>{box.name}</p>
     {(box.ringGauge || box.length) && (
-      <p className="text-sm text-gray-500 mt-1">
+      <p className="text-sm mt-1" style={{ color: '#4a4a4a' }}>
         {box.ringGauge && <span>Ring Gauge {box.ringGauge}</span>}
         {box.ringGauge && box.length && <span className="mx-2">•</span>}
         {box.length && <span>Length {box.length}"</span>}
       </p>
     )}
   </div>
-  <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center text-lg" style={{ background: '#333', color: '#888' }}>x</button>
+  <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center text-lg" style={{ background: '#1a120b', color: '#F5DEB3' }}>x</button>
 </div>
         
        {boxes.length > 1 && (
@@ -1501,21 +1501,21 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
         
         <div className="p-4 space-y-4">
           <div className="grid grid-cols-3 gap-2">
-            <div className="rounded-lg p-3 text-center" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+            <div className="rounded-lg p-3 text-center" style={{ background: '#1a120b' }}>
               <div className="text-xs text-gray-500">Per Box</div>
               <div className="text-2xl font-light" style={{ color: '#1a1a1a' }}>{box.perBox}</div>
             </div>
-            <div className="rounded-lg p-3 text-center" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+            <div className="rounded-lg p-3 text-center" style={{ background: '#1a120b' }}>
               <div className="text-xs text-gray-500">Remaining</div>
               <div className="text-2xl font-light text-green-400">{box.remaining}</div>
             </div>
-            <div className="rounded-lg p-3 text-center" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+            <div className="rounded-lg p-3 text-center" style={{ background: '#1a120b' }}>
               <div className="text-xs text-gray-500">Smoked</div>
               <div className="text-2xl font-light text-orange-400">{box.consumed}</div>
             </div>
           </div>
           
-          <div className="rounded-lg p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+          <div className="rounded-lg p-4" style={{ background: '#1a120b' }}>
             <div className="text-xs text-gray-500 mb-3" style={{ fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Pricing ({baseCurrency})</div>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
@@ -1564,7 +1564,7 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
             </div>
           </div>
           
-         <div className="rounded-lg p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+         <div className="rounded-lg p-4" style={{ background: '#1a120b' }}>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div><div className="text-xs text-gray-500">Box ID</div><div className="text-gray-300">{box.boxNum}</div></div>
               <div><div className="text-xs text-gray-500">Location</div><div className="text-gray-300">{box.location}</div></div>
@@ -1593,7 +1593,7 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
 
           {/* Vitola */}
           {box.notes && (
-            <div className="rounded-lg p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+            <div className="rounded-lg p-4" style={{ background: '#1a120b' }}>
               <div className="text-xs text-gray-500 mb-2" style={{ fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Vitola</div>
               <div className="text-sm text-gray-300">{box.notes}</div>
             </div>
@@ -1601,7 +1601,7 @@ const BoxDetailModal = ({ boxes, onClose, fmtCurrency, fmtCurrencyWithOriginal, 
           
           {/* Age Information */}
           {(boxAge || purchaseAge) && (
-            <div className="rounded-lg p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+            <div className="rounded-lg p-4" style={{ background: '#1a120b' }}>
               <div className="text-xs text-gray-500 mb-3" style={{ fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Age</div>
               <div className="grid grid-cols-2 gap-4">
                 {boxAge && (
