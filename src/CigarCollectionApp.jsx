@@ -36,7 +36,7 @@ const convertCurrency = (amount, fromCurrency, toCurrency, rates) => {
 // Google Auth State (will be set by OAuth)
 let googleAccessToken = null;
 
-// Parse date from various formats including "Month Year" (e.g., "May 2025", "Jan 25")
+// Parse date from various formats
 const parseDate = (dateStr) => {
   if (!dateStr) return '';
   
@@ -50,7 +50,7 @@ const parseDate = (dateStr) => {
     const shortIndex = monthNamesShort.indexOf(monthYearFullMatch[1].toLowerCase());
     const finalIndex = monthIndex !== -1 ? monthIndex : shortIndex;
     if (finalIndex !== -1) {
-      return `${monthYearFullMatch[2]}-${String(finalIndex + 1).padStart(2, '0')}-01`;
+      return `${monthYearFullMatch[2]}-${String(finalIndex + 1).padStart(2, '0')}`;
     }
   }
   
@@ -62,7 +62,7 @@ const parseDate = (dateStr) => {
     const finalIndex = monthIndex !== -1 ? monthIndex : shortIndex;
     if (finalIndex !== -1) {
       const year = parseInt(monthYearShortMatch[2]) + 2000;
-      return `${year}-${String(finalIndex + 1).padStart(2, '0')}-01`;
+      return `${year}-${String(finalIndex + 1).padStart(2, '0')}`;
     }
   }
   
@@ -77,30 +77,46 @@ const parseDate = (dateStr) => {
     }
   }
   
-  // Try standard date parsing
-  const parsed = new Date(dateStr);
-  if (!isNaN(parsed)) {
-    return parsed.toISOString().split('T')[0];
+  // Try YYYY-MM format (already correct)
+  const monthMatch = dateStr.match(/^(\d{4})-(\d{2})$/);
+  if (monthMatch) {
+    return dateStr;
   }
+  
+  // Try YYYY-MM-DD format (already correct)
+  const isoMatch = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (isoMatch) {
+    return dateStr;
+  }
+  
   return '';
 };
 
-// Format date for Google Sheets (e.g., "17 Jul 2025")
+// Format date for Google Sheets (e.g., "Jan 2025" for month-only, "17 Jul 2025" for full date)
 const formatDateForSheet = (dateStr) => {
   if (!dateStr) return '';
-  // Handle YYYY-MM-DD format directly to avoid timezone issues
-  const parts = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (parts) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const year = parts[1];
-    const month = parseInt(parts[2]) - 1;
-    const day = parseInt(parts[3]);
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  
+  // Handle YYYY-MM format (month picker)
+  const monthParts = dateStr.match(/^(\d{4})-(\d{2})$/);
+  if (monthParts) {
+    const year = monthParts[1];
+    const month = parseInt(monthParts[2]) - 1;
+    return `${months[month]} ${year}`;
+  }
+  
+  // Handle YYYY-MM-DD format
+  const dateParts = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (dateParts) {
+    const year = dateParts[1];
+    const month = parseInt(dateParts[2]) - 1;
+    const day = parseInt(dateParts[3]);
     return `${day} ${months[month]} ${year}`;
   }
+  
   // Fallback for other formats
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) return '';
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 };
 
@@ -785,6 +801,21 @@ const fmt = {
   usd: (v) => `$${v.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`,
   gbp: (v) => `£${v.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`,
   date: (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '-',
+  monthYear: (d) => {
+    if (!d) return '-';
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    // Handle YYYY-MM format
+    const monthMatch = d.match(/^(\d{4})-(\d{2})$/);
+    if (monthMatch) {
+      return `${months[parseInt(monthMatch[2]) - 1]} ${monthMatch[1]}`;
+    }
+    // Handle YYYY-MM-DD format
+    const dateMatch = d.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (dateMatch) {
+      return `${months[parseInt(dateMatch[2]) - 1]} ${dateMatch[1]}`;
+    }
+    return d;
+  },
   currency: (v, curr) => {
     const symbol = CURRENCY_SYMBOLS[curr] || '$';
     const locale = curr === 'GBP' ? 'en-GB' : curr === 'EUR' ? 'de-DE' : curr === 'JPY' ? 'ja-JP' : curr === 'CNY' ? 'zh-CN' : 'en-US';
@@ -1432,15 +1463,15 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
               />
             </div>
             <div>
-              <label className="text-xs text-gray-500 block mb-2">Box Date (Release)</label>
-              <input 
-                type="date" 
-                value={dateOfBox} 
-                onChange={e => setDateOfBox(e.target.value)} 
-                className="w-full px-3 py-2 rounded-lg text-base" 
-                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
-              />
-            </div>
+  <label className="text-xs text-gray-500 block mb-2">Box Date (Release)</label>
+  <input 
+    type="month" 
+    value={dateOfBox ? dateOfBox.substring(0, 7) : ''} 
+    onChange={e => setDateOfBox(e.target.value)} 
+    className="w-full px-3 py-2 rounded-lg text-base" 
+    style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+  />
+</div>
           </div>
           
           {/* Save and Discard Buttons */}
@@ -1619,7 +1650,7 @@ const isFullBox = box.remaining === box.perBox;
   )}
   <div className="flex justify-between items-center mb-3">
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Release Date</span>
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.dateOfBox ? fmt.date(box.dateOfBox) : 'Unknown'}</span>
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.dateOfBox ? fmt.monthYear(box.dateOfBox) : 'Unknown'}</span>
   </div>
   {box.code && (
     <div className="flex justify-between items-center mb-3">
@@ -1636,11 +1667,11 @@ const isFullBox = box.remaining === box.perBox;
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.location}</span>
   </div>
   {box.vitola && (
-  <div className="flex justify-between items-start">
-    <span className="text-lg font-medium flex-shrink-0" style={{ color: '#1a120b' }}>Vitola</span>
-    <span className="text-lg font-medium text-right" style={{ color: '#1a120b', maxWidth: '50%' }}>{box.vitola}</span>
-  </div>
-)}
+    <div className="flex justify-between items-start">
+      <span className="text-lg font-medium flex-shrink-0" style={{ color: '#1a120b' }}>Vitola</span>
+      <span className="text-lg font-medium text-right" style={{ color: '#1a120b', maxWidth: '50%' }}>{box.vitola}</span>
+    </div>
+  )}
 </div>
 
 {/* Notes Section */}
@@ -2698,9 +2729,9 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
               <input type="text" value={code} onChange={e => setCode(e.target.value.toUpperCase())} placeholder="e.g. GES MAR 24" className="w-full px-3 py-2 rounded-lg text-base font-mono" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
             </div>
             <div>
-              <label className="text-xs text-gray-500 block mb-2">Box Date</label>
-              <input type="date" value={dateOfBox} onChange={e => setDateOfBox(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
-            </div>
+  <label className="text-xs text-gray-500 block mb-2">Box Date</label>
+  <input type="month" value={dateOfBox} onChange={e => setDateOfBox(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+</div>
           </div>
           
           {/* Submit Button */}
