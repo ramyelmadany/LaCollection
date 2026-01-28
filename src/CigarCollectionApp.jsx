@@ -801,6 +801,13 @@ const updateHighestBoxNum = async (num, accessToken) => {
 // Default exchange rate (fallback if API fails)
 const DEFAULT_FX_RATE = 0.79;
 
+// Convert status value to display name
+const getStatusDisplay = (status) => {
+  if (status === 'Immediate') return 'On Rotation';
+  if (status === 'Combination') return 'Assortment';
+  return status || 'Ageing';
+};
+
 // Format helpers
 const fmt = {
   usd: (v) => `$${v.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`,
@@ -1430,18 +1437,18 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
           {/* Status and Received */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-gray-500 block mb-2">Status</label>
-              <select 
-                value={status} 
-                onChange={e => setStatus(e.target.value)} 
-                className="w-full px-3 py-2 rounded-lg text-base" 
-                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}
-              >
-                <option value="Ageing">Ageing</option>
-                <option value="Immediate">Immediate</option>
-                <option value="Combination">Combination</option>
-              </select>
-            </div>
+  <label className="text-xs text-gray-500 block mb-2">Status</label>
+  <select 
+    value={status} 
+    onChange={e => setStatus(e.target.value)} 
+    className="w-full px-3 py-2 rounded-lg text-base" 
+    style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}
+  >
+    <option value="Ageing">Ageing</option>
+    <option value="Immediate">On Rotation</option>
+    <option value="Combination">Assortment</option>
+  </select>
+</div>
             <div>
               <label className="text-xs text-gray-500 block mb-2">Received</label>
               <button 
@@ -2723,13 +2730,13 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
           {/* Status and Received */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-gray-500 block mb-2">Status</label>
-              <select value={status} onChange={e => setStatus(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
-                <option value="Ageing">Ageing</option>
-                <option value="Immediate">Immediate</option>
-                <option value="Combination">Combination</option>
-              </select>
-            </div>
+  <label className="text-xs text-gray-500 block mb-2">Status</label>
+  <select value={status} onChange={e => setStatus(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
+    <option value="Ageing">Ageing</option>
+    <option value="Immediate">On Rotation</option>
+    <option value="Combination">Assortment</option>
+  </select>
+</div>
             <div>
               <label className="text-xs text-gray-500 block mb-2">Received</label>
               <button onClick={() => setReceived(!received)} className="w-full px-3 py-2 rounded-lg text-base text-left" style={{ background: received ? '#1c3a1c' : '#252525', border: '1px solid #333', color: received ? '#99ff99' : '#888' }}>
@@ -2961,7 +2968,7 @@ const [fxLastUpdated, setFxLastUpdated] = useState(null);
   return saved !== null ? JSON.parse(saved) : [];
 });
   const [filterOpen, setFilterOpen] = useState(false);
-  const [showOpenOnly, setShowOpenOnly] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState([]);
   const [pullStart, setPullStart] = useState(0);
   const [pullDistance, setPullDistance] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -3429,9 +3436,9 @@ setBoxes(boxData);
     let result = boxes.filter(b => b.remaining > 0); // Exclude finished boxes from main collection
     if (location.length > 0) result = result.filter(b => location.includes(b.location));
     if (selectedBrand !== 'All') result = result.filter(b => b.brand === selectedBrand);
-    if (showOpenOnly) result = result.filter(b => b.remaining > 0 && b.remaining < b.perBox);
+    if (selectedStatus.length > 0) result = result.filter(b => selectedStatus.includes(b.status));
     return result;
-  }, [boxes, location, selectedBrand, showOpenOnly]);
+  }, [boxes, location, selectedBrand, selectedStatus]);
 
   // Finished boxes for Collection History
   const finishedBoxes = useMemo(() => {
@@ -3794,30 +3801,41 @@ setBoxes(boxData);
               </div>
             </div>
             
-            {/* Open Boxes Toggle */}
-            <div className="mb-6">
-              <div className="text-sm text-gray-500 mb-3">Status</div>
-              <button 
-                onClick={() => setShowOpenOnly(!showOpenOnly)} 
-                className="px-4 py-2 rounded-lg text-sm"
-                style={{
-                  background: showOpenOnly ? '#F5DEB3' : '#252525',
-                  color: showOpenOnly ? '#000' : '#888',
-                  border: showOpenOnly ? 'none' : '1px solid #444'
-                }}
-              >
-                Open Boxes Only
-              </button>
-            </div>
+            {/* Status Filter */}
+<div className="mb-6">
+  <div className="text-sm text-gray-500 mb-3">Status</div>
+  <div className="flex gap-2 flex-wrap">
+    {['Ageing', 'Immediate', 'Combination'].map(s => (
+      <button 
+        key={s}
+        onClick={() => {
+          if (selectedStatus.includes(s)) {
+            setSelectedStatus(selectedStatus.filter(st => st !== s));
+          } else {
+            setSelectedStatus([...selectedStatus, s]);
+          }
+        }} 
+        className="px-4 py-2 rounded-lg text-sm"
+        style={{
+          background: selectedStatus.includes(s) ? '#F5DEB3' : '#252525',
+          color: selectedStatus.includes(s) ? '#000' : '#888',
+          border: selectedStatus.includes(s) ? 'none' : '1px solid #444'
+        }}
+      >
+        {s === 'Immediate' ? 'On Rotation' : s === 'Combination' ? 'Assortment' : s}
+      </button>
+    ))}
+  </div>
+</div>
             
             {/* Clear Filters */}
             <button 
-              onClick={() => { setLocation([]); setSelectedBrand('All'); setShowOpenOnly(false); }}
-              className="w-full py-3 rounded-lg text-sm"
-              style={{ background: '#252525', color: '#888', border: '1px solid #444' }}
-            >
-              Clear All Filters
-            </button>
+  onClick={() => { setLocation([]); setSelectedBrand('All'); setSelectedStatus([]); }}
+  className="w-full py-3 rounded-lg text-sm"
+  style={{ background: '#252525', color: '#888', border: '1px solid #444' }}
+>
+  Clear All Filters
+</button>
           </div>
         </div>
       )}
