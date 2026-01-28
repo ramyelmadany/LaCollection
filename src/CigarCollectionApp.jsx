@@ -1568,6 +1568,7 @@ const boxAgeData = calculateAge(box.dateOfBox);
 const isFullBox = box.remaining === box.perBox;
   
   return (
+    <>
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
       <div className="w-full max-w-md rounded-2xl max-h-[85vh] overflow-y-auto" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', border: '1px solid #333', scrollbarWidth: 'none', msOverflowStyle: 'none' }} onClick={e => e.stopPropagation()}>
         
@@ -1614,11 +1615,11 @@ const isFullBox = box.remaining === box.perBox;
   <div className="flex justify-around">
     <div className="text-center">
       <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box of</div>
-  {/* Status */}{box.perBox}</div>
+      <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.perBox}</div>
     </div>
     <div className="text-center">
       <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Remaining</div>
-  {/* Status */}{box.remaining}</div>
+      <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.remaining}</div>
     </div>
   </div>
 </div>
@@ -1790,7 +1791,7 @@ const isFullBox = box.remaining === box.perBox;
         style={{ background: 'rgba(26,18,11,0.1)', border: '1px solid rgba(26,18,11,0.2)', color: '#1a120b', minHeight: '150px', resize: 'vertical' }}
         placeholder="Enter your note..."
       />
-      <button
+     <button
   onClick={async () => {
     const success = await onEdit(box, { ...box, boxNotes: noteText });
     if (success) {
@@ -1822,9 +1823,9 @@ const isFullBox = box.remaining === box.perBox;
           availableLocations={availableLocations}
         />
       )}
-    </div>
+    </>
   );
-};;
+};
 
 // Edit History Modal
 const EditHistoryModal = ({ entry, index, onClose, onSave, onDelete }) => {
