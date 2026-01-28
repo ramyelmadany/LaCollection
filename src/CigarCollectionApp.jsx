@@ -1773,8 +1773,7 @@ const isFullBox = box.remaining === box.perBox;
           )}
         </div>
       </div>
-
-{/* Notes Modal */}
+      {/* Notes Modal */}
 {showNotesModal && (
   <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setShowNotesModal(false)} style={{ background: 'rgba(0,0,0,0.9)' }}>
     <div className="w-full max-w-sm mx-4 rounded-xl p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }} onClick={e => e.stopPropagation()}>
