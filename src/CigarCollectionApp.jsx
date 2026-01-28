@@ -3661,9 +3661,9 @@ setBoxes(boxData);
                 style={{ color: '#F5DEB3', border: '1px solid #F5DEB3' }}
               >
                 Filter
-                {(location.length > 0 && !location.includes('All') || selectedBrand !== 'All' || showOpenOnly) && (
-                  <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full" style={{ background: '#F5DEB3' }}></span>
-                )}
+                {(location.length > 0 && !location.includes('All') || selectedBrand !== 'All' || selectedStatus.length > 0) && (
+  <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full" style={{ background: '#F5DEB3' }}></span>
+)}
               </button>
             )}
             <button 
