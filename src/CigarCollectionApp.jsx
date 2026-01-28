@@ -40,11 +40,15 @@ let googleAccessToken = null;
 const parseDate = (dateStr) => {
   if (!dateStr) return '';
   
+  // Trim whitespace
+  const str = String(dateStr).trim();
+  if (!str) return '';
+  
   const monthNamesFull = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
   const monthNamesShort = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
   
-  // Try parsing "Month Year" format with full year (e.g., "May 2025", "January 2025")
-  const monthYearFullMatch = dateStr.match(/^([A-Za-z]+)\s+(\d{4})$/);
+  // Try parsing "Month Year" format with full year (e.g., "May 2025", "January 2025", "Nov 2023")
+  const monthYearFullMatch = str.match(/^([A-Za-z]+)\s+(\d{4})$/);
   if (monthYearFullMatch) {
     const monthIndex = monthNamesFull.indexOf(monthYearFullMatch[1].toLowerCase());
     const shortIndex = monthNamesShort.indexOf(monthYearFullMatch[1].toLowerCase());
@@ -55,7 +59,7 @@ const parseDate = (dateStr) => {
   }
   
   // Try parsing "Month Year" format with short year (e.g., "Jan 25", "May 24")
-  const monthYearShortMatch = dateStr.match(/^([A-Za-z]+)\s+(\d{2})$/);
+  const monthYearShortMatch = str.match(/^([A-Za-z]+)\s+(\d{2})$/);
   if (monthYearShortMatch) {
     const monthIndex = monthNamesFull.indexOf(monthYearShortMatch[1].toLowerCase());
     const shortIndex = monthNamesShort.indexOf(monthYearShortMatch[1].toLowerCase());
@@ -67,7 +71,7 @@ const parseDate = (dateStr) => {
   }
   
   // Try parsing "Day Month Year" format (e.g., "17 Jul 2025", "1 January 2024")
-  const dayMonthYearMatch = dateStr.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/);
+  const dayMonthYearMatch = str.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/);
   if (dayMonthYearMatch) {
     const monthIndex = monthNamesFull.indexOf(dayMonthYearMatch[2].toLowerCase());
     const shortIndex = monthNamesShort.indexOf(dayMonthYearMatch[2].toLowerCase());
@@ -78,15 +82,15 @@ const parseDate = (dateStr) => {
   }
   
   // Try YYYY-MM format (already correct)
-  const monthMatch = dateStr.match(/^(\d{4})-(\d{2})$/);
+  const monthMatch = str.match(/^(\d{4})-(\d{2})$/);
   if (monthMatch) {
-    return dateStr;
+    return str;
   }
   
   // Try YYYY-MM-DD format (already correct)
-  const isoMatch = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const isoMatch = str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (isoMatch) {
-    return dateStr;
+    return str;
   }
   
   return '';
@@ -151,6 +155,7 @@ const fetchSheetData = async (accessToken) => {
     return null;
   }
 };
+
 // Fetch onwards data from Google Sheets (requires OAuth token)
 const fetchOnwardsData = async (accessToken) => {
   const { sheetId, onwardsRange } = GOOGLE_SHEETS_CONFIG;
@@ -3155,6 +3160,7 @@ setBoxes(boxData);
   
   // Function to expand a row into multiple boxes based on quantity (for refresh)
   const expandRowToBoxesRefresh = (row, rowIndex) => {
+    console.log('Row', rowIndex, 'raw dateOfBox:', row[11], 'parsed:', parseDate(row[11]));
     const qty = parseInt(row[5]) || 1;
     const boxNumStr = row[1] || '';
     const boxNums = boxNumStr.split(',').map(s => s.trim()).filter(s => s);
