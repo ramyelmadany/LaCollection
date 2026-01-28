@@ -1621,22 +1621,22 @@ const isFullBox = box.remaining === box.perBox;
       <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Remaining</div>
       <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.remaining}</div>
     </div>
+    <div className="text-center">
+      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Age</div>
+      <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
+        {boxAgeData ? (
+          <>
+            {boxAgeData.years > 0 && <><span>{boxAgeData.years}</span><span className="text-lg"> yrs </span></>}
+            <span>{boxAgeData.months}</span><span className="text-lg"> mo</span>
+          </>
+        ) : '–'}
+      </div>
+    </div>
   </div>
 </div>
 
-{/* Ageing Details */}
+{/* Status */}
 <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-  <div className="flex justify-between items-center mb-3">
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Age</span>
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>
-      {boxAgeData ? (
-        <>
-          {boxAgeData.years > 0 && <>{boxAgeData.years} years </>}
-          {boxAgeData.months} months
-        </>
-      ) : '–'}
-    </span>
-  </div>
   <div className="flex justify-between items-center">
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Status</span>
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{getStatusDisplay(box.status)}</span>
@@ -1654,8 +1654,8 @@ const isFullBox = box.remaining === box.perBox;
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtCurrencyWithOriginal(box.price, box.currency)}</span>
   </div>
   <div className="flex justify-between items-center mb-3">
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>UK Market</span>
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtFromGBP(marketGBP)}</span>
+  <span className="text-lg font-medium" style={{ color: '#1a120b' }}>UK Market</span>
+  <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{marketGBP ? fmtFromGBP(marketGBP) : 'No Data'}</span>
   </div>
   {savingsInBase > 0 && (
     <div className="flex justify-between items-center">
