@@ -88,7 +88,18 @@ const parseDate = (dateStr) => {
 // Format date for Google Sheets (e.g., "17 Jul 2025")
 const formatDateForSheet = (dateStr) => {
   if (!dateStr) return '';
+  // Handle YYYY-MM-DD format directly to avoid timezone issues
+  const parts = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (parts) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const year = parts[1];
+    const month = parseInt(parts[2]) - 1;
+    const day = parseInt(parts[3]);
+    return `${day} ${months[month]} ${year}`;
+  }
+  // Fallback for other formats
   const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '';
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 };
