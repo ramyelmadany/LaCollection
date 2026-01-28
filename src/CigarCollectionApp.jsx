@@ -1620,18 +1620,25 @@ const isFullBox = box.remaining === box.perBox;
       <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.remaining}</div>
     </div>
     <div className="text-center">
-  <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>{box.status}</div>
-  <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
-    {boxAgeData ? (
-      <>
-        {boxAgeData.years > 0 && (
-          <><span>{boxAgeData.years}</span><span className="text-lg"> years </span></>
-        )}
-        <span>{boxAgeData.months}</span><span className="text-lg"> months</span>
-      </>
-    ) : '–'}
+      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Age</div>
+      <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
+        {boxAgeData ? (
+          <>
+            {boxAgeData.years > 0 && (
+              <><span>{boxAgeData.years}</span><span className="text-lg"> years </span></>
+            )}
+            <span>{boxAgeData.months}</span><span className="text-lg"> months</span>
+          </>
+        ) : '–'}
+      </div>
+    </div>
   </div>
-</div>
+  {/* Status */}
+  <div className="mt-4 pt-4 border-t" style={{ borderColor: 'rgba(107,30,30,0.3)' }}>
+    <div className="text-center">
+      <span className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Status – </span>
+      <span className="text-lg font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{getStatusDisplay(box.status)}</span>
+    </div>
   </div>
 </div>
 
