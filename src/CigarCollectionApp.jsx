@@ -4118,7 +4118,9 @@ setBoxes(boxData);
             
             return (
               <>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="mb-6">
+                  <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Collection Summary</h2>
+                  <div className="grid grid-cols-2 gap-3">
                     <div className="rounded-lg p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
                       <div className="text-sm font-medium mb-2" style={{ color: 'rgba(26,18,11,0.5)' }}>Current Collection</div>
                       <div className="space-y-1">
