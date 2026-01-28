@@ -3641,22 +3641,24 @@ setBoxes(boxData);
         {(pullDistance > 0 || isRefreshing) && (
           <>
             <div 
-              className="w-8 h-8 rounded-full border-2 flex items-center justify-center"
+              className="w-8 h-8 flex items-center justify-center"
               style={{ 
-                borderColor: pullDistance > 60 || isRefreshing ? '#d4af37' : '#444',
                 transform: isRefreshing ? 'none' : `rotate(${pullDistance * 3}deg)`,
-                transition: 'border-color 0.2s',
                 animation: isRefreshing ? 'spin 0.8s linear infinite' : 'none'
               }}
             >
-              <div 
-                className="text-lg"
-                style={{ 
-                  color: pullDistance > 60 || isRefreshing ? '#d4af37' : '#666'
-                }}
+              <svg 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24"
+                style={{ opacity: pullDistance > 60 || isRefreshing ? 1 : 0.5 }}
               >
-                ↓
-              </div>
+                <rect x="2" y="10" width="18" height="4" rx="2" fill="#8B4513"/>
+                <rect x="4" y="10" width="3" height="4" fill="#6B1E1E"/>
+                <rect x="20" y="10" width="2" height="4" rx="1" fill="#F5DEB3"/>
+                <path d="M21 9 Q22 7 21 5" stroke="#F5DEB3" strokeWidth="0.8" fill="none" opacity="0.6"/>
+                <path d="M22 8 Q23 6 22 4" stroke="#F5DEB3" strokeWidth="0.8" fill="none" opacity="0.4"/>
+              </svg>
             </div>
             <div 
               className="text-xs mt-2"
