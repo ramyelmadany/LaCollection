@@ -4118,9 +4118,7 @@ setBoxes(boxData);
             
             return (
               <>
-                <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Collection Summary</h2>
-                  <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                     <div className="rounded-lg p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
                       <div className="text-sm font-medium mb-2" style={{ color: 'rgba(26,18,11,0.5)' }}>Current Collection</div>
                       <div className="space-y-1">
@@ -4134,7 +4132,7 @@ setBoxes(boxData);
                         </div>
                         <div className="flex justify-between pt-1 border-t" style={{ borderColor: '#6B1E1E' }}>
                           <span className="text-sm font-medium" style={{ color: '#1a120b' }}>Savings</span>
-                          <span className="text-sm font-medium" style={{ color: '#1a120b' }}>{fmtCurrency(stats.remainingSavingsUSD)}</span>
+                          <span className="text-sm font-medium" style={{ color: stats.remainingSavingsUSD >= 0 ? '#1a5a1a' : '#6B1E1E' }}>{fmtCurrency(stats.remainingSavingsUSD)}</span>
                         </div>
                       </div>
                     </div>
@@ -4151,7 +4149,7 @@ setBoxes(boxData);
                         </div>
                         <div className="flex justify-between pt-1 border-t" style={{ borderColor: '#6B1E1E' }}>
                           <span className="text-sm font-medium" style={{ color: '#1a120b' }}>Savings</span>
-                          <span className="text-sm font-medium" style={{ color: '#1a120b' }}>{fmtCurrency(stats.totalSavingsUSD)}</span>
+                          <span className="text-sm font-medium" style={{ color: stats.totalSavingsUSD >= 0 ? '#1a5a1a' : '#6B1E1E' }}>{fmtCurrency(stats.totalSavingsUSD)}</span>
                         </div>
                       </div>
                     </div>
