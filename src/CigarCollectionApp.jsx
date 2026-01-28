@@ -1612,15 +1612,13 @@ const isFullBox = box.remaining === box.perBox;
           
           {/* Box Status Row */}
 <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-  <div className="flex justify-around">
-    <div className="text-center">
-      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box of</div>
-      <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.perBox}</div>
-    </div>
-    <div className="text-center">
-      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Remaining</div>
-      <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.remaining}</div>
-    </div>
+  <div className="flex justify-between items-center mb-3">
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Box of</span>
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.perBox}</span>
+  </div>
+  <div className="flex justify-between items-center">
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Remaining</span>
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.remaining}</span>
   </div>
 </div>
 
