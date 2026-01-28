@@ -1530,7 +1530,18 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
     const success = await onDelete(box);
     setIsDeleting(false);
     if (success) {
-      onClose();
+      // If there are other boxes in this group, stay open and switch to another box
+      if (boxes.length > 1) {
+        // If we deleted the last box in the list, go to the previous one
+        if (selectedIdx >= boxes.length - 1) {
+          setSelectedIdx(Math.max(0, selectedIdx - 1));
+        }
+        // The parent will refresh the boxes array, so we just need to reset delete confirm
+        setShowDeleteConfirm(false);
+      } else {
+        // No other boxes, close the modal
+        onClose();
+      }
     }
   };
   
@@ -4314,7 +4325,7 @@ setBoxes(boxData);
       {view === 'prices' && <PricesView boxes={boxes} currency={currency} FX={FX} fmtCurrency={fmtCurrency} fmtFromGBP={fmtFromGBP} />}
       
       {/* Modals */}
-      {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} initialBoxIndex={selectedGroup.initialBoxIndex || 0} onClose={() => setSelectedGroup(null)} fmtCurrency={fmtCurrency} fmtCurrencyWithOriginal={fmtCurrencyWithOriginal} fmtFromGBP={fmtFromGBP} baseCurrency={baseCurrency} fxRates={fxRates} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { await refreshData(); } return success; }} onEdit={async (box, updatedData) => { if (!googleAccessToken) return false; const success = await updateBoxInSheet(box.boxNum, updatedData, googleAccessToken); if (success) { await refreshData(); } return success; }} availableLocations={availableLocations} />}
+      {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} initialBoxIndex={selectedGroup.initialBoxIndex || 0} onClose={() => setSelectedGroup(null)} fmtCurrency={fmtCurrency} fmtCurrencyWithOriginal={fmtCurrencyWithOriginal} fmtFromGBP={fmtFromGBP} baseCurrency={baseCurrency} fxRates={fxRates} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { await refreshData(); const remainingBoxes = selectedGroup.boxes.filter(b => b.boxNum !== box.boxNum); if (remainingBoxes.length > 0) { setSelectedGroup({ ...selectedGroup, boxes: remainingBoxes }); } else { setSelectedGroup(null); } } return success; }} onEdit={async (box, updatedData) => { if (!googleAccessToken) return false; const success = await updateBoxInSheet(box.boxNum, updatedData, googleAccessToken); if (success) { await refreshData(); } return success; }} availableLocations={availableLocations} />}
       {showLogModal && <SmokeLogModal boxes={boxes} onClose={() => setShowLogModal(false)} onLog={handleLog} />}
       {showAddModal && <AddBoxModal boxes={boxes} onClose={() => setShowAddModal(false)} onAdd={handleAddBoxes} highestBoxNum={highestBoxNum} />}
       {showSignInPrompt && (
