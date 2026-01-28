@@ -3161,7 +3161,6 @@ setBoxes(boxData);
   // Function to expand a row into multiple boxes based on quantity (for refresh)
   const expandRowToBoxesRefresh = (row, rowIndex) => {
     console.log('Row', rowIndex, 'raw dateOfBox:', row[11], 'parsed:', parseDate(row[11]));
-    const qty = parseInt(row[5]) || 1;
     const boxNumStr = row[1] || '';
     const boxNums = boxNumStr.split(',').map(s => s.trim()).filter(s => s);
     const perBox = parseInt(row[6]) || 0;
