@@ -2608,6 +2608,12 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
         </div>
         
         <div className="p-4 space-y-4">
+          {/* Date Purchased */}
+          <div style={{ overflow: 'hidden' }}>
+            <label className="text-xs text-gray-500 block mb-2">Date Purchased</label>
+            <input type="date" value={datePurchased} onChange={e => setDatePurchased(e.target.value)} className="w-full px-2 py-2 rounded-lg" style={{ background: '#252525', border: '1px solid #333', color: '#fff', fontSize: '14px', WebkitAppearance: 'none', minHeight: '42px' }} />
+          </div>
+          
           {/* Brand */}
           <div>
             <label className="text-xs text-gray-500 block mb-2">Brand *</label>
@@ -2738,18 +2744,6 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
             </div>
           </div>
           
-          {/* Date Purchased and Release Date */}
-          <div className="grid grid-cols-2 gap-3">
-            <div style={{ overflow: 'hidden' }}>
-              <label className="text-xs text-gray-500 block mb-2">Date Purchased</label>
-              <input type="date" value={datePurchased} onChange={e => setDatePurchased(e.target.value)} className="w-full px-2 py-2 rounded-lg" style={{ background: '#252525', border: '1px solid #333', color: '#fff', fontSize: '14px', WebkitAppearance: 'none' }} />
-            </div>
-            <div style={{ overflow: 'hidden' }}>
-              <label className="text-xs text-gray-500 block mb-2">Release Date</label>
-              <input type="month" value={dateOfBox} onChange={e => setDateOfBox(e.target.value)} className="w-full px-2 py-2 rounded-lg" style={{ background: '#252525', border: '1px solid #333', color: '#fff', fontSize: '14px', WebkitAppearance: 'none' }} />
-            </div>
-          </div>
-          
           {/* Location and Status */}
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -2769,18 +2763,24 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
             </div>
           </div>
           
-          {/* Factory Code and Received */}
+          {/* Factory Code and Release Date */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs text-gray-500 block mb-2">Factory Code</label>
               <input type="text" value={code} onChange={e => setCode(e.target.value.toUpperCase())} placeholder="e.g. GES MAR 24" className="w-full px-3 py-2 rounded-lg text-base font-mono" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
             </div>
-            <div>
-              <label className="text-xs text-gray-500 block mb-2">Received</label>
-              <button onClick={() => setReceived(!received)} className="w-full px-3 py-2 rounded-lg text-base text-left" style={{ background: received ? '#1c3a1c' : '#252525', border: '1px solid #333', color: received ? '#99ff99' : '#888' }}>
-                {received ? 'Yes' : 'No'}
-              </button>
+            <div style={{ overflow: 'hidden' }}>
+              <label className="text-xs text-gray-500 block mb-2">Release Date</label>
+              <input type="month" value={dateOfBox} onChange={e => setDateOfBox(e.target.value)} className="w-full px-2 py-2 rounded-lg" style={{ background: '#252525', border: '1px solid #333', color: '#fff', fontSize: '14px', WebkitAppearance: 'none', minHeight: '42px' }} />
             </div>
+          </div>
+          
+          {/* Received */}
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Received</label>
+            <button onClick={() => setReceived(!received)} className="w-full px-3 py-2 rounded-lg text-base text-left" style={{ background: received ? '#1c3a1c' : '#252525', border: '1px solid #333', color: received ? '#99ff99' : '#888' }}>
+              {received ? 'Yes' : 'No'}
+            </button>
           </div>
           
           {/* Submit Button */}
