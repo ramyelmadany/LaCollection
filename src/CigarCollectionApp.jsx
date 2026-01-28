@@ -1175,7 +1175,8 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
   const [name, setName] = useState(box.name || '');
   const [boxNum, setBoxNum] = useState(box.boxNum || '');
   const [perBox, setPerBox] = useState(box.perBox || '');
-  const [price, setPrice] = useState(box.price || ''); const [priceCurrency, setPriceCurrency] = useState(box.currency || 'USD');
+  const [price, setPrice] = useState(box.price || '');
+  const [priceCurrency, setPriceCurrency] = useState(box.currency || 'USD');
   const [datePurchased, setDatePurchased] = useState(box.datePurchased || '');
   const [location, setLocation] = useState(box.location || '');
   const [newLocation, setNewLocation] = useState('');
@@ -1189,7 +1190,6 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
   const [consumed, setConsumed] = useState(box.consumed || 0);
   const [remaining, setRemaining] = useState(box.remaining || 0);
 
-  /// Update remaining if perBox changes - remaining = perBox - consumed
   useEffect(() => {
     const perBoxNum = parseInt(perBox) || 0;
     const consumedNum = parseInt(consumed) || 0;
@@ -1210,25 +1210,25 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
     const finalLocation = location === '__new__' ? newLocation : location;
     
     const updatedData = {
-  brand,
-  name,
-  boxNum,
-  perBox: parseInt(perBox),
-  price: parseFloat(price),
-  currency: priceCurrency,
-  datePurchased,
-  location: finalLocation,
-  status,
-  received,
-  code,
-  dateOfBox,
-  ringGauge,
-  length,
-  vitola,
-  boxNotes: box.boxNotes || '',
-  consumed: parseInt(consumed),
-  remaining: parseInt(remaining),
-};
+      brand,
+      name,
+      boxNum,
+      perBox: parseInt(perBox),
+      price: parseFloat(price),
+      currency: priceCurrency,
+      datePurchased,
+      location: finalLocation,
+      status,
+      received,
+      code,
+      dateOfBox,
+      ringGauge,
+      length,
+      vitola,
+      boxNotes: box.boxNotes || '',
+      consumed: parseInt(consumed),
+      remaining: parseInt(remaining),
+    };
     
     console.log('Saving updatedData:', updatedData);
     await onSave(updatedData);
@@ -1244,6 +1244,30 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
         </div>
         
         <div className="p-4 space-y-4">
+          {/* Date Purchased and Price */}
+          <div className="grid grid-cols-2 gap-3">
+            <div style={{ overflow: 'hidden' }}>
+              <label className="text-xs text-gray-500 block mb-2">Date Purchased</label>
+              <input type="date" value={datePurchased} onChange={e => setDatePurchased(e.target.value)} className="w-full px-2 py-2 rounded-lg" style={{ background: '#252525', border: '1px solid #333', color: '#fff', fontSize: '14px', WebkitAppearance: 'none', minHeight: '42px' }} />
+            </div>
+            <div className="min-w-0">
+              <label className="text-xs text-gray-500 block mb-2">Price</label>
+              <div className="flex gap-1">
+                <select 
+                  value={priceCurrency} 
+                  onChange={e => setPriceCurrency(e.target.value)}
+                  className="px-2 py-2 rounded-lg text-sm flex-shrink-0"
+                  style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '70px' }}
+                >
+                  {CURRENCIES.map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+                <input type="number" value={price} onChange={e => setPrice(e.target.value)} placeholder="e.g. 2500" className="flex-1 min-w-0 px-2 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+              </div>
+            </div>
+          </div>
+          
           {/* Brand */}
           <div>
             <label className="text-xs text-gray-500 block mb-2">Brand</label>
@@ -1293,18 +1317,18 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
           </div>
           
           {/* Vitola Notes */}
-<div>
-  <label className="text-xs text-gray-500 block mb-2">Vitola Notes</label>
-  <input 
-    type="text" 
-    value={vitola} 
-    onChange={e => setVitola(e.target.value)} 
-    className="w-full px-3 py-2 rounded-lg text-base" 
-    style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
-  />
-</div>
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Vitola Notes</label>
+            <input 
+              type="text" 
+              value={vitola} 
+              onChange={e => setVitola(e.target.value)} 
+              className="w-full px-3 py-2 rounded-lg text-base" 
+              style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+            />
+          </div>
           
-          {/* Box Number and Per Box */}
+          {/* Box Number and Cigars Per Box */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs text-gray-500 block mb-2">Box Number</label>
@@ -1324,7 +1348,6 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
                 onChange={e => {
                   const val = parseInt(e.target.value) || 0;
                   const consumedNum = parseInt(consumed) || 0;
-                  // perBox can't be less than consumed (can't have smoked more than existed)
                   setPerBox(Math.max(val, consumedNum));
                 }}
                 min={consumed}
@@ -1374,42 +1397,8 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
             </div>
           </div>
           
-        {/* Price */}
-          <div>
-            <label className="text-xs text-gray-500 block mb-2">Price</label>
-            <div className="flex gap-2">
-              <select 
-                value={priceCurrency} 
-                onChange={e => setPriceCurrency(e.target.value)}
-                className="px-3 py-2 rounded-lg text-base"
-                style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '90px' }}
-              >
-                {CURRENCIES.map(c => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-              <input 
-                type="number" 
-                value={price} 
-                onChange={e => setPrice(e.target.value)} 
-                className="flex-1 px-3 py-2 rounded-lg text-base" 
-                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
-              />
-            </div>
-          </div>
-          
-          {/* Date Purchased and Location */}
+          {/* Location and Status */}
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-gray-500 block mb-2">Date Purchased</label>
-              <input 
-                type="date" 
-                value={datePurchased} 
-                onChange={e => setDatePurchased(e.target.value)} 
-                className="w-full px-3 py-2 rounded-lg text-base" 
-                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
-              />
-            </div>
             <div>
               <label className="text-xs text-gray-500 block mb-2">Location</label>
               <select 
@@ -1432,36 +1421,22 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
                 />
               )}
             </div>
-          </div>
-          
-          {/* Status and Received */}
-          <div className="grid grid-cols-2 gap-3">
             <div>
-  <label className="text-xs text-gray-500 block mb-2">Status</label>
-  <select 
-    value={status} 
-    onChange={e => setStatus(e.target.value)} 
-    className="w-full px-3 py-2 rounded-lg text-base" 
-    style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}
-  >
-    <option value="Ageing">Ageing</option>
-    <option value="Immediate">On Rotation</option>
-    <option value="Combination">Assortment</option>
-  </select>
-</div>
-            <div>
-              <label className="text-xs text-gray-500 block mb-2">Received</label>
-              <button 
-                onClick={() => setReceived(!received)} 
-                className="w-full px-3 py-2 rounded-lg text-base text-left" 
-                style={{ background: received ? '#1c3a1c' : '#252525', border: '1px solid #333', color: received ? '#99ff99' : '#888' }}
+              <label className="text-xs text-gray-500 block mb-2">Status</label>
+              <select 
+                value={status} 
+                onChange={e => setStatus(e.target.value)} 
+                className="w-full px-3 py-2 rounded-lg text-base" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}
               >
-                {received ? 'Yes' : 'No'}
-              </button>
+                <option value="Ageing">Ageing</option>
+                <option value="Immediate">On Rotation</option>
+                <option value="Combination">Assortment</option>
+              </select>
             </div>
           </div>
           
-          {/* Factory Code and Box Date */}
+          {/* Factory Code and Release Date */}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs text-gray-500 block mb-2">Factory Code</label>
@@ -1474,16 +1449,28 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
                 style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
               />
             </div>
-            <div>
-  <label className="text-xs text-gray-500 block mb-2">Release Date</label>
-  <input 
-    type="month" 
-    value={dateOfBox ? dateOfBox.substring(0, 7) : ''} 
-    onChange={e => setDateOfBox(e.target.value)} 
-    className="w-full px-3 py-2 rounded-lg text-base" 
-    style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
-  />
-</div>
+            <div style={{ overflow: 'hidden' }}>
+              <label className="text-xs text-gray-500 block mb-2">Release Date</label>
+              <input 
+                type="month" 
+                value={dateOfBox ? dateOfBox.substring(0, 7) : ''} 
+                onChange={e => setDateOfBox(e.target.value)} 
+                className="w-full px-2 py-2 rounded-lg" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff', fontSize: '14px', WebkitAppearance: 'none', minHeight: '42px' }} 
+              />
+            </div>
+          </div>
+          
+          {/* Received */}
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Received</label>
+            <button 
+              onClick={() => setReceived(!received)} 
+              className="w-full px-3 py-2 rounded-lg text-base text-left" 
+              style={{ background: received ? '#1c3a1c' : '#252525', border: '1px solid #333', color: received ? '#99ff99' : '#888' }}
+            >
+              {received ? 'Yes' : 'No'}
+            </button>
           </div>
           
           {/* Save and Discard Buttons */}
