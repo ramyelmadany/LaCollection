@@ -1520,7 +1520,7 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
   const s = brandStyles[box.brand] || brandStyles['Cohiba'];
   const market = getMarket(box.brand, box.name, box.perBox);
   const boxPriceInBase = convertCurrency(box.price || 0, box.currency || 'USD', baseCurrency, fxRates);
-  const marketGBP = market?.gbp || (boxPriceInBase * 1.15);
+  const marketGBP = market?.gbp || null;
   const marketInBase = convertCurrency(marketGBP, 'GBP', baseCurrency, fxRates);
   const savingsInBase = marketInBase - boxPriceInBase;
 
@@ -3503,7 +3503,7 @@ setBoxes(boxData);
     boxes.forEach(b => {
       const m = getMarket(b.brand, b.name, b.perBox);
       const boxPriceInBase = getBoxPriceInBase(b);
-      const marketGBP = m ? m.gbp : (boxPriceInBase * 1.15);
+      const marketGBP = m ? m.gbp : 0;
       const marketInBase = convertCurrency(marketGBP, 'GBP', baseCurrency, fxRates);
       totalMarket += marketInBase;
       if (b.perBox > 0) {
@@ -3925,7 +3925,7 @@ setBoxes(boxData);
             
             const getBoxMarket = (b) => {
               const m = getMarket(b.brand, b.name, b.perBox);
-              const marketGBP = m ? m.gbp : (getBoxPriceInBase(b) * 1.15);
+              const marketGBP = m ? m.gbp : 0;
               return convertCurrency(marketGBP, 'GBP', baseCurrency, fxRates);
             };
             
