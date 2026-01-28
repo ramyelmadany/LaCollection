@@ -2739,15 +2739,15 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
           </div>
           
           {/* Date Purchased */}
-          <div>
+          <div style={{ maxWidth: '100%', overflow: 'hidden' }}>
             <label className="text-xs text-gray-500 block mb-2">Date Purchased</label>
-            <input type="date" value={datePurchased} onChange={e => setDatePurchased(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+            <input type="date" value={datePurchased} onChange={e => setDatePurchased(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '100%', boxSizing: 'border-box', WebkitAppearance: 'none' }} />
           </div>
           
           {/* Release Date */}
-          <div>
+          <div style={{ maxWidth: '100%', overflow: 'hidden' }}>
             <label className="text-xs text-gray-500 block mb-2">Release Date</label>
-            <input type="month" value={dateOfBox} onChange={e => setDateOfBox(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+            <input type="month" value={dateOfBox} onChange={e => setDateOfBox(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '100%', boxSizing: 'border-box', WebkitAppearance: 'none' }} />
           </div>
           
           {/* Location and Status */}
