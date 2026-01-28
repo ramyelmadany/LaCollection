@@ -1555,6 +1555,23 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
   // Calculate box age
 const calculateAge = (dateStr) => {
   if (!dateStr) return null;
+  
+  // Parse YYYY-MM format directly to avoid timezone issues
+  const match = dateStr.match(/^(\d{4})-(\d{2})$/);
+  if (match) {
+    const boxYear = parseInt(match[1]);
+    const boxMonth = parseInt(match[2]);
+    const now = new Date();
+    const nowYear = now.getFullYear();
+    const nowMonth = now.getMonth() + 1;
+    
+    let totalMonths = (nowYear - boxYear) * 12 + (nowMonth - boxMonth);
+    const years = Math.floor(totalMonths / 12);
+    const months = totalMonths % 12;
+    return { years, months };
+  }
+  
+  // Fallback for other date formats
   const boxDate = new Date(dateStr);
   const now = new Date();
   const diffMs = now - boxDate;
