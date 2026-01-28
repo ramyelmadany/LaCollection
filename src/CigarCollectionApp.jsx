@@ -1475,7 +1475,7 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
               />
             </div>
             <div>
-  <label className="text-xs text-gray-500 block mb-2">Box Date (Release)</label>
+  <label className="text-xs text-gray-500 block mb-2">Release Date</label>
   <input 
     type="month" 
     value={dateOfBox ? dateOfBox.substring(0, 7) : ''} 
@@ -2740,13 +2740,13 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
           
           {/* Date Purchased and Location */}
           <div className="grid grid-cols-2 gap-3">
-            <div>
+            <div className="min-w-0">
               <label className="text-xs text-gray-500 block mb-2">Date Purchased</label>
-              <input type="date" value={datePurchased} onChange={e => setDatePurchased(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+              <input type="date" value={datePurchased} onChange={e => setDatePurchased(e.target.value)} className="w-full min-w-0 px-2 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
             </div>
-            <div>
+            <div className="min-w-0">
               <label className="text-xs text-gray-500 block mb-2">Location</label>
-              <select value={location} onChange={e => setLocation(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
+              <select value={location} onChange={e => setLocation(e.target.value)} className="w-full min-w-0 px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
                 <option value="London">London</option>
                 <option value="Cayman">Cayman</option>
               </select>
@@ -2773,14 +2773,14 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
           
           {/* Factory Code and Box Date */}
           <div className="grid grid-cols-2 gap-3">
-            <div>
+            <div className="min-w-0">
               <label className="text-xs text-gray-500 block mb-2">Factory Code</label>
-              <input type="text" value={code} onChange={e => setCode(e.target.value.toUpperCase())} placeholder="e.g. GES MAR 24" className="w-full px-3 py-2 rounded-lg text-base font-mono" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+              <input type="text" value={code} onChange={e => setCode(e.target.value.toUpperCase())} placeholder="e.g. GES MAR 24" className="w-full min-w-0 px-2 py-2 rounded-lg text-sm font-mono" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
             </div>
-            <div>
-  <label className="text-xs text-gray-500 block mb-2">Box Date</label>
-  <input type="month" value={dateOfBox} onChange={e => setDateOfBox(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
-</div>
+            <div className="min-w-0">
+              <label className="text-xs text-gray-500 block mb-2">Release Date</label>
+              <input type="month" value={dateOfBox} onChange={e => setDateOfBox(e.target.value)} className="w-full min-w-0 px-2 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+            </div>
           </div>
           
           {/* Submit Button */}
