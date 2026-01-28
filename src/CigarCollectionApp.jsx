@@ -3969,7 +3969,7 @@ setBoxes(boxData);
         </div>
       )}
 
-      {/* Value View */}
+      {/* {/* Value View */}
       {view === 'value' && (
         <div className="px-4 pb-8 pt-4">
           {(() => {
@@ -3982,9 +3982,23 @@ setBoxes(boxData);
             
             const getBoxMarket = (b) => {
               const m = getMarket(b.brand, b.name, b.perBox);
-              const marketGBP = m ? m.gbp : 0;
-              return convertCurrency(marketGBP, 'GBP', baseCurrency, fxRates);
+              const marketGBP = m ? m.gbp : null;
+              return marketGBP ? convertCurrency(marketGBP, 'GBP', baseCurrency, fxRates) : null;
             };
+            
+            const hasMarketData = (b) => {
+              const m = getMarket(b.brand, b.name, b.perBox);
+              return m && m.gbp;
+            };
+            
+            // Calculate average cigar value from boxes WITH known market data
+            const boxesWithMarket = remainingBoxes.filter(hasMarketData);
+            const cigarsWithMarket = boxesWithMarket.reduce((s, b) => s + b.remaining, 0);
+            const marketValueWithData = boxesWithMarket.reduce((s, b) => {
+              const market = getBoxMarket(b);
+              return s + market * (b.remaining / b.perBox);
+            }, 0);
+            const avgCigarFromKnown = cigarsWithMarket > 0 ? marketValueWithData / cigarsWithMarket : 0;
             
             const groupByVitola = (boxList) => {
               const groups = {};
@@ -4009,6 +4023,7 @@ setBoxes(boxData);
             const fullBoxes = remainingBoxes.filter(b => b.remaining === b.perBox);
             const fullBoxVitolas = groupByVitola(fullBoxes);
             const mostValuableBox = fullBoxVitolas
+              .filter(v => hasMarketData(v.boxes[0]))
               .map(v => ({
                 ...v,
                 marketValue: getBoxMarket(v.boxes[0]),
@@ -4019,6 +4034,7 @@ setBoxes(boxData);
             
             const allVitolas = groupByVitola(remainingBoxes);
             const mostValuableCigar = allVitolas
+              .filter(v => hasMarketData(v.boxes[0]))
               .map(v => {
                 const boxMarket = getBoxMarket(v.boxes[0]);
                 const perBox = v.boxes[0].perBox;
@@ -4031,7 +4047,10 @@ setBoxes(boxData);
               .sort((a, b) => b.cigarValue - a.cigarValue)
               .slice(0, 3);
             
-            const bestPerformer = allVitolas
+            // Only include vitolas WITH market data in performance rankings
+            const vitolasWithMarket = allVitolas.filter(v => hasMarketData(v.boxes[0]));
+            
+            const bestPerformer = vitolasWithMarket
               .map(v => {
                 const avgPurchase = v.boxes.reduce((s, b) => s + getBoxPriceInBase(b), 0) / v.boxes.length;
                 const marketValue = getBoxMarket(v.boxes[0]);
@@ -4047,7 +4066,7 @@ setBoxes(boxData);
               .sort((a, b) => b.returnPct - a.returnPct)
               .slice(0, 3);
             
-            const worstPerformer = allVitolas
+            const worstPerformer = vitolasWithMarket
               .map(v => {
                 const avgPurchase = v.boxes.reduce((s, b) => s + getBoxPriceInBase(b), 0) / v.boxes.length;
                 const marketValue = getBoxMarket(v.boxes[0]);
@@ -4064,14 +4083,27 @@ setBoxes(boxData);
               .slice(0, 3);
             
             const totalCigarsRemaining = remainingBoxes.reduce((s, b) => s + b.remaining, 0);
-            const totalMarketRemaining = remainingBoxes.reduce((s, b) => s + getBoxMarket(b) * (b.remaining / b.perBox), 0);
-            const avgCigarValue = totalCigarsRemaining > 0 ? totalMarketRemaining / totalCigarsRemaining : 0;
+            // For boxes without market data, use the average from known boxes
+            const totalMarketRemaining = remainingBoxes.reduce((s, b) => {
+              const market = getBoxMarket(b);
+              if (market !== null) {
+                return s + market * (b.remaining / b.perBox);
+              } else {
+                // Use average cigar value for unknown boxes
+                return s + avgCigarFromKnown * b.remaining;
+              }
+            }, 0);
+            const avgCigarValue = avgCigarFromKnown;
             
             const totalSmoked = boxes.reduce((s, b) => s + b.consumed, 0);
             const valueEnjoyed = boxes.reduce((s, b) => {
               if (b.perBox === 0) return s;
               const boxMarket = getBoxMarket(b);
-              return s + (boxMarket / b.perBox) * b.consumed;
+              if (boxMarket !== null) {
+                return s + (boxMarket / b.perBox) * b.consumed;
+              } else {
+                return s + avgCigarFromKnown * b.consumed;
+              }
             }, 0);
             
             const boxesWithRelease = remainingBoxes.filter(b => b.dateOfBox);
@@ -4141,7 +4173,7 @@ setBoxes(boxData);
                         </div>
                       </div>
                     ))}
-                    {mostValuableBox.length === 0 && <div className="text-sm font-medium" style={{ color: 'rgba(245,222,179,0.5)' }}>No full boxes in collection</div>}
+                    {mostValuableBox.length === 0 && <div className="text-sm font-medium" style={{ color: 'rgba(245,222,179,0.5)' }}>No full boxes with market data</div>}
                   </div>
                 </div>
                 
@@ -4161,6 +4193,7 @@ setBoxes(boxData);
                         </div>
                       </div>
                     ))}
+                    {mostValuableCigar.length === 0 && <div className="text-sm font-medium" style={{ color: 'rgba(245,222,179,0.5)' }}>No cigars with market data</div>}
                   </div>
                 </div>
                 
@@ -4182,6 +4215,7 @@ setBoxes(boxData);
                         </div>
                       </div>
                     ))}
+                    {bestPerformer.length === 0 && <div className="text-sm font-medium" style={{ color: 'rgba(245,222,179,0.5)' }}>No cigars with market data</div>}
                   </div>
                 </div>
                 
@@ -4203,6 +4237,7 @@ setBoxes(boxData);
                         </div>
                       </div>
                     ))}
+                    {worstPerformer.length === 0 && <div className="text-sm font-medium" style={{ color: 'rgba(245,222,179,0.5)' }}>No cigars with market data</div>}
                   </div>
                 </div>
                 
@@ -4241,7 +4276,7 @@ setBoxes(boxData);
                           <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box {oldestBox.boxNum}</div>
                         </div>
                         <div className="text-right">
-                          <div className="text-xl font-medium" style={{ color: '#1a120b' }}>{fmt.date(oldestBox.dateOfBox)}</div>
+                          <div className="text-xl font-medium" style={{ color: '#1a120b' }}>{fmt.monthYear(oldestBox.dateOfBox)}</div>
                           <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>release date</div>
                         </div>
                       </div>
@@ -4274,94 +4309,6 @@ setBoxes(boxData);
               </>
             );
           })()}
-        </div>
-      )}
-{/* Settings View */}
-      {view === 'settings' && (
-        <div className="px-4 pb-8">
-          <h2 className="text-xl font-bold mb-6" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Settings</h2>
-          
-          {/* Currency Section */}
-          <div className="mb-6">
-            <h3 className="text-lg mb-3" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Currency</h3>
-            <div className="rounded-lg p-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-              <div className="mb-4">
-                <div className="text-sm text-gray-300 mb-2">Base Currency</div>
-                <select 
-                  value={baseCurrency} 
-                  onChange={(e) => setBaseCurrency(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg text-base"
-                  style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}
-                >
-                  {CURRENCIES.map(c => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-              </div>
-              {fxLastUpdated && (
-                <div className="text-xs text-gray-500">
-                  FX rates updated: {new Date(fxLastUpdated).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                </div>
-              )}
-            </div>
-          </div>
-          
-          {/* Theme Section */}
-          <div className="mb-6">
-            <h3 className="text-lg mb-3" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Theme</h3>
-            <div className="rounded-lg p-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-              <div className="text-sm text-gray-400">Coming soon...</div>
-            </div>
-          </div>
-          
-          {/* Display Section */}
-          <div className="mb-6">
-            <h3 className="text-lg mb-3" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Display</h3>
-            <div className="rounded-lg p-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="text-sm text-gray-300">Show inventory info on cards</div>
-                  <div className="text-xs text-gray-500">Display cigar count and box count below indicator</div>
-                </div>
-                <button 
-                  onClick={() => setShowCigarCount(!showCigarCount)}
-                  className="w-12 h-6 rounded-full relative"
-                  style={{ background: showCigarCount ? '#d4af37' : '#333' }}
-                >
-                  <div 
-                    className="w-5 h-5 rounded-full absolute top-0.5 transition-all"
-                    style={{ 
-                      background: '#fff',
-                      left: showCigarCount ? '26px' : '2px'
-                    }}
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          {/* Save Settings Button */}
-          <button 
-            onClick={async () => {
-              localStorage.setItem('showCigarCount', JSON.stringify(showCigarCount));
-              localStorage.setItem('baseCurrency', baseCurrency);
-              if (googleAccessToken) {
-                saveSetting('showCigarCount', showCigarCount, googleAccessToken);
-                saveSetting('baseCurrency', baseCurrency, googleAccessToken);
-              }
-              // Refresh FX rates with new base currency
-              const fxData = await fetchFxRates(baseCurrency);
-              if (fxData) {
-                setFxRates(fxData.rates);
-                setFxLastUpdated(fxData.date);
-              }
-              setView('collection');
-            }}
-            className="w-full py-3 rounded-lg font-semibold"
-            style={{ background: '#d4af37', color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}
-          >
-            Save Settings
-          </button>
         </div>
       )}
       
