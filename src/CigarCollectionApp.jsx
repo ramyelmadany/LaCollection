@@ -1626,8 +1626,9 @@ const isFullBox = box.remaining === box.perBox;
       <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
         {boxAgeData ? (
           <>
-            {boxAgeData.years > 0 && <><span>{boxAgeData.years}</span><span className="text-lg"> yrs </span></>}
-            <span>{boxAgeData.months}</span><span className="text-lg"> mo</span>
+            {boxAgeData.years > 0 && <><span>{boxAgeData.years}</span><span className="text-lg"> yrs</span></>}
+            {boxAgeData.months > 0 && <><span>{boxAgeData.years > 0 ? ' ' : ''}{boxAgeData.months}</span><span className="text-lg"> mo</span></>}
+            {boxAgeData.years === 0 && boxAgeData.months === 0 && <span className="text-lg">New</span>}
           </>
         ) : '–'}
       </div>
