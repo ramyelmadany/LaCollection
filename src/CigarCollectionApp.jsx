@@ -1821,6 +1821,7 @@ const isFullBox = box.remaining === box.perBox;
           availableLocations={availableLocations}
         />
       )}
+    </div>
     </>
   );
 };
