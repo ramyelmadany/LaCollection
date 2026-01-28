@@ -3084,7 +3084,11 @@ setBoxes(boxData);
     setSyncStatus('writing');
     
     try {
+      console.log('Box being saved:', box);
+      console.log('dateOfBox value:', box.dateOfBox);
       const rowData = boxToRow(box);
+      console.log('Row data:', rowData);
+      console.log('dateOfBox in row (index 11):', rowData[11]);
       await appendSheetRow(rowData, accessToken);
       setSyncStatus('success');
       return true;
