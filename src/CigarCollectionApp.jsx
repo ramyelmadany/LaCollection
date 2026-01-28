@@ -2608,10 +2608,28 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
         </div>
         
         <div className="p-4 space-y-4">
-          {/* Date Purchased */}
-          <div style={{ overflow: 'hidden' }}>
-            <label className="text-xs text-gray-500 block mb-2">Date Purchased</label>
-            <input type="date" value={datePurchased} onChange={e => setDatePurchased(e.target.value)} className="w-full px-2 py-2 rounded-lg" style={{ background: '#252525', border: '1px solid #333', color: '#fff', fontSize: '14px', WebkitAppearance: 'none', minHeight: '42px' }} />
+          {/* Date Purchased and Price */}
+          <div className="grid grid-cols-2 gap-3">
+            <div style={{ overflow: 'hidden' }}>
+              <label className="text-xs text-gray-500 block mb-2">Date Purchased</label>
+              <input type="date" value={datePurchased} onChange={e => setDatePurchased(e.target.value)} className="w-full px-2 py-2 rounded-lg" style={{ background: '#252525', border: '1px solid #333', color: '#fff', fontSize: '14px', WebkitAppearance: 'none', minHeight: '42px' }} />
+            </div>
+            <div className="min-w-0">
+              <label className="text-xs text-gray-500 block mb-2">Price *</label>
+              <div className="flex gap-1">
+                <select 
+                  value={priceCurrency} 
+                  onChange={e => setPriceCurrency(e.target.value)}
+                  className="px-2 py-2 rounded-lg text-sm flex-shrink-0"
+                  style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '70px' }}
+                >
+                  {CURRENCIES.map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+                <input type="number" value={price} onChange={e => setPrice(e.target.value)} placeholder="e.g. 2500" className="flex-1 min-w-0 px-2 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+              </div>
+            </div>
           </div>
           
           {/* Brand */}
@@ -2720,28 +2738,10 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
             </div>
           </div>
           
-          {/* Per Box and Price */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-gray-500 block mb-2">Cigars Per Box *</label>
-              <input type="number" value={perBox} onChange={e => setPerBox(e.target.value)} placeholder="e.g. 25" className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
-            </div>
-            <div className="min-w-0">
-              <label className="text-xs text-gray-500 block mb-2">Price *</label>
-              <div className="flex gap-1">
-                <select 
-                  value={priceCurrency} 
-                  onChange={e => setPriceCurrency(e.target.value)}
-                  className="px-2 py-2 rounded-lg text-sm flex-shrink-0"
-                  style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '70px' }}
-                >
-                  {CURRENCIES.map(c => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-                <input type="number" value={price} onChange={e => setPrice(e.target.value)} placeholder="e.g. 2500" className="flex-1 min-w-0 px-2 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
-              </div>
-            </div>
+          {/* Cigars Per Box */}
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Cigars Per Box *</label>
+            <input type="number" value={perBox} onChange={e => setPerBox(e.target.value)} placeholder="e.g. 25" className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
           </div>
           
           {/* Location and Status */}
