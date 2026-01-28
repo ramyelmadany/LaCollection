@@ -2738,48 +2738,48 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
             </div>
           </div>
           
-          {/* Date Purchased and Location */}
+          {/* Date Purchased */}
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Date Purchased</label>
+            <input type="date" value={datePurchased} onChange={e => setDatePurchased(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+          </div>
+          
+          {/* Release Date */}
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Release Date</label>
+            <input type="month" value={dateOfBox} onChange={e => setDateOfBox(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+          </div>
+          
+          {/* Location and Status */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="min-w-0 overflow-hidden">
-              <label className="text-xs text-gray-500 block mb-2">Date Purchased</label>
-              <input type="date" value={datePurchased} onChange={e => setDatePurchased(e.target.value)} className="w-full min-w-0 px-2 py-2 rounded-lg text-xs" style={{ background: '#252525', border: '1px solid #333', color: '#fff', maxWidth: '100%' }} />
-            </div>
-            <div className="min-w-0 overflow-hidden">
+            <div>
               <label className="text-xs text-gray-500 block mb-2">Location</label>
-              <select value={location} onChange={e => setLocation(e.target.value)} className="w-full min-w-0 px-2 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
+              <select value={location} onChange={e => setLocation(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
                 <option value="London">London</option>
                 <option value="Cayman">Cayman</option>
               </select>
             </div>
+            <div>
+              <label className="text-xs text-gray-500 block mb-2">Status</label>
+              <select value={status} onChange={e => setStatus(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
+                <option value="Ageing">Ageing</option>
+                <option value="Immediate">On Rotation</option>
+                <option value="Combination">Assortment</option>
+              </select>
+            </div>
           </div>
           
-          {/* Status and Received */}
+          {/* Factory Code and Received */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-  <label className="text-xs text-gray-500 block mb-2">Status</label>
-  <select value={status} onChange={e => setStatus(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
-    <option value="Ageing">Ageing</option>
-    <option value="Immediate">On Rotation</option>
-    <option value="Combination">Assortment</option>
-  </select>
-</div>
+              <label className="text-xs text-gray-500 block mb-2">Factory Code</label>
+              <input type="text" value={code} onChange={e => setCode(e.target.value.toUpperCase())} placeholder="e.g. GES MAR 24" className="w-full px-3 py-2 rounded-lg text-base font-mono" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+            </div>
             <div>
               <label className="text-xs text-gray-500 block mb-2">Received</label>
               <button onClick={() => setReceived(!received)} className="w-full px-3 py-2 rounded-lg text-base text-left" style={{ background: received ? '#1c3a1c' : '#252525', border: '1px solid #333', color: received ? '#99ff99' : '#888' }}>
                 {received ? 'Yes' : 'No'}
               </button>
-            </div>
-          </div>
-          
-          {/* Factory Code and Release Date */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="min-w-0 overflow-hidden">
-              <label className="text-xs text-gray-500 block mb-2">Factory Code</label>
-              <input type="text" value={code} onChange={e => setCode(e.target.value.toUpperCase())} placeholder="e.g. GES MAR 24" className="w-full min-w-0 px-2 py-2 rounded-lg text-xs font-mono" style={{ background: '#252525', border: '1px solid #333', color: '#fff', maxWidth: '100%' }} />
-            </div>
-            <div className="min-w-0 overflow-hidden">
-              <label className="text-xs text-gray-500 block mb-2">Release Date</label>
-              <input type="month" value={dateOfBox} onChange={e => setDateOfBox(e.target.value)} className="w-full min-w-0 px-2 py-2 rounded-lg text-xs" style={{ background: '#252525', border: '1px solid #333', color: '#fff', maxWidth: '100%' }} />
             </div>
           </div>
           
