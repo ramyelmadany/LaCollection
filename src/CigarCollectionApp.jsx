@@ -2676,20 +2676,20 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
               <label className="text-xs text-gray-500 block mb-2">Cigars Per Box *</label>
               <input type="number" value={perBox} onChange={e => setPerBox(e.target.value)} placeholder="e.g. 25" className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
             </div>
-            <div>
+            <div className="min-w-0">
               <label className="text-xs text-gray-500 block mb-2">Price *</label>
-              <div className="flex gap-2">
+              <div className="flex gap-1">
                 <select 
                   value={priceCurrency} 
                   onChange={e => setPriceCurrency(e.target.value)}
-                  className="px-3 py-2 rounded-lg text-base"
-                  style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '90px' }}
+                  className="px-2 py-2 rounded-lg text-sm flex-shrink-0"
+                  style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '70px' }}
                 >
                   {CURRENCIES.map(c => (
                     <option key={c} value={c}>{c}</option>
                   ))}
                 </select>
-                <input type="number" value={price} onChange={e => setPrice(e.target.value)} placeholder="e.g. 2500" className="flex-1 px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+                <input type="number" value={price} onChange={e => setPrice(e.target.value)} placeholder="e.g. 2500" className="flex-1 min-w-0 px-2 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
               </div>
             </div>
           </div>
