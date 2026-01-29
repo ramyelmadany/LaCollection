@@ -2812,12 +2812,12 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
   };
   
   const CigarIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" style={{ transform: 'rotate(-45deg)' }}>
+    <svg width="48" height="48" viewBox="0 0 24 24" style={{ transform: 'rotate(-45deg)' }}>
       <rect x="2" y="10" width="18" height="4" rx="2" fill="#8B4513"/>
       <rect x="4" y="10" width="3" height="4" fill="#6B1E1E"/>
-      <rect x="20" y="10" width="2" height="4" rx="1" fill="#F5DEB3"/>
-      <path d="M21 9 Q22 7 21 5" stroke="#F5DEB3" strokeWidth="0.8" fill="none" opacity="0.6"/>
-      <path d="M22 8 Q23 6 22 4" stroke="#F5DEB3" strokeWidth="0.8" fill="none" opacity="0.4"/>
+      <rect x="20" y="10" width="2" height="4" rx="1" fill="#888"/>
+      <path d="M21 9 Q22 7 21 5" stroke="#888" strokeWidth="0.8" fill="none" opacity="0.6"/>
+      <path d="M22 8 Q23 6 22 4" stroke="#888" strokeWidth="0.8" fill="none" opacity="0.4"/>
     </svg>
   );
 
