@@ -2811,11 +2811,22 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
     return { brand, name, boxes: groupBoxes };
   };
   
+  const CigarIcon = () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" style={{ transform: 'rotate(-45deg)' }}>
+      <rect x="4" y="10" width="14" height="4" rx="2" fill="#8B4513" />
+      <rect x="4" y="10" width="3" height="4" rx="1" fill="#6B1E1E" />
+      <rect x="18" y="10" width="3" height="4" rx="1" fill="#F5DEB3" />
+      <ellipse cx="20" cy="8" rx="2" ry="1" fill="#F5DEB3" opacity="0.4" />
+      <ellipse cx="21" cy="6" rx="1.5" ry="0.8" fill="#F5DEB3" opacity="0.3" />
+    </svg>
+  );
+  
   return (
     <div className="px-4 pt-4 space-y-3">
       {history.slice().reverse().map((h, i) => {
         const actualIndex = history.length - 1 - i;
         const group = findGroupForBox(h.boxNum, h.brand, h.name);
+        const cigarCount = Math.min(h.qty, 10); // Cap at 10 icons to avoid overflow
         return (
           <div key={i} className="p-4 rounded-lg" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
             {/* Date Header */}
@@ -2829,7 +2840,14 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
                 <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{h.brand}</div>
                 <div className="text-base font-medium" style={{ color: '#1a120b' }}>{h.name}</div>
               </div>
-              <div className="text-2xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>x{h.qty}</div>
+              <div className="flex items-center" style={{ marginLeft: '-8px' }}>
+                {[...Array(cigarCount)].map((_, idx) => (
+                  <div key={idx} style={{ marginLeft: '-8px' }}>
+                    <CigarIcon />
+                  </div>
+                ))}
+                {h.qty > 10 && <span className="text-sm font-medium ml-1" style={{ color: '#1a120b' }}>+{h.qty - 10}</span>}
+              </div>
             </div>
             
             {/* Box and Notes Row */}
@@ -2865,7 +2883,6 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
     </div>
   );
 };
-
 // Prices View
 const PricesView = ({ boxes, currency, FX, fmtCurrency, fmtFromGBP }) => {
   // Get unique cigars from collection for comparison
