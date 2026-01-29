@@ -1586,7 +1586,7 @@ const isFullBox = box.remaining === box.perBox;
           <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(245,222,179,0.1)', color: '#F5DEB3', fontSize: '1.25rem' }}>×</button>
         </div>
         
-        {/* Box Selector Buttons */}
+{/* Box Selector Buttons */}
 <div className="px-4 pt-3 pb-2 flex gap-2 overflow-x-auto items-start" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
   {boxes.map((b, i) => (
     <div key={b.id} className="flex flex-col items-center gap-1.5">
@@ -1598,7 +1598,7 @@ const isFullBox = box.remaining === box.perBox;
           color: '#F5DEB3',
           borderRadius: '4px',
           fontFamily: 'tt-ricordi-allegria, Georgia, serif',
-          border: 'none'
+          border: b.remaining > 0 && b.remaining < b.perBox ? '2px solid #F5DEB3' : 'none'
         }}
       >
         Box {b.boxNum}
