@@ -1642,13 +1642,15 @@ const isFullBox = box.remaining === box.perBox;
 
 {/* Status */}
 <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-  <div className="flex justify-between items-center">
+  <div className="flex justify-between items-start">
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Status</span>
-    <div className="text-right">
-      <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{getStatusDisplay(box.status)}</div>
-      {!box.received && <div className="text-sm font-medium" style={{ color: '#6B1E1E' }}>Yet to be received</div>}
-    </div>
+    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{getStatusDisplay(box.status)}</span>
   </div>
+  {!box.received && (
+    <div className="text-right">
+      <span className="text-sm font-medium" style={{ color: '#6B1E1E' }}>(Yet to be received)</span>
+    </div>
+  )}
 </div>
 
           {/* Pricing Row */}
