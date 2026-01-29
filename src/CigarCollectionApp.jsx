@@ -536,10 +536,10 @@ const updateBoxInSheet = async (boxNum, updatedData, accessToken) => {
   }
 };
 
-// Fetch  data from Google Sheets (requires OAuth token)
-const fetchData = async (accessToken) => {
-  const { sheetId, Range } = GOOGLE_SHEETS_CONFIG;
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${Range}`;
+// Fetch onwards data from Google Sheets (requires OAuth token)
+const fetchOnwardsData = async (accessToken) => {
+  const { sheetId, onwardsRange } = GOOGLE_SHEETS_CONFIG;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${onwardsRange}`;
   
   try {
     const response = await fetch(url, {
@@ -547,11 +547,31 @@ const fetchData = async (accessToken) => {
         'Authorization': `Bearer ${accessToken}`,
       },
     });
-    if (!response.ok) throw new Error('Failed to fetch  data');
+    if (!response.ok) throw new Error('Failed to fetch onwards data');
     const data = await response.json();
     return data.values || [];
   } catch (error) {
-    console.error('Error fetching  data:', error);
+    console.error('Error fetching onwards data:', error);
+    return null;
+  }
+};
+
+// Fetch history data from Google Sheets (requires OAuth token)
+const fetchHistoryData = async (accessToken) => {
+  const { sheetId, historyRange } = GOOGLE_SHEETS_CONFIG;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${historyRange}`;
+  
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
+    if (!response.ok) throw new Error('Failed to fetch history data');
+    const data = await response.json();
+    return data.values || [];
+  } catch (error) {
+    console.error('Error fetching history data:', error);
     return null;
   }
 };
