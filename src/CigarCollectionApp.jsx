@@ -536,26 +536,6 @@ const updateBoxInSheet = async (boxNum, updatedData, accessToken) => {
   }
 };
 
-// Fetch onwards data from Google Sheets (requires OAuth token)
-const fetchOnwardsData = async (accessToken) => {
-  const { sheetId, onwardsRange } = GOOGLE_SHEETS_CONFIG;
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${onwardsRange}`;
-  
-  try {
-    const response = await fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-      },
-    });
-    if (!response.ok) throw new Error('Failed to fetch onwards data');
-    const data = await response.json();
-    return data.values || [];
-  } catch (error) {
-    console.error('Error fetching onwards data:', error);
-    return null;
-  }
-};
-
 // Fetch history data from Google Sheets (requires OAuth token)
 const fetchHistoryData = async (accessToken) => {
   const { sheetId, historyRange } = GOOGLE_SHEETS_CONFIG;
