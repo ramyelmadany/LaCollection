@@ -2820,7 +2820,7 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
       <path d="M22 8 Q23 6 22 4" stroke="#F5DEB3" strokeWidth="0.8" fill="none" opacity="0.4"/>
     </svg>
   );
-  
+
   return (
     <div className="px-4 pt-4 space-y-3">
       {history.slice().reverse().map((h, i) => {
