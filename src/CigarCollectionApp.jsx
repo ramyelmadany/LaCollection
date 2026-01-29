@@ -536,10 +536,10 @@ const updateBoxInSheet = async (boxNum, updatedData, accessToken) => {
   }
 };
 
-// Fetch history data from Google Sheets (requires OAuth token)
-const fetchHistoryData = async (accessToken) => {
-  const { sheetId, historyRange } = GOOGLE_SHEETS_CONFIG;
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${historyRange}`;
+// Fetch  data from Google Sheets (requires OAuth token)
+const fetchData = async (accessToken) => {
+  const { sheetId, Range } = GOOGLE_SHEETS_CONFIG;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${Range}`;
   
   try {
     const response = await fetch(url, {
@@ -547,11 +547,11 @@ const fetchHistoryData = async (accessToken) => {
         'Authorization': `Bearer ${accessToken}`,
       },
     });
-    if (!response.ok) throw new Error('Failed to fetch history data');
+    if (!response.ok) throw new Error('Failed to fetch  data');
     const data = await response.json();
     return data.values || [];
   } catch (error) {
-    console.error('Error fetching history data:', error);
+    console.error('Error fetching  data:', error);
     return null;
   }
 };
@@ -657,10 +657,10 @@ const saveSetting = async (settingName, value, accessToken) => {
   }
 };
 
-// Add a smoke log entry to History sheet
-const addHistoryEntry = async (entry, accessToken) => {
-  const { sheetId, historyRange } = GOOGLE_SHEETS_CONFIG;
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${historyRange}:append?valueInputOption=USER_ENTERED`;
+// Add a smoke log entry to  sheet
+const addEntry = async (entry, accessToken) => {
+  const { sheetId, Range } = GOOGLE_SHEETS_CONFIG;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${Range}:append?valueInputOption=USER_ENTERED`;
   
   try {
     const response = await fetch(url, {
@@ -2818,16 +2818,25 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
         const group = findGroupForBox(h.boxNum, h.brand, h.name);
         return (
           <div key={i} className="p-4 rounded-lg" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+            {/* Date Header */}
+            <div className="flex justify-between items-center mb-3 pb-3 border-b" style={{ borderColor: '#6B1E1E' }}>
+              <div className="text-xl font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{fmt.date(h.date)}</div>
+              <div className="text-2xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>×{h.qty}</div>
+            </div>
+            
+            {/* Cigar Details */}
             <div className="flex justify-between items-start">
               <div>
-                <div className="text-xl font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{h.brand}</div>
-                <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{h.name}</div>
+                <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{h.brand}</div>
+                <div className="text-base font-medium" style={{ color: '#1a120b' }}>{h.name}</div>
+              </div>
+              <div className="flex flex-col items-end gap-1">
                 {h.boxNum === 'EXT' ? (
-                  <div className="text-base font-medium mt-1" style={{ color: 'rgba(26,18,11,0.5)' }}>External</div>
+                  <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>External</div>
                 ) : (
                   <button
                     onClick={() => group && onBoxClick && onBoxClick(group, h.boxNum)}
-                    className="mt-2 px-3 py-1.5 text-sm font-medium"
+                    className="px-3 py-1.5 text-sm font-medium"
                     style={{
                       background: '#6B1E1E',
                       color: '#F5DEB3',
@@ -2840,13 +2849,10 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
                     Box {h.boxNum}
                   </button>
                 )}
-                {h.notes && <div className="text-base mt-2 italic" style={{ color: 'rgba(26,18,11,0.7)' }}>{h.notes}</div>}
-              </div>
-              <div className="text-right">
-                <div className="text-2xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>x{h.qty}</div>
-                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>{fmt.date(h.date)}</div>
+                {h.notes && <div className="text-sm italic text-right mt-1" style={{ color: 'rgba(26,18,11,0.7)', maxWidth: '150px' }}>{h.notes}</div>}
               </div>
             </div>
+            
             {onEdit && (
               <div className="mt-3 pt-3 border-t" style={{ borderColor: '#6B1E1E' }}>
                 <button
