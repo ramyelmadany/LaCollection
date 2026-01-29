@@ -1292,6 +1292,18 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
             />
           </div>
           
+          {/* Received */}
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Received</label>
+            <button 
+              onClick={() => setReceived(!received)} 
+              className="w-full px-3 py-2 rounded-lg text-base text-left" 
+              style={{ background: received ? '#1c3a1c' : '#252525', border: '1px solid #333', color: received ? '#99ff99' : '#888' }}
+            >
+              {received ? 'Yes' : 'No'}
+            </button>
+          </div>
+          
           {/* Ring Gauge and Length */}
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -1397,6 +1409,31 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
             </div>
           </div>
           
+          {/* Factory Code and Release Date */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs text-gray-500 block mb-2">Factory Code</label>
+              <input 
+                type="text" 
+                value={code} 
+                onChange={e => setCode(e.target.value.toUpperCase())} 
+                maxLength={3} 
+                className="w-full px-3 py-2 rounded-lg text-base font-mono" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+              />
+            </div>
+            <div style={{ overflow: 'hidden' }}>
+              <label className="text-xs text-gray-500 block mb-2">Release Date</label>
+              <input 
+                type="month" 
+                value={dateOfBox ? dateOfBox.substring(0, 7) : ''} 
+                onChange={e => setDateOfBox(e.target.value)} 
+                className="w-full px-2 py-2 rounded-lg" 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff', fontSize: '14px', WebkitAppearance: 'none', minHeight: '42px' }} 
+              />
+            </div>
+          </div>
+          
           {/* Location and Status */}
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -1434,43 +1471,6 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
                 <option value="Combination">Assortment</option>
               </select>
             </div>
-          </div>
-          
-          {/* Factory Code and Release Date */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-gray-500 block mb-2">Factory Code</label>
-              <input 
-                type="text" 
-                value={code} 
-                onChange={e => setCode(e.target.value.toUpperCase())} 
-                maxLength={3} 
-                className="w-full px-3 py-2 rounded-lg text-base font-mono" 
-                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
-              />
-            </div>
-            <div style={{ overflow: 'hidden' }}>
-              <label className="text-xs text-gray-500 block mb-2">Release Date</label>
-              <input 
-                type="month" 
-                value={dateOfBox ? dateOfBox.substring(0, 7) : ''} 
-                onChange={e => setDateOfBox(e.target.value)} 
-                className="w-full px-2 py-2 rounded-lg" 
-                style={{ background: '#252525', border: '1px solid #333', color: '#fff', fontSize: '14px', WebkitAppearance: 'none', minHeight: '42px' }} 
-              />
-            </div>
-          </div>
-          
-          {/* Received */}
-          <div>
-            <label className="text-xs text-gray-500 block mb-2">Received</label>
-            <button 
-              onClick={() => setReceived(!received)} 
-              className="w-full px-3 py-2 rounded-lg text-base text-left" 
-              style={{ background: received ? '#1c3a1c' : '#252525', border: '1px solid #333', color: received ? '#99ff99' : '#888' }}
-            >
-              {received ? 'Yes' : 'No'}
-            </button>
           </div>
           
           {/* Save and Discard Buttons */}
@@ -2672,6 +2672,14 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
             )}
           </div>
           
+          {/* Received */}
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Received</label>
+            <button onClick={() => setReceived(!received)} className="w-full px-3 py-2 rounded-lg text-base text-left" style={{ background: received ? '#1c3a1c' : '#252525', border: '1px solid #333', color: received ? '#99ff99' : '#888' }}>
+              {received ? 'Yes' : 'No'}
+            </button>
+          </div>
+          
           {/* Ring Gauge and Length - Auto-populated but editable */}
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -2731,6 +2739,18 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
             <input type="number" value={perBox} onChange={e => setPerBox(e.target.value)} placeholder="e.g. 25" className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
           </div>
           
+          {/* Factory Code and Release Date */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs text-gray-500 block mb-2">Factory Code</label>
+              <input type="text" value={code} onChange={e => setCode(e.target.value.toUpperCase())} placeholder="e.g. GES MAR 24" className="w-full px-3 py-2 rounded-lg text-base font-mono" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+            </div>
+            <div style={{ overflow: 'hidden' }}>
+              <label className="text-xs text-gray-500 block mb-2">Release Date</label>
+              <input type="month" value={dateOfBox} onChange={e => setDateOfBox(e.target.value)} className="w-full px-2 py-2 rounded-lg" style={{ background: '#252525', border: '1px solid #333', color: '#fff', fontSize: '14px', WebkitAppearance: 'none', minHeight: '42px' }} />
+            </div>
+          </div>
+          
           {/* Location and Status */}
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -2748,26 +2768,6 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
                 <option value="Combination">Assortment</option>
               </select>
             </div>
-          </div>
-          
-          {/* Factory Code and Release Date */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-gray-500 block mb-2">Factory Code</label>
-              <input type="text" value={code} onChange={e => setCode(e.target.value.toUpperCase())} placeholder="e.g. GES MAR 24" className="w-full px-3 py-2 rounded-lg text-base font-mono" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
-            </div>
-            <div style={{ overflow: 'hidden' }}>
-              <label className="text-xs text-gray-500 block mb-2">Release Date</label>
-              <input type="month" value={dateOfBox} onChange={e => setDateOfBox(e.target.value)} className="w-full px-2 py-2 rounded-lg" style={{ background: '#252525', border: '1px solid #333', color: '#fff', fontSize: '14px', WebkitAppearance: 'none', minHeight: '42px' }} />
-            </div>
-          </div>
-          
-          {/* Received */}
-          <div>
-            <label className="text-xs text-gray-500 block mb-2">Received</label>
-            <button onClick={() => setReceived(!received)} className="w-full px-3 py-2 rounded-lg text-base text-left" style={{ background: received ? '#1c3a1c' : '#252525', border: '1px solid #333', color: received ? '#99ff99' : '#888' }}>
-              {received ? 'Yes' : 'No'}
-            </button>
           </div>
           
           {/* Submit Button */}
