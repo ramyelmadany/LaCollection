@@ -1644,7 +1644,10 @@ const isFullBox = box.remaining === box.perBox;
 <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
   <div className="flex justify-between items-center">
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Status</span>
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{getStatusDisplay(box.status)}</span>
+    <div className="text-right">
+      <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{getStatusDisplay(box.status)}</div>
+      {!box.received && <div className="text-sm font-medium" style={{ color: '#6B1E1E' }}>Yet to be received</div>}
+    </div>
   </div>
 </div>
 
@@ -1684,6 +1687,12 @@ const isFullBox = box.remaining === box.perBox;
       <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.length}"</span>
     </div>
   )}
+  {box.vitola && (
+    <div className="flex justify-between items-start mb-3">
+      <span className="text-lg font-medium flex-shrink-0" style={{ color: '#1a120b' }}>Vitola</span>
+      <span className="text-lg font-medium text-right" style={{ color: '#1a120b', maxWidth: '50%' }}>{box.vitola}</span>
+    </div>
+  )}
   <div className="flex justify-between items-center mb-3">
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Release Date</span>
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.dateOfBox ? fmt.monthYear(box.dateOfBox) : 'Unknown'}</span>
@@ -1698,16 +1707,10 @@ const isFullBox = box.remaining === box.perBox;
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Box ID</span>
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.boxNum}</span>
   </div>
-  <div className="flex justify-between items-center mb-3">
+  <div className="flex justify-between items-center">
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Location</span>
     <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.location}</span>
   </div>
-  {box.vitola && (
-    <div className="flex justify-between items-start">
-      <span className="text-lg font-medium flex-shrink-0" style={{ color: '#1a120b' }}>Vitola</span>
-      <span className="text-lg font-medium text-right" style={{ color: '#1a120b', maxWidth: '50%' }}>{box.vitola}</span>
-    </div>
-  )}
 </div>
 
 {/* Notes Section */}
