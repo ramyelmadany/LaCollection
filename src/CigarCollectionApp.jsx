@@ -1239,7 +1239,7 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
     <div className="fixed inset-0 z-[60] flex items-center justify-center px-4 py-8" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
       <div className="w-full max-w-md rounded-2xl max-h-[90vh] overflow-y-auto" style={{ background: '#1a1a1a', border: '1px solid #333', scrollbarWidth: 'none', msOverflowStyle: 'none' }} onClick={e => e.stopPropagation()}>
         <div className="sticky top-0 z-10 p-4 flex justify-between items-center" style={{ background: '#1a1a1a', borderBottom: '1px solid #333' }}>
-          <h3 className="text-lg font-semibold" style={{ color: '#d4af37' }}>Edit Box</h3>
+          <h3 className="text-lg font-semibold" style={{ color: '#F5DEB3' }}>Edit Box</h3>
           <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#333', color: '#888' }}>×</button>
         </div>
         
@@ -1486,7 +1486,7 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
               onClick={handleSave} 
               disabled={isSaving}
               className="flex-1 py-3 rounded-lg font-semibold" 
-              style={{ background: isSaving ? '#333' : '#d4af37', color: isSaving ? '#666' : '#000' }}
+              style={{ background: isSaving ? '#333' : '#F5DEB3', color: isSaving ? '#666' : '#1a120b' }}
             >
               {isSaving ? 'Saving...' : 'Save'}
             </button>
@@ -1826,18 +1826,13 @@ const isFullBox = box.remaining === box.perBox;
             const success = await onEdit(box, updatedData);
             if (success) {
               setShowEditModal(false);
-              onClose();
             }
             return success;
           }}
           availableLocations={availableLocations}
         />
       )}
-    </div>
-    </>
-  );
-};
-
+      
 // Edit History Modal
 const EditHistoryModal = ({ entry, index, onClose, onSave, onDelete }) => {
   // Format date for input (needs YYYY-MM-DD format)
