@@ -2865,7 +2865,7 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
                     color: '#F5DEB3', 
                     borderRadius: '4px', 
                     fontFamily: 'tt-ricordi-allegria, Georgia, serif', 
-                    border: isBoxOpen ? '2px solid #F5DEB3' : 'none', 
+                    border: isBoxOpen ? '2px solid #1a120b' : 'none', 
                     cursor: group ? 'pointer' : 'default' 
                   }}
                 >
