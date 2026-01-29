@@ -2880,6 +2880,8 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
       })}
     </div>
   );
+};
+
   
 // Prices View
 const PricesView = ({ boxes, currency, FX, fmtCurrency, fmtFromGBP }) => {
