@@ -2819,9 +2819,8 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
         return (
           <div key={i} className="p-4 rounded-lg" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
             {/* Date Header */}
-            <div className="flex justify-between items-center mb-3 pb-3 border-b" style={{ borderColor: '#6B1E1E' }}>
+            <div className="mb-3 pb-3 border-b" style={{ borderColor: '#6B1E1E' }}>
               <div className="text-xl font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{fmt.date(h.date)}</div>
-              <div className="text-2xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>×{h.qty}</div>
             </div>
             
             {/* Cigar Details */}
@@ -2830,27 +2829,23 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
                 <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{h.brand}</div>
                 <div className="text-base font-medium" style={{ color: '#1a120b' }}>{h.name}</div>
               </div>
-              <div className="flex flex-col items-end gap-1">
-                {h.boxNum === 'EXT' ? (
-                  <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>External</div>
-                ) : (
-                  <button
-                    onClick={() => group && onBoxClick && onBoxClick(group, h.boxNum)}
-                    className="px-3 py-1.5 text-sm font-medium"
-                    style={{
-                      background: '#6B1E1E',
-                      color: '#F5DEB3',
-                      borderRadius: '4px',
-                      fontFamily: 'tt-ricordi-allegria, Georgia, serif',
-                      border: 'none',
-                      cursor: group ? 'pointer' : 'default'
-                    }}
-                  >
-                    Box {h.boxNum}
-                  </button>
-                )}
-                {h.notes && <div className="text-sm italic text-right mt-1" style={{ color: 'rgba(26,18,11,0.7)', maxWidth: '150px' }}>{h.notes}</div>}
-              </div>
+              <div className="text-2xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>x{h.qty}</div>
+            </div>
+            
+            {/* Box and Notes Row */}
+            <div className="flex justify-between items-center mt-2">
+              {h.boxNum === 'EXT' ? (
+                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>External</div>
+              ) : (
+                <button
+                  onClick={() => group && onBoxClick && onBoxClick(group, h.boxNum)}
+                  className="px-3 py-1.5 text-sm font-medium"
+                  style={{ background: '#6B1E1E', color: '#F5DEB3', borderRadius: '4px', fontFamily: 'tt-ricordi-allegria, Georgia, serif', border: 'none', cursor: group ? 'pointer' : 'default' }}
+                >
+                  Box {h.boxNum}
+                </button>
+              )}
+              {h.notes && <div className="text-sm italic text-right" style={{ color: 'rgba(26,18,11,0.7)', maxWidth: '60%' }}>{h.notes}</div>}
             </div>
             
             {onEdit && (
