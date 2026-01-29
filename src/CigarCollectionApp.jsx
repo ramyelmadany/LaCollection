@@ -1,4 +1,5 @@
 
+
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { ukMarketPrices } from './uk_market_prices.js';
 // Google Sheets Configuration
@@ -1597,7 +1598,7 @@ const isFullBox = box.remaining === box.perBox;
           color: '#F5DEB3',
           borderRadius: '4px',
           fontFamily: 'tt-ricordi-allegria, Georgia, serif',
-          border: (b.remaining > 0 && b.remaining < b.perBox) ? '2px solid #F5DEB3' : 'none'
+          border: 'none'
         }}
       >
         Box {b.boxNum}
@@ -1611,6 +1612,8 @@ const isFullBox = box.remaining === box.perBox;
     </div>
   ))}
 </div>
+        
+        <div className="p-4 pb-6">
           
           {/* Box Status Row */}
 <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
@@ -1782,7 +1785,6 @@ const isFullBox = box.remaining === box.perBox;
           )}
         </div>
       </div>
-    </div>
       {/* Notes Modal */}
 {showNotesModal && (
   <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setShowNotesModal(false)} style={{ background: 'rgba(0,0,0,0.9)' }}>
@@ -1800,13 +1802,13 @@ const isFullBox = box.remaining === box.perBox;
         style={{ background: 'rgba(26,18,11,0.1)', border: '1px solid rgba(26,18,11,0.2)', color: '#1a120b', minHeight: '150px', resize: 'vertical' }}
         placeholder="Enter your note..."
       />
-      <button
-        onClick={async () => {
-          const success = await onEdit(box, { ...box, boxNotes: noteText });
-          if (success) {
-            setShowNotesModal(false);
-          }
-        }}
+     <button
+  onClick={async () => {
+    const success = await onEdit(box, { ...box, boxNotes: noteText });
+    if (success) {
+      setShowNotesModal(false);
+    }
+  }}
         className="w-full py-3 mt-4 text-lg font-bold rounded-lg"
         style={{ background: '#1a120b', color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}
       >
@@ -1816,21 +1818,21 @@ const isFullBox = box.remaining === box.perBox;
   </div>
 )}
       
-{/* Edit Modal */}
-{showEditModal && (
-  <EditBoxModal 
-    box={box} 
-    onClose={() => setShowEditModal(false)} 
-    onSave={async (updatedData) => {
-      const success = await onEdit(box, updatedData);
-      if (success) {
-        setShowEditModal(false);
-      }
-      return success;
-    }}
-    availableLocations={availableLocations}
-  />
-)}
+      {/* Edit Modal */}
+      {showEditModal && (
+        <EditBoxModal 
+          box={box} 
+          onClose={() => setShowEditModal(false)} 
+          onSave={async (updatedData) => {
+            const success = await onEdit(box, updatedData);
+            if (success) {
+              setShowEditModal(false);
+            }
+            return success;
+          }}
+          availableLocations={availableLocations}
+        />
+      )}
     </div>
     </>
   );
