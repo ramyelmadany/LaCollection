@@ -2827,6 +2827,10 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
         const actualIndex = history.length - 1 - i;
         const group = findGroupForBox(h.boxNum, h.brand, h.name);
         const cigarCount = Math.min(h.qty, 10); // Cap at 10 icons to avoid overflow
+        // Find the actual box to check if it's open
+        const actualBox = boxes.find(b => b.boxNum === h.boxNum);
+        const isBoxOpen = actualBox && actualBox.remaining > 0 && actualBox.remaining < actualBox.perBox;
+        const isBoxFull = actualBox && actualBox.remaining === actualBox.perBox;
         return (
           <div key={i} className="p-4 rounded-lg" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
             {/* Date Header with Cigar Icons */}
@@ -2842,27 +2846,34 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
               </div>
             </div>
             
-            {/* Cigar Details with Box */}
-            <div className="flex justify-between items-center">
-              <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{h.brand}</div>
+            {/* Brand */}
+            <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{h.brand}</div>
+            
+            {/* Cigar Name */}
+            <div className="text-base font-medium" style={{ color: '#1a120b' }}>{h.name}</div>
+            
+            {/* Box Indicator */}
+            <div className="flex justify-between items-center mt-2">
               {h.boxNum === 'EXT' ? (
                 <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>External</div>
               ) : (
                 <button
                   onClick={() => group && onBoxClick && onBoxClick(group, h.boxNum)}
                   className="px-3 py-1.5 text-sm font-medium"
-                  style={{ background: '#6B1E1E', color: '#F5DEB3', borderRadius: '4px', fontFamily: 'tt-ricordi-allegria, Georgia, serif', border: 'none', cursor: group ? 'pointer' : 'default' }}
+                  style={{ 
+                    background: '#6B1E1E', 
+                    color: '#F5DEB3', 
+                    borderRadius: '4px', 
+                    fontFamily: 'tt-ricordi-allegria, Georgia, serif', 
+                    border: isBoxOpen ? '2px solid #F5DEB3' : 'none', 
+                    cursor: group ? 'pointer' : 'default' 
+                  }}
                 >
                   Box {h.boxNum}
                 </button>
               )}
+              {h.notes && <div className="text-sm italic text-right" style={{ color: 'rgba(26,18,11,0.7)', maxWidth: '60%' }}>{h.notes}</div>}
             </div>
-            
-            {/* Cigar Name */}
-            <div className="text-base font-medium" style={{ color: '#1a120b' }}>{h.name}</div>
-            
-            {/* Notes */}
-            {h.notes && <div className="text-sm italic mt-2" style={{ color: 'rgba(26,18,11,0.7)' }}>{h.notes}</div>}
             
             {onEdit && (
               <div className="mt-3 pt-3 border-t" style={{ borderColor: '#6B1E1E' }}>
@@ -2882,7 +2893,6 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
   );
 };
 
-  
 // Prices View
 const PricesView = ({ boxes, currency, FX, fmtCurrency, fmtFromGBP }) => {
   // Get unique cigars from collection for comparison
