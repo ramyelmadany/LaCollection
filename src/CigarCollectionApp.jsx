@@ -1832,7 +1832,11 @@ const isFullBox = box.remaining === box.perBox;
           availableLocations={availableLocations}
         />
       )}
-      
+    </div>
+    </>
+  );
+};
+
 // Edit History Modal
 const EditHistoryModal = ({ entry, index, onClose, onSave, onDelete }) => {
   // Format date for input (needs YYYY-MM-DD format)
