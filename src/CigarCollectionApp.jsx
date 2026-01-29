@@ -1800,13 +1800,13 @@ const isFullBox = box.remaining === box.perBox;
         style={{ background: 'rgba(26,18,11,0.1)', border: '1px solid rgba(26,18,11,0.2)', color: '#1a120b', minHeight: '150px', resize: 'vertical' }}
         placeholder="Enter your note..."
       />
-     <button
-  onClick={async () => {
-    const success = await onEdit(box, { ...box, boxNotes: noteText });
-    if (success) {
-      setShowNotesModal(false);
-    }
-  }}
+      <button
+        onClick={async () => {
+          const success = await onEdit(box, { ...box, boxNotes: noteText });
+          if (success) {
+            setShowNotesModal(false);
+          }
+        }}
         className="w-full py-3 mt-4 text-lg font-bold rounded-lg"
         style={{ background: '#1a120b', color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}
       >
@@ -1816,21 +1816,22 @@ const isFullBox = box.remaining === box.perBox;
   </div>
 )}
       
-      {/* Edit Modal */}
-      {showEditModal && (
-        <EditBoxModal 
-          box={box} 
-          onClose={() => setShowEditModal(false)} 
-          onSave={async (updatedData) => {
-            const success = await onEdit(box, updatedData);
-            if (success) {
-              setShowEditModal(false);
-            }
-            return success;
-          }}
-          availableLocations={availableLocations}
-        />
-      )}
+{/* Edit Modal */}
+{showEditModal && (
+  <EditBoxModal 
+    box={box} 
+    onClose={() => setShowEditModal(false)} 
+    onSave={async (updatedData) => {
+      const success = await onEdit(box, updatedData);
+      if (success) {
+        setShowEditModal(false);
+      }
+      return success;
+    }}
+    availableLocations={availableLocations}
+  />
+)}
+    </div>
     </>
   );
 };
