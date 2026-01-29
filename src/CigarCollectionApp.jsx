@@ -1782,6 +1782,7 @@ const isFullBox = box.remaining === box.perBox;
           )}
         </div>
       </div>
+    </div>
       {/* Notes Modal */}
 {showNotesModal && (
   <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setShowNotesModal(false)} style={{ background: 'rgba(0,0,0,0.9)' }}>
@@ -1830,7 +1831,6 @@ const isFullBox = box.remaining === box.perBox;
           availableLocations={availableLocations}
         />
       )}
-    </div>
     </>
   );
 };
