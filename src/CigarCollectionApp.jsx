@@ -1613,13 +1613,17 @@ const isFullBox = box.remaining === box.perBox;
     <div key={b.id} className="flex flex-col items-center gap-1.5">
       <button 
         onClick={() => setSelectedIdx(boxes.findIndex(box => box.id === b.id))} 
-        className="px-4 py-2 text-base whitespace-nowrap"
+        className="flex items-center justify-center"
         style={{
+          width: '70px',
+          height: '40px',
           background: '#6B1E1E',
           color: '#F5DEB3',
           borderRadius: '4px',
           fontFamily: 'tt-ricordi-allegria, Georgia, serif',
-          border: b.remaining > 0 && b.remaining < b.perBox ? '3px solid #F5DEB3' : '3px solid transparent'
+          fontSize: '14px',
+          border: b.remaining > 0 && b.remaining < b.perBox ? '3px solid #F5DEB3' : '3px solid transparent',
+          boxSizing: 'border-box'
         }}
       >
         Box {b.boxNum}
