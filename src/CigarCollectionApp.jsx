@@ -1615,8 +1615,8 @@ const isFullBox = box.remaining === box.perBox;
         onClick={() => setSelectedIdx(boxes.findIndex(box => box.id === b.id))} 
         className="flex items-center justify-center"
         style={{
-          width: '70px',
-          height: '40px',
+          width: '72px',
+          height: '32px',
           background: '#6B1E1E',
           color: '#F5DEB3',
           borderRadius: '4px',
