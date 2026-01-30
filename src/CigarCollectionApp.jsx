@@ -1262,7 +1262,9 @@ const OnwardsCard = ({ item, fmtCurrency }) => {
         {(isSold || isSoldAtCost || isSoldAtLoss) && (
           <div className="flex justify-between items-center">
             <span className="text-sm" style={{ color: 'rgba(26,18,11,0.5)' }}>Sold</span>
-            <span className="text-sm font-medium" style={{ color: '#1a120b' }}>{item.saleDate ? fmt.date(item.saleDate) : '—'} • {fmtCurrency(item.salePriceUSD)}</span>
+            <span className="text-sm font-medium" style={{ color: '#1a120b' }}>
+              {item.saleDate ? `${fmt.date(item.saleDate)} • ` : ''}{fmtCurrency(item.salePriceUSD)}
+            </span>
           </div>
         )}
         
