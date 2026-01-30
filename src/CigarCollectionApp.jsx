@@ -4468,7 +4468,136 @@ if (onwardsRows) {
 {view === 'history' && <HistoryView history={history} boxes={boxes} onDelete={isSignedIn ? handleDeleteHistory : () => setShowSignInPrompt(true)} onEdit={isSignedIn ? handleEditHistory : () => setShowSignInPrompt(true)} onBoxClick={(group, boxNum) => { const boxIndex = group.boxes.findIndex(b => b.boxNum === boxNum); setSelectedGroup({ ...group, initialBoxIndex: boxIndex >= 0 ? boxIndex : 0 }); }} />}      
       {/* Prices View */}
       {view === 'prices' && <PricesView boxes={boxes} currency={currency} FX={FX} fmtCurrency={fmtCurrency} fmtFromGBP={fmtFromGBP} />}
+      {/* Settings View */}
+{view === 'settings' && (
+  <div className="px-4 pb-8 pt-4">
+    <div className="mb-6">
+      <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Settings</h2>
       
+      {/* Base Currency */}
+      <div className="rounded-lg p-4 mb-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+        <div className="flex justify-between items-center">
+          <div>
+            <div className="text-base font-medium" style={{ color: '#1a120b' }}>Base Currency</div>
+            <div className="text-sm" style={{ color: 'rgba(26,18,11,0.5)' }}>Display prices in this currency</div>
+          </div>
+          <select 
+            value={baseCurrency} 
+            onChange={async (e) => {
+              const newCurrency = e.target.value;
+              setBaseCurrency(newCurrency);
+              localStorage.setItem('baseCurrency', newCurrency);
+              if (isSignedIn && accessToken) {
+                await saveSetting('baseCurrency', newCurrency, accessToken);
+              }
+              // Refresh FX rates for new base
+              const fxData = await fetchFxRates(newCurrency);
+              if (fxData) {
+                setFxRates(fxData.rates);
+                setFxLastUpdated(fxData.date);
+              }
+            }}
+            className="px-3 py-2 rounded-lg text-base font-medium"
+            style={{ background: '#1a120b', color: '#F5DEB3', border: 'none' }}
+          >
+            {CURRENCIES.map(c => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+      
+      {/* Show Cigar Count */}
+      <div className="rounded-lg p-4 mb-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+        <div className="flex justify-between items-center">
+          <div>
+            <div className="text-base font-medium" style={{ color: '#1a120b' }}>Show Cigar Count</div>
+            <div className="text-sm" style={{ color: 'rgba(26,18,11,0.5)' }}>Display count on collection cards</div>
+          </div>
+          <button
+            onClick={async () => {
+              const newValue = !showCigarCount;
+              setShowCigarCount(newValue);
+              localStorage.setItem('showCigarCount', JSON.stringify(newValue));
+              if (isSignedIn && accessToken) {
+                await saveSetting('showCigarCount', newValue, accessToken);
+              }
+            }}
+            className="px-4 py-2 rounded-lg text-base font-medium"
+            style={{ 
+              background: showCigarCount ? '#1a5a1a' : '#1a120b', 
+              color: showCigarCount ? '#90EE90' : '#888' 
+            }}
+          >
+            {showCigarCount ? 'On' : 'Off'}
+          </button>
+        </div>
+      </div>
+      
+      {/* FX Rates Info */}
+      <div className="rounded-lg p-4 mb-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+        <div className="text-base font-medium mb-2" style={{ color: '#1a120b' }}>Exchange Rates</div>
+        <div className="text-sm" style={{ color: 'rgba(26,18,11,0.5)' }}>
+          Last updated: {fxLastUpdated || 'Unknown'}
+        </div>
+        <div className="mt-2 space-y-1">
+          {Object.entries(fxRates).filter(([c]) => c !== baseCurrency).slice(0, 5).map(([currency, rate]) => (
+            <div key={currency} className="flex justify-between text-sm">
+              <span style={{ color: 'rgba(26,18,11,0.7)' }}>1 {baseCurrency}</span>
+              <span style={{ color: '#1a120b' }}>{rate.toFixed(4)} {currency}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+    
+    {/* Account Section */}
+    <div className="mb-6">
+      <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Account</h2>
+      
+      <div className="rounded-lg p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+        <div className="flex justify-between items-center">
+          <div>
+            <div className="text-base font-medium" style={{ color: '#1a120b' }}>
+              {isSignedIn ? 'Signed In' : 'Not Signed In'}
+            </div>
+            <div className="text-sm" style={{ color: 'rgba(26,18,11,0.5)' }}>
+              {isSignedIn ? 'Syncing with Google Sheets' : 'Sign in to sync data'}
+            </div>
+          </div>
+          {isSignedIn ? (
+            <button
+              onClick={handleGoogleSignOut}
+              className="px-4 py-2 rounded-lg text-base font-medium"
+              style={{ background: '#6B1E1E', color: '#F5DEB3' }}
+            >
+              Sign Out
+            </button>
+          ) : (
+            <button
+              onClick={handleGoogleSignIn}
+              className="px-4 py-2 rounded-lg text-base font-medium"
+              style={{ background: '#1a120b', color: '#F5DEB3' }}
+            >
+              Sign In
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+    
+    {/* App Info */}
+    <div className="mb-6">
+      <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>About</h2>
+      
+      <div className="rounded-lg p-4 text-center" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+        <div className="text-lg font-bold mb-1" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>La Colección</div>
+        <div className="text-sm" style={{ color: 'rgba(26,18,11,0.5)' }}>by Ramy El-Madany</div>
+        <div className="text-xs mt-2" style={{ color: 'rgba(26,18,11,0.4)' }}>v1.0.0</div>
+      </div>
+    </div>
+  </div>
+)}
       {/* Modals */}
       {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} initialBoxIndex={selectedGroup.initialBoxIndex || 0} onClose={() => setSelectedGroup(null)} fmtCurrency={fmtCurrency} fmtCurrencyWithOriginal={fmtCurrencyWithOriginal} fmtFromGBP={fmtFromGBP} baseCurrency={baseCurrency} fxRates={fxRates} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { await refreshData(); const remainingBoxes = selectedGroup.boxes.filter(b => b.boxNum !== box.boxNum); if (remainingBoxes.length > 0) { setSelectedGroup({ ...selectedGroup, boxes: remainingBoxes }); } else { setSelectedGroup(null); } } return success; }} onEdit={async (box, updatedData) => { if (!googleAccessToken) return false; const success = await updateBoxInSheet(box.boxNum, updatedData, googleAccessToken); if (success) { const updatedGroupBoxes = selectedGroup.boxes.map(b => b.boxNum === box.boxNum ? { ...b, ...updatedData } : b); setSelectedGroup({ ...selectedGroup, boxes: updatedGroupBoxes }); refreshData(); } return success; }} availableLocations={availableLocations} />}
       {showLogModal && <SmokeLogModal boxes={boxes} onClose={() => setShowLogModal(false)} onLog={handleLog} />}
