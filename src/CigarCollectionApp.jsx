@@ -4403,12 +4403,9 @@ setBoxes(boxData);
   index={editingHistory.index}
   onClose={() => setEditingHistory(null)} 
   onSave={async (index, oldEntry, newEntry) => {
-    // Update local state first for instant UI feedback
+    // Update local state and close modal immediately for instant UI feedback
     setHistory(prev => prev.map((h, i) => i === index ? { ...newEntry, timestamp: Date.now() } : h));
-    
-    // Then update sheet (delete old entry and add new one)
-    await deleteHistoryEntry(oldEntry, accessToken);
-    await addHistoryEntry(newEntry, accessToken);
+    setEditingHistory(null);
     
     // If collection cigar and qty changed, update box counts
     if (oldEntry.boxNum !== 'EXT' && oldEntry.source !== 'external') {
@@ -4424,13 +4421,15 @@ setBoxes(boxData);
               : b
           ));
           if (isSignedIn && accessToken) {
-            await updateBoxConsumed({ ...box, remaining: newRemaining, consumed: newConsumed });
+            updateBoxConsumed({ ...box, remaining: newRemaining, consumed: newConsumed });
           }
         }
       }
     }
     
-    setEditingHistory(null);
+    // Update sheet in background (delete old entry and add new one)
+    deleteHistoryEntry(oldEntry, accessToken);
+    addHistoryEntry(newEntry, accessToken);
   }}
   onDelete={async (index, entry) => {
     await handleDeleteHistory(index, entry);
