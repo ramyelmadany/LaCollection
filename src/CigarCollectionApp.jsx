@@ -1599,18 +1599,27 @@ const isFullBox = box.remaining === box.perBox;
         </div>
         
 {/* Box Selector Buttons */}
-<div className="px-4 pt-3 pb-2 flex gap-2 overflow-x-auto items-start" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-  {boxes.map((b, i) => (
+<div className="px-4 pt-3 pb-2 flex gap-2 overflow-x-auto items-center" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+  {[...boxes].sort((a, b) => {
+    const dateA = a.datePurchased ? new Date(a.datePurchased).getTime() : 0;
+    const dateB = b.datePurchased ? new Date(b.datePurchased).getTime() : 0;
+    if (dateA !== dateB) return dateA - dateB;
+    const aIsOpen = a.remaining > 0 && a.remaining < a.perBox;
+    const bIsOpen = b.remaining > 0 && b.remaining < b.perBox;
+    if (aIsOpen && !bIsOpen) return 1;
+    if (!aIsOpen && bIsOpen) return -1;
+    return 0;
+  }).map((b) => (
     <div key={b.id} className="flex flex-col items-center gap-1.5">
       <button 
-        onClick={() => setSelectedIdx(i)} 
+        onClick={() => setSelectedIdx(boxes.findIndex(box => box.id === b.id))} 
         className="px-4 py-2 text-base whitespace-nowrap"
         style={{
           background: '#6B1E1E',
           color: '#F5DEB3',
           borderRadius: '4px',
           fontFamily: 'tt-ricordi-allegria, Georgia, serif',
-          border: b.remaining > 0 && b.remaining < b.perBox ? '3px solid #F5DEB3' : 'none'
+          border: b.remaining > 0 && b.remaining < b.perBox ? '3px solid #F5DEB3' : '3px solid transparent'
         }}
       >
         Box {b.boxNum}
@@ -1618,7 +1627,7 @@ const isFullBox = box.remaining === box.perBox;
       <div 
         className="w-2 h-2 rounded-full"
         style={{ 
-          background: selectedIdx === i ? '#1a120b' : 'transparent'
+          background: boxes.findIndex(box => box.id === b.id) === selectedIdx ? '#1a120b' : 'transparent'
         }}
       />
     </div>
