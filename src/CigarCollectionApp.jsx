@@ -1524,9 +1524,10 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
                 type="text" 
                 value={code} 
                 onChange={e => setCode(e.target.value.toUpperCase())} 
-                maxLength={3} 
+                placeholder="e.g. GES MAR 24"
+                autoCapitalize="characters"
                 className="w-full px-3 py-2 rounded-lg text-base font-mono" 
-                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+                style={{ background: '#252525', border: '1px solid #333', color: '#fff', textTransform: 'uppercase' }} 
               />
             </div>
             <div style={{ overflow: 'hidden' }}>
@@ -2873,7 +2874,7 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-xs text-gray-500 block mb-2">Factory Code</label>
-              <input type="text" value={code} onChange={e => setCode(e.target.value.toUpperCase())} placeholder="e.g. GES MAR 24" className="w-full px-3 py-2 rounded-lg text-base font-mono" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+              <input type="text" value={code} onChange={e => setCode(e.target.value.toUpperCase())} placeholder="e.g. GES MAR 24" autoCapitalize="characters" className="w-full px-3 py-2 rounded-lg text-base font-mono" style={{ background: '#252525', border: '1px solid #333', color: '#fff', textTransform: 'uppercase' }} />
             </div>
             <div style={{ overflow: 'hidden' }}>
               <label className="text-xs text-gray-500 block mb-2">Release Date</label>
