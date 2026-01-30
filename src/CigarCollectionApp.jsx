@@ -1237,49 +1237,38 @@ const OnwardsCard = ({ item, fmtCurrency }) => {
   
   return (
     <div className="p-4 rounded-lg" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
-      {/* Brand and Name Header with Box Details */}
+      {/* Header: Brand/Name left, Status badge right */}
       <div className="flex justify-between items-start mb-3 pb-3 border-b" style={{ borderColor: '#6B1E1E' }}>
         <div>
           <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{item.brand}</div>
           <div className="text-base font-medium" style={{ color: '#1a120b' }}>{item.name}</div>
+          <div className="text-sm mt-1" style={{ color: 'rgba(26,18,11,0.5)' }}>{item.qty} box of {item.perBox}</div>
         </div>
-        <div className="text-sm font-medium text-right" style={{ color: 'rgba(26,18,11,0.6)' }}>
-          {item.qty} box of {item.perBox}
+        <div 
+          className="px-3 py-1.5 rounded-full text-sm font-bold"
+          style={getStatusStyle()}
+        >
+          {getStatusText()}
         </div>
       </div>
       
-      {/* Sold To (if present) */}
-      {item.soldTo && (
-        <div className="text-sm italic mb-3" style={{ color: 'rgba(26,18,11,0.7)' }}>{item.soldTo}</div>
-      )}
-      
-      {/* Dates on left, Prices on right */}
-      <div className="flex justify-between">
-        {/* Left side - Dates */}
-        <div className="space-y-1">
-          <div className="text-sm" style={{ color: 'rgba(26,18,11,0.7)' }}>
-            <span style={{ color: 'rgba(26,18,11,0.5)' }}>Purchased:</span> {fmt.date(item.datePurchased)}
-          </div>
-          {(isSold || isSoldAtCost || isSoldAtLoss) && (
-            <div className="text-sm" style={{ color: 'rgba(26,18,11,0.7)' }}>
-              <span style={{ color: 'rgba(26,18,11,0.5)' }}>Sold:</span> {item.saleDate ? fmt.date(item.saleDate) : '—'}
-            </div>
-          )}
+      {/* Transaction details */}
+      <div className="space-y-2">
+        <div className="flex justify-between items-center">
+          <span className="text-sm" style={{ color: 'rgba(26,18,11,0.5)' }}>Purchased</span>
+          <span className="text-sm font-medium" style={{ color: '#1a120b' }}>{fmt.date(item.datePurchased)} • {fmtCurrency(item.costUSD)}</span>
         </div>
         
-        {/* Right side - Prices stacked */}
-        <div className="text-right space-y-1">
-          <div className="text-sm font-medium" style={{ color: '#1a120b' }}>{fmtCurrency(item.costUSD)}</div>
-          {item.salePriceUSD > 0 && (
-            <div className="text-sm font-medium" style={{ color: '#1a120b' }}>{fmtCurrency(item.salePriceUSD)}</div>
-          )}
-          <div 
-            className="inline-block px-3 py-1 rounded-full text-sm font-semibold mt-1"
-            style={getStatusStyle()}
-          >
-            {getStatusText()}
+        {(isSold || isSoldAtCost || isSoldAtLoss) && (
+          <div className="flex justify-between items-center">
+            <span className="text-sm" style={{ color: 'rgba(26,18,11,0.5)' }}>Sold</span>
+            <span className="text-sm font-medium" style={{ color: '#1a120b' }}>{item.saleDate ? fmt.date(item.saleDate) : '—'} • {fmtCurrency(item.salePriceUSD)}</span>
           </div>
-        </div>
+        )}
+        
+        {item.soldTo && (
+          <div className="text-sm italic pt-1" style={{ color: 'rgba(26,18,11,0.6)' }}>{item.soldTo}</div>
+        )}
       </div>
     </div>
   );
