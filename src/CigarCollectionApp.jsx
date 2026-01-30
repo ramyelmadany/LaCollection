@@ -7,7 +7,7 @@ const GOOGLE_SHEETS_CONFIG = {
   clientId: '945855470299-l1is4q9t6lb1ak8v5n0871hsk6kt8ihl.apps.googleusercontent.com',
   sheetId: '10A_FMj8eotx-xlzAlCNFxjOr3xEOuO4p5GxAZjHC86A',
   collectionRange: 'A:T',
-  onwardsRange: 'Onwards!A:L',
+  onwardsRange: 'Onwards!A:M',
   onwardsSheetId: 1785734797,
   historyRange: 'History!A:F',
   historySheetId: 563552694,
@@ -205,31 +205,75 @@ const rowToBox = (row, index) => {
   };
 };
 
-// Transform onwards row to onwards object
-const rowToOnwards = (row, index) => {
-  // Columns: Date of Purchase | Received | Brand | Name | Quantity Purchased | Number / Box | Price / Box | Price / Cigar | Sale Price (may be GBP) | Sale Price Base (USD) | Profit | Sold To/By
-  const costUSD = parseCurrency(row[6]);
-  const salePriceBase = parseCurrency(row[9]); // USD sale price
-  const salePriceOriginal = parseCurrency(row[8]); // May be GBP
-  const profit = parseCurrency(row[10]);
+// Onwards Card
+const OnwardsCard = ({ item, fmtCurrency }) => {
+  const isSold = item.type === 'sold';
+  const isSoldAtCost = item.type === 'sold-at-cost';
+  const isSoldAtLoss = item.type === 'sold-at-loss';
+  const isPending = item.type === 'pending';
   
-  // Use the USD base price if available, otherwise fall back to original
-  const salePrice = salePriceBase || salePriceOriginal;
-  
-  return {
-    id: index + 100,
-    datePurchased: parseDate(row[0]),
-    received: row[1] === 'TRUE',
-    brand: row[2] || '',
-    name: row[3] || '',
-    qty: parseInt(row[4]) || 1,
-    perBox: parseInt(row[5]) || 0,
-    costUSD: costUSD,
-    salePriceUSD: salePrice || null,
-    profitUSD: profit || 0,
-    soldTo: row[11] || '',
-    type: salePrice > 0 ? (profit > 0 ? 'sold' : profit < 0 ? 'sold-at-loss' : 'sold-at-cost') : 'pending',
+  const getStatusStyle = () => {
+    if (isSold) return { background: '#2d5a3d', color: '#90EE90' };
+    if (isSoldAtLoss) return { background: '#5a2d2d', color: '#ff9090' };
+    if (isSoldAtCost) return { background: '#4a4a3a', color: '#d4d4a0' };
+    return { background: '#5a4a2d', color: '#ffd700' };
   };
+  
+  const getStatusText = () => {
+    if (isSold) return `+${fmtCurrency(item.profitUSD)}`;
+    if (isSoldAtLoss) return fmtCurrency(item.profitUSD);
+    if (isSoldAtCost) return 'At cost';
+    return 'Pending';
+  };
+  
+  return (
+    <div className="p-4 rounded-lg" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+      {/* Brand and Name Header with Box Details */}
+      <div className="flex justify-between items-start mb-3 pb-3 border-b" style={{ borderColor: '#6B1E1E' }}>
+        <div>
+          <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{item.brand}</div>
+          <div className="text-base font-medium" style={{ color: '#1a120b' }}>{item.name}</div>
+        </div>
+        <div className="text-sm font-medium text-right" style={{ color: 'rgba(26,18,11,0.6)' }}>
+          {item.qty} box of {item.perBox}
+        </div>
+      </div>
+      
+      {/* Sold To (if present) */}
+      {item.soldTo && (
+        <div className="text-sm italic mb-3" style={{ color: 'rgba(26,18,11,0.7)' }}>{item.soldTo}</div>
+      )}
+      
+      {/* Dates on left, Prices on right */}
+      <div className="flex justify-between">
+        {/* Left side - Dates */}
+        <div className="space-y-1">
+          <div className="text-sm" style={{ color: 'rgba(26,18,11,0.7)' }}>
+            <span style={{ color: 'rgba(26,18,11,0.5)' }}>Purchased:</span> {fmt.date(item.datePurchased)}
+          </div>
+          {(isSold || isSoldAtCost || isSoldAtLoss) && (
+            <div className="text-sm" style={{ color: 'rgba(26,18,11,0.7)' }}>
+              <span style={{ color: 'rgba(26,18,11,0.5)' }}>Sold:</span> {item.saleDate ? fmt.date(item.saleDate) : '—'}
+            </div>
+          )}
+        </div>
+        
+        {/* Right side - Prices stacked */}
+        <div className="text-right space-y-1">
+          <div className="text-sm font-medium" style={{ color: '#1a120b' }}>{fmtCurrency(item.costUSD)}</div>
+          {item.salePriceUSD > 0 && (
+            <div className="text-sm font-medium" style={{ color: '#1a120b' }}>{fmtCurrency(item.salePriceUSD)}</div>
+          )}
+          <div 
+            className="inline-block px-3 py-1 rounded-full text-sm font-semibold mt-1"
+            style={getStatusStyle()}
+          >
+            {getStatusText()}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 // Transform box object to sheet row
