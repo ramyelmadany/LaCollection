@@ -703,18 +703,25 @@ const updateHistoryEntry = async (oldEntry, newEntry, accessToken) => {
     const data = await fetchResponse.json();
     const rows = data.values || [];
     
+    // Helper to normalize dates for comparison
+    const normalizeDate = (dateStr) => {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toISOString().split('T')[0]; // YYYY-MM-DD
+    };
+    
     // Find the row (match date, boxNum, brand, name, qty)
     let rowIndex = -1;
-    console.log('Looking for oldEntry:', oldEntry);
+    const oldDateNorm = normalizeDate(oldEntry.date);
     for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header
-      console.log(`Row ${i}: date="${rows[i][0]}" vs "${oldEntry.date}" match=${rows[i][0] === oldEntry.date}`);
-      if (rows[i][0] === oldEntry.date && 
+      const rowDateNorm = normalizeDate(rows[i][0]);
+      if (rowDateNorm === oldDateNorm && 
           String(rows[i][1]) === String(oldEntry.boxNum) && 
           rows[i][2] === oldEntry.brand && 
           rows[i][3] === oldEntry.name && 
           String(rows[i][4]) === String(oldEntry.qty)) {
         rowIndex = i + 1; // +1 because sheets are 1-indexed
-        console.log('Found match at rowIndex:', rowIndex);
         break;
       }
     }
