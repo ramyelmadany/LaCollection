@@ -1598,7 +1598,7 @@ const isFullBox = box.remaining === box.perBox;
           color: '#F5DEB3',
           borderRadius: '4px',
           fontFamily: 'tt-ricordi-allegria, Georgia, serif',
-          border: b.remaining > 0 && b.remaining < b.perBox ? '2px solid #F5DEB3' : 'none'
+          border: b.remaining > 0 && b.remaining < b.perBox ? '3px solid #F5DEB3' : 'none'
         }}
       >
         Box {b.boxNum}
