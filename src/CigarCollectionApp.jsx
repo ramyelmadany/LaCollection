@@ -3039,48 +3039,75 @@ const PricesView = ({ boxes, currency, FX, fmtCurrency, fmtFromGBP }) => {
   }, [boxes]);
   
   return (
-    <div className="px-4">
+    <div className="px-4 pt-4">
       {/* Price metadata */}
-      <div className="rounded-lg p-3 mb-4" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
+      <div className="rounded-lg p-4 mb-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
         <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium" style={{ color: '#d4af37' }}>UK Market Prices</span>
-          <span className="text-xs text-gray-500">Updated: {PRICE_META.lastUpdated}</span>
+          <span className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>UK Market Prices</span>
+          <span className="text-xs font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>{PRICE_META.lastUpdated}</span>
         </div>
-        <div className="text-xs text-gray-500">Sources: {PRICE_META.sources.join(', ')}</div>
+        <div className="text-sm" style={{ color: 'rgba(26,18,11,0.6)' }}>Sources: {PRICE_META.sources.join(', ')}</div>
       </div>
       
       {/* Price list by brand */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         {Object.entries(ukMarket).map(([brand, cigars]) => {
           const s = brandStyles[brand] || brandStyles['Cohiba'];
           return (
-            <div key={brand} className="rounded-lg overflow-hidden" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-              <div className="px-3 py-2 flex items-center gap-2" style={{ background: '#252525', borderBottom: `2px solid ${s.accent}` }}>
-                <span className="text-2xl font-semibold tracking-wider" style={{ color: s.accent }}>{brand}</span>
+            <div key={brand} className="rounded-lg overflow-hidden" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+              {/* Brand Header */}
+              <div className="px-4 py-3" style={{ borderBottom: '2px solid #6B1E1E' }}>
+                <span className="text-xl font-bold tracking-wider" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{brand}</span>
               </div>
-              <div className="divide-y divide-gray-800">
-                {Object.entries(cigars).map(([name, data]) => {
+              
+              {/* Cigars List */}
+              <div>
+                {Object.entries(cigars).map(([name, data], idx, arr) => {
                   const inCollection = collectionCigars.find(c => c.brand === brand && c.name === name);
                   const marketUSD = FX.toUSD(data.gbp);
                   const perCigarUSD = marketUSD / data.perBox;
                   const savings = inCollection ? marketUSD - inCollection.yourCostUSD : null;
                   
                   return (
-                    <div key={name} className="p-3">
-                      <div className="flex justify-between items-start mb-1">
+                    <div 
+                      key={name} 
+                      className="px-4 py-3"
+                      style={{ borderBottom: idx < arr.length - 1 ? '1px solid rgba(26,18,11,0.15)' : 'none' }}
+                    >
+                      <div className="flex justify-between items-start">
                         <div>
-                          <div className="text-sm text-gray-300">{name}</div>
-                          <div className="text-xs text-gray-500">Box of {data.perBox} | {data.source}</div>
+                          <div className="text-base font-medium" style={{ color: '#1a120b' }}>{name}</div>
+                          <div className="text-sm mt-0.5" style={{ color: 'rgba(26,18,11,0.5)' }}>
+                            Box of {data.perBox} • {data.source}
+                          </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-sm font-medium" style={{ color: '#d4af37' }}>{fmtFromGBP(data.gbp)}</div>
-                          <div className="text-xs text-gray-500">{currency === 'GBP' ? fmt.usd(marketUSD) : fmt.gbp(data.gbp)}</div>
+                          <div className="text-base font-bold" style={{ color: '#1a120b' }}>{fmtFromGBP(data.gbp)}</div>
+                          <div className="text-sm" style={{ color: 'rgba(26,18,11,0.5)' }}>
+                            {currency === 'GBP' ? fmt.usd(marketUSD) : fmt.gbp(data.gbp)}
+                          </div>
                         </div>
                       </div>
-                      <div className="flex justify-between text-xs mt-2">
-                        <span className="text-gray-600">Per cigar: {fmtCurrency(perCigarUSD)}</span>
+                      
+                      <div className="flex justify-between items-center mt-2">
+                        <span className="text-sm" style={{ color: 'rgba(26,18,11,0.6)' }}>
+                          Per cigar: {fmtCurrency(perCigarUSD)}
+                        </span>
                         {savings !== null && savings > 0 && (
-                          <span className="text-green-500">You saved {fmtCurrency(savings)}</span>
+                          <span 
+                            className="text-sm font-semibold px-2 py-0.5 rounded-full"
+                            style={{ background: '#2d5a3d', color: '#90EE90' }}
+                          >
+                            Saved {fmtCurrency(savings)}
+                          </span>
+                        )}
+                        {inCollection && (savings === null || savings <= 0) && (
+                          <span 
+                            className="text-sm font-medium px-2 py-0.5 rounded-full"
+                            style={{ background: 'rgba(26,18,11,0.1)', color: 'rgba(26,18,11,0.5)' }}
+                          >
+                            In collection
+                          </span>
                         )}
                       </div>
                     </div>
@@ -3092,11 +3119,10 @@ const PricesView = ({ boxes, currency, FX, fmtCurrency, fmtFromGBP }) => {
         })}
       </div>
       
-      {/* Missing prices note */}
-      <div className="mt-4 rounded-lg p-3 text-center" style={{ background: '#252525', border: '1px solid #333' }}>
-        <div className="text-xs text-gray-500">
-          Prices scraped weekly from UK retailers.
-          <br />Run the Python scraper to update.
+      {/* Footer note */}
+      <div className="mt-4 mb-4 rounded-lg p-4 text-center" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+        <div className="text-sm" style={{ color: 'rgba(26,18,11,0.6)' }}>
+          Prices updated weekly from UK retailers
         </div>
       </div>
     </div>
