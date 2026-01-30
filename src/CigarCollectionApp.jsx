@@ -4533,22 +4533,6 @@ if (onwardsRows) {
           </button>
         </div>
       </div>
-      
-      {/* FX Rates Info */}
-      <div className="rounded-lg p-4 mb-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
-        <div className="text-base font-medium mb-2" style={{ color: '#1a120b' }}>Exchange Rates</div>
-        <div className="text-sm" style={{ color: 'rgba(26,18,11,0.5)' }}>
-          Last updated: {fxLastUpdated || 'Unknown'}
-        </div>
-        <div className="mt-2 space-y-1">
-          {Object.entries(fxRates).filter(([c]) => c !== baseCurrency).slice(0, 5).map(([currency, rate]) => (
-            <div key={currency} className="flex justify-between text-sm">
-              <span style={{ color: 'rgba(26,18,11,0.7)' }}>1 {baseCurrency}</span>
-              <span style={{ color: '#1a120b' }}>{rate.toFixed(4)} {currency}</span>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
     
     {/* Account Section */}
