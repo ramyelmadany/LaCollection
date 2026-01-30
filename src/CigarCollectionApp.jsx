@@ -687,6 +687,65 @@ const addHistoryEntry = async (entry, accessToken) => {
   }
 };
 
+// Update a history entry in place
+const updateHistoryEntry = async (oldEntry, newEntry, accessToken) => {
+  const { sheetId, historyRange, historySheetId } = GOOGLE_SHEETS_CONFIG;
+  
+  try {
+    // Fetch all history to find the matching row
+    const fetchUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${historyRange}`;
+    const fetchResponse = await fetch(fetchUrl, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
+    if (!fetchResponse.ok) throw new Error('Failed to fetch history data');
+    const data = await fetchResponse.json();
+    const rows = data.values || [];
+    
+    // Find the row (match date, boxNum, brand, name, qty)
+    let rowIndex = -1;
+    for (let i = 1; i < rows.length; i++) { // Start at 1 to skip header
+      if (rows[i][0] === oldEntry.date && 
+          String(rows[i][1]) === String(oldEntry.boxNum) && 
+          rows[i][2] === oldEntry.brand && 
+          rows[i][3] === oldEntry.name && 
+          String(rows[i][4]) === String(oldEntry.qty)) {
+        rowIndex = i + 1; // +1 because sheets are 1-indexed
+        break;
+      }
+    }
+    
+    if (rowIndex === -1) {
+      console.error('History entry not found for update');
+      return false;
+    }
+    
+    // Update the row in place
+    const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'Smoking History'!A${rowIndex}:F${rowIndex}?valueInputOption=USER_ENTERED`;
+    const response = await fetch(updateUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        values: [[newEntry.date, newEntry.boxNum, newEntry.brand, newEntry.name, newEntry.qty, newEntry.notes || '']]
+      }),
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error?.message || 'Failed to update history entry');
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error updating history entry:', error);
+    return false;
+  }
+};
+
 // Delete a history entry by finding and removing the row
 const deleteHistoryEntry = async (entry, accessToken) => {
   const { sheetId, historyRange, historySheetId } = GOOGLE_SHEETS_CONFIG;
@@ -4427,9 +4486,8 @@ setBoxes(boxData);
       }
     }
     
-    // Update sheet in background (delete old entry and add new one)
-    deleteHistoryEntry(oldEntry, accessToken);
-    addHistoryEntry(newEntry, accessToken);
+    // Update sheet in place
+    await updateHistoryEntry(oldEntry, newEntry, accessToken);
   }}
   onDelete={async (index, entry) => {
     await handleDeleteHistory(index, entry);
