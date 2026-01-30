@@ -1230,9 +1230,20 @@ const OnwardsCard = ({ item, fmtCurrency }) => {
   
   return (
     <div className="p-4 rounded-lg" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
-      {/* Date Header with Status */}
-      <div className="flex justify-between items-center mb-3 pb-3 border-b" style={{ borderColor: '#6B1E1E' }}>
-        <div className="text-xl font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{fmt.date(item.datePurchased)}</div>
+      {/* Brand and Name Header */}
+      <div className="flex justify-between items-start mb-3 pb-3 border-b" style={{ borderColor: '#6B1E1E' }}>
+        <div>
+          <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{item.brand}</div>
+          <div className="text-base font-medium" style={{ color: '#1a120b' }}>{item.name}</div>
+        </div>
+        <div className="text-sm font-medium text-right" style={{ color: 'rgba(26,18,11,0.5)' }}>
+          {item.qty} box • {item.perBox}/box
+        </div>
+      </div>
+      
+      {/* Date and Status Row */}
+      <div className="flex justify-between items-center">
+        <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.7)' }}>{fmt.date(item.datePurchased)}</div>
         <div 
           className="px-3 py-1 rounded-full text-sm font-semibold"
           style={getStatusStyle()}
@@ -1241,31 +1252,17 @@ const OnwardsCard = ({ item, fmtCurrency }) => {
         </div>
       </div>
       
-      {/* Brand */}
-      <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{item.brand}</div>
-      
-      {/* Cigar Name */}
-      <div className="text-base font-medium" style={{ color: '#1a120b' }}>{item.name}</div>
-      
-      {/* Details Row */}
+      {/* Cost and Sale Row */}
       <div className="flex justify-between items-center mt-2">
-        <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>
-          {item.qty} box • {item.perBox}/box
-        </div>
         <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.7)' }}>
           Cost: {fmtCurrency(item.costUSD)}
         </div>
-      </div>
-      
-      {/* Sale Price Row (if sold) */}
-      {item.salePriceUSD && (
-        <div className="flex justify-between items-center mt-1">
-          <div></div>
+        {item.salePriceUSD && (
           <div className="text-sm font-medium" style={{ color: '#1a120b' }}>
             Sold: {fmtCurrency(item.salePriceUSD)}
           </div>
-        </div>
-      )}
+        )}
+      </div>
       
       {/* Sold To (if present) */}
       {item.soldTo && (
@@ -3191,16 +3188,17 @@ setBoxes(boxData);
             }
             
             const onwardsRows = await fetchOnwardsData(response.access_token);
-            if (onwardsRows) {
-              const onwardsData = onwardsRows
-  .filter(row => {
-    const brand = row[2]?.trim();
-    const name = row[3]?.trim();
-    return brand && name;
-  })
-  .map((row, idx) => rowToOnwards(row, idx));
-              setOnwards(onwardsData);
-            }
+if (onwardsRows) {
+  const onwardsData = onwardsRows
+    .slice(2)
+    .filter(row => {
+      const brand = row[2]?.trim();
+      const name = row[3]?.trim();
+      return brand && name;
+    })
+    .map((row, idx) => rowToOnwards(row, idx));
+  setOnwards(onwardsData);
+}
             
             const historyRows = await fetchHistoryData(response.access_token);
             if (historyRows && historyRows.length > 1) {
@@ -3415,16 +3413,17 @@ setBoxes(boxData);
       }
       
       const onwardsRows = await fetchOnwardsData(googleAccessToken);
-      if (onwardsRows) {
-        const onwardsData = onwardsRows
-  .filter(row => {
-    const brand = row[2]?.trim();
-    const name = row[3]?.trim();
-    return brand && name;
-  })
-  .map((row, idx) => rowToOnwards(row, idx));
-        setOnwards(onwardsData);
-      }
+if (onwardsRows) {
+  const onwardsData = onwardsRows
+    .slice(2)
+    .filter(row => {
+      const brand = row[2]?.trim();
+      const name = row[3]?.trim();
+      return brand && name;
+    })
+    .map((row, idx) => rowToOnwards(row, idx));
+  setOnwards(onwardsData);
+}
       
       // Refresh history data
       const historyRows = await fetchHistoryData(googleAccessToken);
