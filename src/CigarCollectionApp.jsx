@@ -207,10 +207,14 @@ const rowToBox = (row, index) => {
 
 // Transform onwards row to onwards object
 const rowToOnwards = (row, index) => {
-  // Columns: Date of Purchase | Received | Brand | Name | Quantity Purchased | Number / Box | Price / Box | Price / Cigar | Sale Price | Sale Price Base | Profit | Sold To/By
-  const priceUSD = parseCurrency(row[6]);
-  const salePrice = parseCurrency(row[8]) || parseCurrency(row[9]);
+  // Columns: Date of Purchase | Received | Brand | Name | Quantity Purchased | Number / Box | Price / Box | Price / Cigar | Sale Price (may be GBP) | Sale Price Base (USD) | Profit | Sold To/By
+  const costUSD = parseCurrency(row[6]);
+  const salePriceBase = parseCurrency(row[9]); // USD sale price
+  const salePriceOriginal = parseCurrency(row[8]); // May be GBP
   const profit = parseCurrency(row[10]);
+  
+  // Use the USD base price if available, otherwise fall back to original
+  const salePrice = salePriceBase || salePriceOriginal;
   
   return {
     id: index + 100,
@@ -220,7 +224,7 @@ const rowToOnwards = (row, index) => {
     name: row[3] || '',
     qty: parseInt(row[4]) || 1,
     perBox: parseInt(row[5]) || 0,
-    costUSD: priceUSD,
+    costUSD: costUSD,
     salePriceUSD: salePrice || null,
     profitUSD: profit || 0,
     soldTo: row[11] || '',
