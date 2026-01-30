@@ -732,8 +732,8 @@ const updateHistoryEntry = async (oldEntry, newEntry, accessToken) => {
     }
     
     // Update the row in place
-    const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/'Smoking History'!A${rowIndex}:F${rowIndex}?valueInputOption=USER_ENTERED`;
-    const response = await fetch(updateUrl, {
+      const sheetName = historyRange.split('!')[0];
+      const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetName}!A${rowIndex}:F${rowIndex}?valueInputOption=USER_ENTERED`;    const response = await fetch(updateUrl, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
