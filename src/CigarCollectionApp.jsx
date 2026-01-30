@@ -659,7 +659,7 @@ const saveSetting = async (settingName, value, accessToken) => {
 };
 
 // Add a smoke log entry to  sheet
-const addEntry = async (entry, accessToken) => {
+const addHistoryEntry = async (entry, accessToken) => {
   const { sheetId, Range } = GOOGLE_SHEETS_CONFIG;
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${Range}:append?valueInputOption=USER_ENTERED`;
   
@@ -1883,9 +1883,15 @@ const EditHistoryModal = ({ entry, index, onClose, onSave, onDelete }) => {
   const isExternal = entry.boxNum === 'EXT' || entry.source === 'external';
   
   const handleSave = () => {
+    // Format date to match sheet format (e.g., "23 Jan 2026")
+    const formatDateForSheet = (dateStr) => {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    };
+    
     const newEntry = {
       ...entry,
-      date,
+      date: formatDateForSheet(date),
       qty,
       notes,
       brand: isExternal ? brand : entry.brand,
