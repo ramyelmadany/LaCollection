@@ -1208,45 +1208,69 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
 
 // Onwards Card
 const OnwardsCard = ({ item, fmtCurrency }) => {
-  const s = brandStyles[item.brand] || brandStyles['Cohiba'];
   const isSold = item.type === 'sold';
   const isSoldAtCost = item.type === 'sold-at-cost';
   const isSoldAtLoss = item.type === 'sold-at-loss';
   const isPending = item.type === 'pending';
   
+  // Status badge styling
+  const getStatusStyle = () => {
+    if (isSold) return { background: '#2d5a3d', color: '#90EE90' };
+    if (isSoldAtLoss) return { background: '#5a2d2d', color: '#ff9090' };
+    if (isSoldAtCost) return { background: '#4a4a3a', color: '#d4d4a0' };
+    return { background: '#5a4a2d', color: '#ffd700' }; // pending
+  };
+  
+  const getStatusText = () => {
+    if (isSold) return `+${fmtCurrency(item.profitUSD)}`;
+    if (isSoldAtLoss) return fmtCurrency(item.profitUSD);
+    if (isSoldAtCost) return 'At cost';
+    return 'Pending';
+  };
+  
   return (
-    <div className="rounded-lg overflow-hidden" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-      <div className="p-3" style={{ borderLeft: `3px solid ${s.accent}` }}>
-        <div className="flex justify-between items-start mb-2">
-          <div>
-            <div className="text-2xl font-semibold" style={{ color: '#d4af37', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{item.brand}</div>
-            <div className="text-xl text-gray-300">{item.name}</div>
-          </div>
-          <div className="text-right">
-            {isSold && <div className="text-green-400 font-semibold">+{fmtCurrency(item.profitUSD)}</div>}
-            {isSoldAtLoss && <div className="text-red-400 font-semibold">{fmtCurrency(item.profitUSD)}</div>}
-            {isSoldAtCost && <div className="text-gray-400 text-sm">At cost</div>}
-            {isPending && <div className="text-yellow-400 text-sm">Pending</div>}
-          </div>
+    <div className="p-4 rounded-lg" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+      {/* Date Header with Status */}
+      <div className="flex justify-between items-center mb-3 pb-3 border-b" style={{ borderColor: '#6B1E1E' }}>
+        <div className="text-xl font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{fmt.date(item.datePurchased)}</div>
+        <div 
+          className="px-3 py-1 rounded-full text-sm font-semibold"
+          style={getStatusStyle()}
+        >
+          {getStatusText()}
         </div>
-        <div className="space-y-1 text-sm mb-2">
-          <div className="flex justify-between">
-            <span className="text-gray-500">Cost:</span>
-            <span className="text-gray-300">{fmtCurrency(item.costUSD)}</span>
-          </div>
-          {item.salePriceUSD && (
-            <div className="flex justify-between">
-              <span className="text-gray-500">Sold for:</span>
-              <span className="text-green-400">{fmtCurrency(item.salePriceUSD)}</span>
-            </div>
-          )}
-        </div>
-        <div className="flex justify-between items-center text-xs text-gray-500">
-          <span>{item.qty} box | {item.perBox}/box</span>
-          <span>{fmt.date(item.datePurchased)}</span>
-        </div>
-        {item.soldTo && <div className="mt-2 text-sm text-gray-400 italic">{item.soldTo}</div>}
       </div>
+      
+      {/* Brand */}
+      <div className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{item.brand}</div>
+      
+      {/* Cigar Name */}
+      <div className="text-base font-medium" style={{ color: '#1a120b' }}>{item.name}</div>
+      
+      {/* Details Row */}
+      <div className="flex justify-between items-center mt-2">
+        <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>
+          {item.qty} box • {item.perBox}/box
+        </div>
+        <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.7)' }}>
+          Cost: {fmtCurrency(item.costUSD)}
+        </div>
+      </div>
+      
+      {/* Sale Price Row (if sold) */}
+      {item.salePriceUSD && (
+        <div className="flex justify-between items-center mt-1">
+          <div></div>
+          <div className="text-sm font-medium" style={{ color: '#1a120b' }}>
+            Sold: {fmtCurrency(item.salePriceUSD)}
+          </div>
+        </div>
+      )}
+      
+      {/* Sold To (if present) */}
+      {item.soldTo && (
+        <div className="mt-2 text-sm italic" style={{ color: 'rgba(26,18,11,0.7)' }}>{item.soldTo}</div>
+      )}
     </div>
   );
 };
