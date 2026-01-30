@@ -1079,16 +1079,28 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
             <div className="font-medium" style={{ color: s.text, opacity: 0.9, fontSize: nameSize }}>{name}</div>
           </div>
          <div className="rounded overflow-hidden mb-2" style={{ background: 'rgba(184,132,76,0.8)' }}>
-            {[...Array(Math.ceil(boxes.length / 6) || 1)].map((_, rowIdx) => {
-              const fullBoxesCount = boxes.filter(b => b.remaining === b.perBox).length;
-              const openBoxesCount = boxes.filter(b => b.remaining > 0 && b.remaining < b.perBox).length;
-              return (
+            {(() => {
+              // Sort boxes chronologically by purchase date, then open boxes last if same date
+              const sortedBoxes = [...boxes].sort((a, b) => {
+                const dateA = a.datePurchased ? new Date(a.datePurchased).getTime() : 0;
+                const dateB = b.datePurchased ? new Date(b.datePurchased).getTime() : 0;
+                if (dateA !== dateB) return dateA - dateB;
+                // Same date: open boxes go to the right
+                const aIsOpen = a.remaining > 0 && a.remaining < a.perBox;
+                const bIsOpen = b.remaining > 0 && b.remaining < b.perBox;
+                if (aIsOpen && !bIsOpen) return 1;
+                if (!aIsOpen && bIsOpen) return -1;
+                return 0;
+              });
+              return [...Array(Math.ceil(sortedBoxes.length / 6) || 1)].map((_, rowIdx) => (
                 <div key={rowIdx} className="h-5 flex gap-0.5 p-1 items-end">
                   {[...Array(6)].map((_, i) => {
                     const boxIndex = rowIdx * 6 + i;
-                    const isFull = boxIndex < fullBoxesCount;
-                    const isOpen = boxIndex >= fullBoxesCount && boxIndex < fullBoxesCount + openBoxesCount;
-                    const isEmpty = boxIndex >= boxes.length;
+                    const box = sortedBoxes[boxIndex];
+                    const isEmpty = !box;
+                    const isFull = box && box.remaining === box.perBox;
+                    const isOpen = box && box.remaining > 0 && box.remaining < box.perBox;
+                    const isEmptyBox = box && box.remaining === 0;
                     return <div key={i} className="flex-1 rounded-sm" style={{ 
                       height: isEmpty ? '0%' : (isFull || isOpen || isFinishedView) ? '100%' : '20%', 
                       background: isFinishedView ? '#1a1a1a' : (isFull ? '#6B1E1E' : isOpen ? '#6B1E1E' : 'rgba(0,0,0,0.3)'),
@@ -1097,8 +1109,8 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
                     }} />;
                   })}
                 </div>
-              );
-            })}
+              ));
+            })()}
           </div>
           {showCigarCount && (
             <div className="flex justify-between items-center text-sm">
