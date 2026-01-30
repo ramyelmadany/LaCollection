@@ -658,10 +658,10 @@ const saveSetting = async (settingName, value, accessToken) => {
   }
 };
 
-// Add a smoke log entry to  sheet
+// Add a smoke log entry to sheet
 const addHistoryEntry = async (entry, accessToken) => {
-  const { sheetId, Range } = GOOGLE_SHEETS_CONFIG;
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${Range}:append?valueInputOption=USER_ENTERED`;
+  const { sheetId, historyRange } = GOOGLE_SHEETS_CONFIG;
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${historyRange}:append?valueInputOption=USER_ENTERED`;
   
   try {
     const response = await fetch(url, {
