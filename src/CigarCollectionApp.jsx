@@ -3039,92 +3039,70 @@ const PricesView = ({ boxes, currency, FX, fmtCurrency, fmtFromGBP }) => {
   }, [boxes]);
   
   return (
-    <div className="px-4 pt-4">
+    <div className="px-4 pb-8 pt-4">
       {/* Price metadata */}
-      <div className="rounded-lg p-4 mb-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-lg font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>UK Market Prices</span>
-          <span className="text-xs font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>{PRICE_META.lastUpdated}</span>
+      <div className="mb-6">
+        <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>UK Market Prices</h2>
+        <div className="rounded-lg p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+          <div className="flex justify-between items-center">
+            <div>
+              <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Last Updated</div>
+              <div className="text-lg font-medium" style={{ color: '#1a120b' }}>{PRICE_META.lastUpdated}</div>
+            </div>
+            <div className="text-right">
+              <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Sources</div>
+              <div className="text-base font-medium" style={{ color: '#1a120b' }}>{PRICE_META.sources.join(', ')}</div>
+            </div>
+          </div>
         </div>
-        <div className="text-sm" style={{ color: 'rgba(26,18,11,0.6)' }}>Sources: {PRICE_META.sources.join(', ')}</div>
       </div>
       
       {/* Price list by brand */}
-      <div className="space-y-4">
-        {Object.entries(ukMarket).map(([brand, cigars]) => {
-          const s = brandStyles[brand] || brandStyles['Cohiba'];
-          return (
-            <div key={brand} className="rounded-lg overflow-hidden" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
-              {/* Brand Header */}
-              <div className="px-4 py-3" style={{ borderBottom: '2px solid #6B1E1E' }}>
-                <span className="text-xl font-bold tracking-wider" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{brand}</span>
-              </div>
+      {Object.entries(ukMarket).map(([brand, cigars]) => (
+        <div key={brand} className="mb-6">
+          <h2 className="text-xl font-bold mb-4" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{brand}</h2>
+          <div className="space-y-2">
+            {Object.entries(cigars).map(([name, data]) => {
+              const inCollection = collectionCigars.find(c => c.brand === brand && c.name === name);
+              const marketUSD = FX.toUSD(data.gbp);
+              const perCigarUSD = marketUSD / data.perBox;
+              const savings = inCollection ? marketUSD - inCollection.yourCostUSD : null;
               
-              {/* Cigars List */}
-              <div>
-                {Object.entries(cigars).map(([name, data], idx, arr) => {
-                  const inCollection = collectionCigars.find(c => c.brand === brand && c.name === name);
-                  const marketUSD = FX.toUSD(data.gbp);
-                  const perCigarUSD = marketUSD / data.perBox;
-                  const savings = inCollection ? marketUSD - inCollection.yourCostUSD : null;
-                  
-                  return (
-                    <div 
-                      key={name} 
-                      className="px-4 py-3"
-                      style={{ borderBottom: idx < arr.length - 1 ? '1px solid rgba(26,18,11,0.15)' : 'none' }}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <div className="text-base font-medium" style={{ color: '#1a120b' }}>{name}</div>
-                          <div className="text-sm mt-0.5" style={{ color: 'rgba(26,18,11,0.5)' }}>
-                            Box of {data.perBox} • {data.source}
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-base font-bold" style={{ color: '#1a120b' }}>{fmtFromGBP(data.gbp)}</div>
-                          <div className="text-sm" style={{ color: 'rgba(26,18,11,0.5)' }}>
-                            {currency === 'GBP' ? fmt.usd(marketUSD) : fmt.gbp(data.gbp)}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex justify-between items-center mt-2">
-                        <span className="text-sm" style={{ color: 'rgba(26,18,11,0.6)' }}>
-                          Per cigar: {fmtCurrency(perCigarUSD)}
-                        </span>
-                        {savings !== null && savings > 0 && (
-                          <span 
-                            className="text-sm font-semibold px-2 py-0.5 rounded-full"
-                            style={{ background: '#2d5a3d', color: '#90EE90' }}
-                          >
-                            Saved {fmtCurrency(savings)}
-                          </span>
-                        )}
-                        {inCollection && (savings === null || savings <= 0) && (
-                          <span 
-                            className="text-sm font-medium px-2 py-0.5 rounded-full"
-                            style={{ background: 'rgba(26,18,11,0.1)', color: 'rgba(26,18,11,0.5)' }}
-                          >
-                            In collection
-                          </span>
-                        )}
+              return (
+                <div key={name} className="rounded-lg p-3" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="text-base font-medium" style={{ color: '#1a120b' }}>{name}</div>
+                      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box of {data.perBox} • {data.source}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xl font-medium" style={{ color: '#1a120b' }}>{fmtFromGBP(data.gbp)}</div>
+                      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>
+                        {currency === 'GBP' ? fmt.usd(marketUSD) : fmt.gbp(data.gbp)}
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      
-      {/* Footer note */}
-      <div className="mt-4 mb-4 rounded-lg p-4 text-center" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
-        <div className="text-sm" style={{ color: 'rgba(26,18,11,0.6)' }}>
-          Prices updated weekly from UK retailers
+                  </div>
+                  <div className="flex justify-between items-center mt-2 pt-2 border-t" style={{ borderColor: 'rgba(26,18,11,0.15)' }}>
+                    <span className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.6)' }}>
+                      {fmtCurrency(perCigarUSD)} per cigar
+                    </span>
+                    {savings !== null && savings > 0 && (
+                      <span className="text-sm font-medium" style={{ color: '#1a5a1a' }}>
+                        You saved {fmtCurrency(savings)}
+                      </span>
+                    )}
+                    {inCollection && (savings === null || savings <= 0) && (
+                      <span className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>
+                        In collection
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   );
 };
