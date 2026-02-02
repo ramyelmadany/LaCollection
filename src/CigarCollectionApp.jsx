@@ -2101,29 +2101,29 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
   };
   
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.9)' }}>
-      <div className="w-full max-w-sm rounded-xl max-h-[85vh] overflow-y-auto" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
-        <div className="sticky top-0 p-4 flex justify-between items-center" style={{ background: '#1a1a1a', borderBottom: '1px solid #333' }}>
-          <h3 className="text-lg font-semibold" style={{ color: '#d4af37' }}>Log Smoke</h3>
-          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#333', color: '#888' }}>x</button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
+      <div className="w-full max-w-sm rounded-2xl max-h-[85vh] overflow-y-auto" style={{ background: '#1a120b', border: '1px solid #6B1E1E', scrollbarWidth: 'none', msOverflowStyle: 'none' }} onClick={e => e.stopPropagation()}>
+        <div className="sticky top-0 z-10 p-4 flex justify-between items-center" style={{ background: '#1a120b', borderBottom: '1px solid #6B1E1E' }}>
+          <h3 className="text-lg font-bold" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Log Smoke</h3>
+          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(245,222,179,0.1)', color: '#F5DEB3' }}>×</button>
         </div>
         
         <div className="p-4 space-y-4">
           {/* Source Selection */}
           {!source && (
             <div className="space-y-3">
-              <label className="text-xs text-gray-500 block mb-2">Where is this cigar from?</label>
+              <label className="text-xs block mb-2" style={{ color: 'rgba(245,222,179,0.5)' }}>Where is this cigar from?</label>
               <button 
                 onClick={() => setSource('collection')} 
-                className="w-full py-4 rounded-lg text-lg font-semibold"
-                style={{ background: '#252525', border: '2px solid #d4af37', color: '#d4af37' }}
+                className="w-full py-4 rounded-lg text-lg font-bold"
+                style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', color: '#1a120b' }}
               >
                 My Collection
               </button>
               <button 
                 onClick={() => setSource('external')} 
                 className="w-full py-4 rounded-lg text-lg font-semibold"
-                style={{ background: '#252525', border: '2px solid #666', color: '#888' }}
+                style={{ background: 'rgba(245,222,179,0.08)', border: '1px solid rgba(245,222,179,0.2)', color: 'rgba(245,222,179,0.6)' }}
               >
                 External
               </button>
@@ -2133,29 +2133,30 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
           {/* Collection Flow */}
           {source === 'collection' && (
             <>
-              <button onClick={() => setSource(null)} className="text-sm text-gray-500 mb-2">← Back</button>
+              <button onClick={() => setSource(null)} className="text-sm" style={{ color: 'rgba(245,222,179,0.5)' }}>← Back</button>
               
               <div>
-                <label className="text-xs text-gray-500 block mb-2">Date</label>
-                <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+                <label className="text-xs block mb-2" style={{ color: 'rgba(245,222,179,0.5)' }}>Date</label>
+                <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: 'rgba(245,222,179,0.08)', border: '1px solid rgba(245,222,179,0.15)', color: '#F5DEB3', WebkitAppearance: 'none', minHeight: '42px' }} />
               </div>
               
               <div>
-                <label className="text-xs text-gray-500 block mb-2">Select Cigar</label>
-                <div className="space-y-2 max-h-48 overflow-y-auto">
+                <label className="text-xs block mb-2" style={{ color: 'rgba(245,222,179,0.5)' }}>Select Cigar</label>
+                <div className="space-y-2 max-h-48 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
                   {available.map(b => {
-                    const st = brandStyles[b.brand] || brandStyles['Cohiba'];
+                    const isSelected = selectedBox?.id === b.id;
                     return (
                       <div key={b.id} onClick={() => { setSelectedBox(b); setQty(1); }} className="p-3 rounded-lg cursor-pointer" style={{ 
-                        background: selectedBox?.id === b.id ? `${st.accent}20` : '#252525',
-                        border: `1px solid ${selectedBox?.id === b.id ? st.accent : '#333'}`
+                        background: isSelected ? 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' : 'rgba(245,222,179,0.08)',
+                        border: `1px solid ${isSelected ? '#6B1E1E' : 'rgba(245,222,179,0.15)'}`
                       }}>
                         <div className="flex justify-between items-center">
                           <div>
-                            <div className="text-sm font-medium" style={{ color: st.accent }}>{b.brand} {b.name}</div>
-                            <div className="text-xs text-gray-500">Box {b.boxNum} | {b.location}</div>
+                            <div className="text-sm font-bold" style={{ color: isSelected ? '#1a120b' : '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{b.brand}</div>
+                            <div className="text-sm font-medium" style={{ color: isSelected ? '#1a120b' : 'rgba(245,222,179,0.8)' }}>{b.name}</div>
+                            <div className="text-xs" style={{ color: isSelected ? 'rgba(26,18,11,0.5)' : 'rgba(245,222,179,0.4)' }}>Box {b.boxNum} • {b.location}</div>
                           </div>
-                          <div className="text-sm text-gray-300">{b.remaining} left</div>
+                          <div className="text-sm font-medium" style={{ color: isSelected ? '#6B1E1E' : 'rgba(245,222,179,0.6)' }}>{b.remaining} left</div>
                         </div>
                       </div>
                     );
@@ -2166,20 +2167,20 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
               {selectedBox && (
                 <>
                   <div>
-                    <label className="text-xs text-gray-500 block mb-2">Quantity</label>
+                    <label className="text-xs block mb-2" style={{ color: 'rgba(245,222,179,0.5)' }}>Quantity</label>
                     <div className="flex items-center gap-4">
-                      <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-10 h-10 rounded-lg text-lg" style={{ background: '#252525', border: '1px solid #333', color: '#d4af37' }}>-</button>
-                      <span className="text-2xl font-light" style={{ color: '#d4af37', minWidth: 40, textAlign: 'center' }}>{qty}</span>
-                      <button onClick={() => setQty(Math.min(selectedBox.remaining, qty + 1))} className="w-10 h-10 rounded-lg text-lg" style={{ background: '#252525', border: '1px solid #333', color: '#d4af37' }}>+</button>
+                      <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-10 h-10 rounded-lg text-lg font-bold" style={{ background: 'rgba(245,222,179,0.08)', border: '1px solid rgba(245,222,179,0.15)', color: '#F5DEB3' }}>-</button>
+                      <span className="text-2xl font-bold" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif', minWidth: 40, textAlign: 'center' }}>{qty}</span>
+                      <button onClick={() => setQty(Math.min(selectedBox.remaining, qty + 1))} className="w-10 h-10 rounded-lg text-lg font-bold" style={{ background: 'rgba(245,222,179,0.08)', border: '1px solid rgba(245,222,179,0.15)', color: '#F5DEB3' }}>+</button>
                     </div>
                   </div>
                   
                   <div>
-                    <label className="text-xs text-gray-500 block mb-2">Notes (optional)</label>
-                    <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Tasting notes, occasion..." className="w-full px-3 py-2 rounded-lg text-sm resize-none" rows={2} style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+                    <label className="text-xs block mb-2" style={{ color: 'rgba(245,222,179,0.5)' }}>Notes (optional)</label>
+                    <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Tasting notes, occasion..." className="w-full px-3 py-2 rounded-lg text-sm resize-none" rows={2} style={{ background: 'rgba(245,222,179,0.08)', border: '1px solid rgba(245,222,179,0.15)', color: '#F5DEB3' }} />
                   </div>
                   
-                  <button onClick={handleSubmit} className="w-full py-3 rounded-lg font-semibold" style={{ background: '#d4af37', color: '#000' }}>
+                  <button onClick={handleSubmit} className="w-full py-3 rounded-lg font-bold" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', color: '#1a120b' }}>
                     Log {qty} Cigar{qty > 1 ? 's' : ''}
                   </button>
                 </>
@@ -2190,39 +2191,39 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
           {/* External Flow */}
           {source === 'external' && (
             <>
-              <button onClick={() => setSource(null)} className="text-sm text-gray-500 mb-2">← Back</button>
+              <button onClick={() => setSource(null)} className="text-sm" style={{ color: 'rgba(245,222,179,0.5)' }}>← Back</button>
               
               <div>
-                <label className="text-xs text-gray-500 block mb-2">Date</label>
-                <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+                <label className="text-xs block mb-2" style={{ color: 'rgba(245,222,179,0.5)' }}>Date</label>
+                <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: 'rgba(245,222,179,0.08)', border: '1px solid rgba(245,222,179,0.15)', color: '#F5DEB3', WebkitAppearance: 'none', minHeight: '42px' }} />
               </div>
               
               <div>
-                <label className="text-xs text-gray-500 block mb-2">Brand</label>
-                <input type="text" value={externalBrand} onChange={e => setExternalBrand(e.target.value)} placeholder="e.g. Cohiba" className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+                <label className="text-xs block mb-2" style={{ color: 'rgba(245,222,179,0.5)' }}>Brand</label>
+                <input type="text" value={externalBrand} onChange={e => setExternalBrand(e.target.value)} placeholder="e.g. Cohiba" className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: 'rgba(245,222,179,0.08)', border: '1px solid rgba(245,222,179,0.15)', color: '#F5DEB3' }} />
               </div>
               
               <div>
-                <label className="text-xs text-gray-500 block mb-2">Cigar Name</label>
-                <input type="text" value={externalName} onChange={e => setExternalName(e.target.value)} placeholder="e.g. Siglo VI" className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+                <label className="text-xs block mb-2" style={{ color: 'rgba(245,222,179,0.5)' }}>Cigar Name</label>
+                <input type="text" value={externalName} onChange={e => setExternalName(e.target.value)} placeholder="e.g. Siglo VI" className="w-full px-3 py-2 rounded-lg text-sm" style={{ background: 'rgba(245,222,179,0.08)', border: '1px solid rgba(245,222,179,0.15)', color: '#F5DEB3' }} />
               </div>
               
               <div>
-                <label className="text-xs text-gray-500 block mb-2">Quantity</label>
+                <label className="text-xs block mb-2" style={{ color: 'rgba(245,222,179,0.5)' }}>Quantity</label>
                 <div className="flex items-center gap-4">
-                  <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-10 h-10 rounded-lg text-lg" style={{ background: '#252525', border: '1px solid #333', color: '#d4af37' }}>-</button>
-                  <span className="text-2xl font-light" style={{ color: '#d4af37', minWidth: 40, textAlign: 'center' }}>{qty}</span>
-                  <button onClick={() => setQty(qty + 1)} className="w-10 h-10 rounded-lg text-lg" style={{ background: '#252525', border: '1px solid #333', color: '#d4af37' }}>+</button>
+                  <button onClick={() => setQty(Math.max(1, qty - 1))} className="w-10 h-10 rounded-lg text-lg font-bold" style={{ background: 'rgba(245,222,179,0.08)', border: '1px solid rgba(245,222,179,0.15)', color: '#F5DEB3' }}>-</button>
+                  <span className="text-2xl font-bold" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif', minWidth: 40, textAlign: 'center' }}>{qty}</span>
+                  <button onClick={() => setQty(qty + 1)} className="w-10 h-10 rounded-lg text-lg font-bold" style={{ background: 'rgba(245,222,179,0.08)', border: '1px solid rgba(245,222,179,0.15)', color: '#F5DEB3' }}>+</button>
                 </div>
               </div>
               
               <div>
-                <label className="text-xs text-gray-500 block mb-2">Notes (optional)</label>
-                <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Tasting notes, occasion..." className="w-full px-3 py-2 rounded-lg text-sm resize-none" rows={2} style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+                <label className="text-xs block mb-2" style={{ color: 'rgba(245,222,179,0.5)' }}>Notes (optional)</label>
+                <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Tasting notes, occasion..." className="w-full px-3 py-2 rounded-lg text-sm resize-none" rows={2} style={{ background: 'rgba(245,222,179,0.08)', border: '1px solid rgba(245,222,179,0.15)', color: '#F5DEB3' }} />
               </div>
               
               {externalBrand && externalName && (
-                <button onClick={handleSubmit} className="w-full py-3 rounded-lg font-semibold" style={{ background: '#d4af37', color: '#000' }}>
+                <button onClick={handleSubmit} className="w-full py-3 rounded-lg font-bold" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', color: '#1a120b' }}>
                   Log {qty} Cigar{qty > 1 ? 's' : ''}
                 </button>
               )}
