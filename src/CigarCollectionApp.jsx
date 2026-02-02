@@ -2088,6 +2088,7 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
   const [notes, setNotes] = useState('');
   const [externalBrand, setExternalBrand] = useState('');
   const [externalName, setExternalName] = useState('');
+  const [showOpenOnly, setShowOpenOnly] = useState(false);
   
   const available = boxes.filter(b => b.remaining > 0).sort((a, b) => {
   if (a.brand !== b.brand) return a.brand.localeCompare(b.brand);
@@ -2146,7 +2147,6 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
               </div>
               
               <div>
-                <div>
                 <div className="flex justify-between items-center mb-2">
                   <label className="text-xs" style={{ color: 'rgba(245,222,179,0.5)' }}>Select Cigar</label>
                   <button 
