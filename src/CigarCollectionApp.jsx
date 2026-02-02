@@ -2222,8 +2222,6 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
                   </button>
                 </>
               )}
-            </>
-          )}
           
           {/* External Flow */}
           {source === 'external' && (
