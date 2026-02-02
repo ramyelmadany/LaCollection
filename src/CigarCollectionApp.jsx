@@ -2187,14 +2187,14 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
                             const isOpen = b.remaining > 0 && b.remaining < b.perBox;
                             return (
                               <div key={b.id} onClick={() => { setSelectedBox(b); setQty(1); }} className="relative p-2.5 rounded-sm cursor-pointer" style={{ 
-                                background: isSelected ? 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' : 'rgba(184,132,76,0.8)',
+                                background: isSelected ? 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' : '#6B1E1E',
                                 border: isOpen && !isSelected ? '2px solid #F5DEB3' : isSelected ? '2px solid #6B1E1E' : '2px solid transparent'
                               }}>
-                                <div className="text-sm font-medium" style={{ color: isSelected ? '#1a120b' : '#fff' }}>{b.name}</div>
-                                <div className="text-xs" style={{ color: isSelected ? 'rgba(26,18,11,0.5)' : 'rgba(255,255,255,0.7)' }}>Box {b.boxNum} • Box of {b.perBox} • {b.location}</div>
+                                <div className="text-sm font-medium" style={{ color: isSelected ? '#1a120b' : '#F5DEB3' }}>{b.name}</div>
+                                <div className="text-xs" style={{ color: isSelected ? 'rgba(26,18,11,0.5)' : 'rgba(245,222,179,0.6)' }}>Box {b.boxNum} • Box of {b.perBox} • {b.location}</div>
                                 {isOpen && (
                                   <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg" 
-                                    style={{ background: '#6B1E1E', color: '#fff', fontSize: 10 }}>{b.remaining}</div>
+                                    style={{ background: '#F5DEB3', color: '#6B1E1E', fontSize: 10 }}>{b.remaining}</div>
                                 )}
                               </div>
                             );
