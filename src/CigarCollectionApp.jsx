@@ -2088,7 +2088,11 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
   const [externalBrand, setExternalBrand] = useState('');
   const [externalName, setExternalName] = useState('');
   
-  const available = boxes.filter(b => b.remaining > 0);
+  const available = boxes.filter(b => b.remaining > 0).sort((a, b) => {
+  if (a.brand !== b.brand) return a.brand.localeCompare(b.brand);
+  if (a.name !== b.name) return a.name.localeCompare(b.name);
+  return String(a.boxNum).localeCompare(String(b.boxNum), undefined, { numeric: true });
+});
   
   const handleSubmit = () => {
     if (source === 'collection' && selectedBox) {
