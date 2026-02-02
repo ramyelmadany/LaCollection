@@ -1,6 +1,7 @@
 
 
 
+
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { ukMarketPrices } from './uk_market_prices.js';
 // Google Sheets Configuration
@@ -2222,6 +2223,8 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
                   </button>
                 </>
               )}
+            </>
+          )}
           
           {/* External Flow */}
           {source === 'external' && (
