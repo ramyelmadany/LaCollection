@@ -2146,7 +2146,6 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
               </div>
               
               <div>
-                <div>
                 <label className="text-xs block mb-2" style={{ color: 'rgba(245,222,179,0.5)' }}>Select Cigar</label>
                 <div className="max-h-60 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
                   {(() => {
