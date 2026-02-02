@@ -2149,28 +2149,26 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
                 <div className="space-y-2 max-h-48 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
                   {available.map(b => {
                     const isSelected = selectedBox?.id === b.id;
+                    const isFull = b.remaining === b.perBox;
                     const isOpen = b.remaining > 0 && b.remaining < b.perBox;
                     return (
                       <div key={b.id} onClick={() => { setSelectedBox(b); setQty(1); }} className="relative p-3 rounded-lg cursor-pointer" style={{ 
                         background: isSelected ? 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' : 'rgba(245,222,179,0.08)',
                         border: `1px solid ${isSelected ? '#6B1E1E' : 'rgba(245,222,179,0.15)'}`
                       }}>
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-md flex items-center justify-center text-xs font-bold flex-shrink-0" style={{
-                              background: isSelected ? '#6B1E1E' : 'rgba(245,222,179,0.08)',
-                              border: isOpen ? `2px solid ${isSelected ? '#1a120b' : '#F5DEB3'}` : 'none',
-                              color: isSelected ? '#F5DEB3' : '#F5DEB3'
-                            }}>
-                              {b.boxNum}
-                            </div>
-                            <div>
-                              <div className="text-sm font-bold" style={{ color: isSelected ? '#1a120b' : '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{b.brand}</div>
-                              <div className="text-sm font-medium" style={{ color: isSelected ? '#1a120b' : 'rgba(245,222,179,0.8)' }}>{b.name}</div>
-                              <div className="text-xs" style={{ color: isSelected ? 'rgba(26,18,11,0.5)' : 'rgba(245,222,179,0.4)' }}>{b.location}</div>
-                            </div>
+                        <div className="flex items-center gap-3">
+                          {/* Box indicator matching collection page */}
+                          <div className="flex-shrink-0 w-5 rounded-sm" style={{
+                            height: '28px',
+                            background: '#6B1E1E',
+                            border: isOpen ? '2px solid #F5DEB3' : 'none',
+                          }} />
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm font-bold" style={{ color: isSelected ? '#1a120b' : '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{b.brand}</div>
+                            <div className="text-sm font-medium" style={{ color: isSelected ? '#1a120b' : 'rgba(245,222,179,0.8)' }}>{b.name}</div>
+                            <div className="text-xs" style={{ color: isSelected ? 'rgba(26,18,11,0.5)' : 'rgba(245,222,179,0.4)' }}>Box {b.boxNum} • {b.location}</div>
                           </div>
-                          <div className="text-sm font-medium" style={{ color: isSelected ? '#6B1E1E' : 'rgba(245,222,179,0.6)' }}>{b.remaining}/{b.perBox}</div>
+                          <div className="text-sm font-medium flex-shrink-0" style={{ color: isSelected ? '#6B1E1E' : 'rgba(245,222,179,0.6)' }}>{b.remaining}/{b.perBox}</div>
                         </div>
                         {isOpen && (
                           <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center font-bold shadow-lg" 
