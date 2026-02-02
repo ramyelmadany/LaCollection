@@ -2146,37 +2146,51 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
               
               <div>
                 <label className="text-xs block mb-2" style={{ color: 'rgba(245,222,179,0.5)' }}>Select Cigar</label>
-                <div className="space-y-2 max-h-48 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
-                  {available.map(b => {
-                    const isSelected = selectedBox?.id === b.id;
-                    const isFull = b.remaining === b.perBox;
-                    const isOpen = b.remaining > 0 && b.remaining < b.perBox;
-                    return (
-                      <div key={b.id} onClick={() => { setSelectedBox(b); setQty(1); }} className="relative p-3 rounded-lg cursor-pointer" style={{ 
-                        background: isSelected ? 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' : 'rgba(245,222,179,0.08)',
-                        border: `1px solid ${isSelected ? '#6B1E1E' : 'rgba(245,222,179,0.15)'}`
-                      }}>
-                        <div className="flex items-center gap-3">
-                          {/* Box indicator matching collection page */}
-                          <div className="flex-shrink-0 w-5 rounded-sm" style={{
-                            height: '28px',
-                            background: '#6B1E1E',
-                            border: isOpen ? '2px solid #F5DEB3' : 'none',
-                          }} />
-                          <div className="flex-1 min-w-0">
-                            <div className="text-sm font-bold" style={{ color: isSelected ? '#1a120b' : '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{b.brand}</div>
-                            <div className="text-sm font-medium" style={{ color: isSelected ? '#1a120b' : 'rgba(245,222,179,0.8)' }}>{b.name}</div>
-                            <div className="text-xs" style={{ color: isSelected ? 'rgba(26,18,11,0.5)' : 'rgba(245,222,179,0.4)' }}>Box {b.boxNum} • {b.location}</div>
-                          </div>
-                          <div className="text-sm font-medium flex-shrink-0" style={{ color: isSelected ? '#6B1E1E' : 'rgba(245,222,179,0.6)' }}>{b.remaining}/{b.perBox}</div>
+                <div className="max-h-60 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+                  {(() => {
+                    const brands = {};
+                    available.forEach(b => {
+                      if (!brands[b.brand]) brands[b.brand] = [];
+                      brands[b.brand].push(b);
+                    });
+                    return Object.entries(brands).sort(([a], [b]) => a.localeCompare(b)).map(([brand, brandBoxes]) => (
+                      <div key={brand} className="mb-3">
+                        <div className="text-xs font-bold tracking-wide mb-1.5 pb-1" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif', borderBottom: '1px solid rgba(245,222,179,0.15)' }}>{brand}</div>
+                        <div className="space-y-1.5">
+                          {brandBoxes.sort((a, b) => a.name.localeCompare(b.name) || String(a.boxNum).localeCompare(String(b.boxNum), undefined, { numeric: true })).map(b => {
+                            const isSelected = selectedBox?.id === b.id;
+                            const isOpen = b.remaining > 0 && b.remaining < b.perBox;
+                            return (
+                              <div key={b.id} onClick={() => { setSelectedBox(b); setQty(1); }} className="relative flex items-center justify-between p-2.5 rounded-lg cursor-pointer" style={{ 
+                                background: isSelected ? 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' : 'rgba(245,222,179,0.08)',
+                                border: `1px solid ${isSelected ? '#6B1E1E' : 'rgba(245,222,179,0.15)'}`
+                              }}>
+                                <div className="flex-1 min-w-0">
+                                  <div className="text-sm font-medium" style={{ color: isSelected ? '#1a120b' : 'rgba(245,222,179,0.9)' }}>{b.name}</div>
+                                  <div className="text-xs" style={{ color: isSelected ? 'rgba(26,18,11,0.5)' : 'rgba(245,222,179,0.4)' }}>Box of {b.perBox} • {b.location}</div>
+                                </div>
+                                {/* Box indicator */}
+                                <div className="flex-shrink-0 flex items-end gap-0.5 ml-2">
+                                  <div className="rounded-sm flex items-center justify-center" style={{
+                                    width: '24px',
+                                    height: '18px',
+                                    background: isSelected ? '#6B1E1E' : '#6B1E1E',
+                                    border: isOpen ? '2px solid #F5DEB3' : 'none',
+                                  }}>
+                                    <span className="text-xs font-bold" style={{ color: '#fff', fontSize: 10 }}>{b.boxNum}</span>
+                                  </div>
+                                </div>
+                                {isOpen && (
+                                  <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg" 
+                                    style={{ background: '#6B1E1E', color: '#fff', fontSize: 10 }}>{b.remaining}</div>
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
-                        {isOpen && (
-                          <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center font-bold shadow-lg" 
-                            style={{ background: '#6B1E1E', color: '#fff', fontSize: 11 }}>{b.remaining}</div>
-                        )}
                       </div>
-                    );
-                  })}
+                    ));
+                  })()}
                 </div>
               </div>
               
