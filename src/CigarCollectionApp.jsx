@@ -2146,32 +2146,37 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
               </div>
               
               <div>
-                <label className="text-xs block mb-2" style={{ color: 'rgba(245,222,179,0.5)' }}>Select Cigar</label>
+                <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-xs" style={{ color: 'rgba(245,222,179,0.5)' }}>Select Cigar</label>
+                  <button 
+                    onClick={() => setShowOpenOnly(!showOpenOnly)}
+                    className="text-xs px-2 py-1 rounded"
+                    style={{ 
+                      background: showOpenOnly ? '#6B1E1E' : 'transparent',
+                      border: '1px solid #6B1E1E',
+                      color: showOpenOnly ? '#F5DEB3' : 'rgba(245,222,179,0.5)'
+                    }}
+                  >
+                    Open boxes
+                  </button>
+                </div>
                 <div className="max-h-60 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
                   {(() => {
-                    // Sort: open boxes first, then by brand, name, box number
-                    const sorted = [...available].sort((a, b) => {
-                      const aOpen = a.remaining > 0 && a.remaining < a.perBox;
-                      const bOpen = b.remaining > 0 && b.remaining < b.perBox;
-                      if (aOpen && !bOpen) return -1;
-                      if (!aOpen && bOpen) return 1;
-                      if (a.brand !== b.brand) return a.brand.localeCompare(b.brand);
-                      if (a.name !== b.name) return a.name.localeCompare(b.name);
-                      return String(a.boxNum).localeCompare(String(b.boxNum), undefined, { numeric: true });
-                    });
+                    // Filter for open boxes if toggle is on
+                    const filtered = showOpenOnly 
+                      ? available.filter(b => b.remaining > 0 && b.remaining < b.perBox)
+                      : available;
                     
                     // Group by brand
                     const brands = {};
-                    sorted.forEach(b => {
+                    filtered.forEach(b => {
                       if (!brands[b.brand]) brands[b.brand] = [];
                       brands[b.brand].push(b);
                     });
                     
-                    // Get brand order from sorted list
-                    const brandOrder = [];
-                    sorted.forEach(b => {
-                      if (!brandOrder.includes(b.brand)) brandOrder.push(b.brand);
-                    });
+                    // Get brand order alphabetically
+                    const brandOrder = Object.keys(brands).sort((a, b) => a.localeCompare(b));
                     
                     return brandOrder.map(brand => (
                       <div key={brand} className="mb-3">
@@ -2181,15 +2186,15 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
                             const isSelected = selectedBox?.id === b.id;
                             const isOpen = b.remaining > 0 && b.remaining < b.perBox;
                             return (
-                              <div key={b.id} onClick={() => { setSelectedBox(b); setQty(1); }} className="relative p-2.5 rounded-lg cursor-pointer" style={{ 
-                                background: isSelected ? 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' : '#6B1E1E',
+                              <div key={b.id} onClick={() => { setSelectedBox(b); setQty(1); }} className="relative p-2.5 rounded-sm cursor-pointer" style={{ 
+                                background: isSelected ? 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' : 'rgba(184,132,76,0.8)',
                                 border: isOpen && !isSelected ? '2px solid #F5DEB3' : isSelected ? '2px solid #6B1E1E' : '2px solid transparent'
                               }}>
-                                <div className="text-sm font-medium" style={{ color: isSelected ? '#1a120b' : '#F5DEB3' }}>{b.name}</div>
-                                <div className="text-xs" style={{ color: isSelected ? 'rgba(26,18,11,0.5)' : 'rgba(245,222,179,0.5)' }}>Box {b.boxNum} • Box of {b.perBox} • {b.location}</div>
+                                <div className="text-sm font-medium" style={{ color: isSelected ? '#1a120b' : '#fff' }}>{b.name}</div>
+                                <div className="text-xs" style={{ color: isSelected ? 'rgba(26,18,11,0.5)' : 'rgba(255,255,255,0.7)' }}>Box {b.boxNum} • Box of {b.perBox} • {b.location}</div>
                                 {isOpen && (
                                   <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg" 
-                                    style={{ background: isSelected ? '#6B1E1E' : '#F5DEB3', color: isSelected ? '#fff' : '#1a120b', fontSize: 10 }}>{b.remaining}</div>
+                                    style={{ background: '#6B1E1E', color: '#fff', fontSize: 10 }}>{b.remaining}</div>
                                 )}
                               </div>
                             );
