@@ -1198,16 +1198,17 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
                     </div>
                   ))}
                   {/* Loose cigars indicator */}
-                  {totalLooseCigars > 0 && (
-                    <div className="h-5 flex gap-1 p-1 items-center justify-start">
-                      <svg width="20" height="8" viewBox="0 0 25 10">
-                        <rect x="0" y="3" width="22" height="4" rx="2" fill="#8B4513"/>
-                        <rect x="2" y="3" width="4" height="4" fill="#6B1E1E"/>
-                        <rect x="22" y="3" width="3" height="4" rx="1" fill="#F5DEB3"/>
-                      </svg>
-                      <span className="text-xs font-bold" style={{ color: '#1a120b' }}>×{totalLooseCigars}</span>
-                    </div>
-                  )}
+{totalLooseCigars > 0 && (
+  <div className="h-5 flex gap-0.5 p-1 items-end">
+    <div className="flex-1 rounded-sm" style={{ height: '100%', background: '#8B4513' }}>
+      <svg width="100%" height="100%" viewBox="0 0 25 12" preserveAspectRatio="xMidYMid meet">
+        <rect x="1" y="4" width="20" height="4" rx="2" fill="#8B4513"/>
+        <rect x="2" y="4" width="4" height="4" fill="#6B1E1E"/>
+        <rect x="21" y="4" width="3" height="4" rx="1" fill="#F5DEB3"/>
+      </svg>
+    </div>
+  </div>
+)}
                 </>
               );
             })()}
@@ -1634,7 +1635,7 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
 };
 
 // Box Detail Modal
-  const BoxDetailModal = ({ boxes, initialBoxIndex = 0, onClose, fmtCurrency, fmtCurrencyWithOriginal, fmtFromGBP, onDelete, onEdit, isSignedIn, availableLocations = [], baseCurrency, fxRates }) => {
+const BoxDetailModal = ({ boxes, initialBoxIndex = 0, onClose, fmtCurrency, fmtCurrencyWithOriginal, fmtFromGBP, onDelete, onEdit, isSignedIn, availableLocations = [], baseCurrency, fxRates }) => {
   const [selectedIdx, setSelectedIdx] = useState(initialBoxIndex);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -1647,6 +1648,7 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
   }, [initialBoxIndex]);
   
   const box = boxes[selectedIdx];
+  const isLooseCigars = box.boxNum.startsWith('c.');
   const s = brandStyles[box.brand] || brandStyles['Cohiba'];
   const market = getMarket(box.brand, box.name, box.perBox);
   const boxPriceInBase = convertCurrency(box.price || 0, box.currency || 'USD', baseCurrency, fxRates);
@@ -1660,52 +1662,49 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
     const success = await onDelete(box);
     setIsDeleting(false);
     if (success) {
-      // If there are other boxes in this group, stay open and switch to another box
       if (boxes.length > 1) {
-        // If we deleted the last box in the list, go to the previous one
         if (selectedIdx >= boxes.length - 1) {
           setSelectedIdx(Math.max(0, selectedIdx - 1));
         }
-        // The parent will refresh the boxes array, so we just need to reset delete confirm
         setShowDeleteConfirm(false);
       } else {
-        // No other boxes, close the modal
         onClose();
       }
     }
   };
   
-  // Calculate box age
-const calculateAge = (dateStr) => {
-  if (!dateStr) return null;
-  
-  // Parse YYYY-MM format directly to avoid timezone issues
-  const match = dateStr.match(/^(\d{4})-(\d{2})$/);
-  if (match) {
-    const boxYear = parseInt(match[1]);
-    const boxMonth = parseInt(match[2]);
-    const now = new Date();
-    const nowYear = now.getFullYear();
-    const nowMonth = now.getMonth() + 1;
+  const calculateAge = (dateStr) => {
+    if (!dateStr) return null;
     
-    let totalMonths = (nowYear - boxYear) * 12 + (nowMonth - boxMonth);
-    const years = Math.floor(totalMonths / 12);
-    const months = totalMonths % 12;
+    const match = dateStr.match(/^(\d{4})-(\d{2})$/);
+    if (match) {
+      const boxYear = parseInt(match[1]);
+      const boxMonth = parseInt(match[2]);
+      const now = new Date();
+      const nowYear = now.getFullYear();
+      const nowMonth = now.getMonth() + 1;
+      
+      let totalMonths = (nowYear - boxYear) * 12 + (nowMonth - boxMonth);
+      const years = Math.floor(totalMonths / 12);
+      const months = totalMonths % 12;
+      return { years, months };
+    }
+    
+    const boxDate = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now - boxDate;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const years = Math.floor(diffDays / 365);
+    const months = Math.floor((diffDays % 365) / 30);
     return { years, months };
-  }
-  
-  // Fallback for other date formats
-  const boxDate = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now - boxDate;
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  const years = Math.floor(diffDays / 365);
-  const months = Math.floor((diffDays % 365) / 30);
-  return { years, months };
-};
+  };
 
-const boxAgeData = calculateAge(box.dateOfBox);
-const isFullBox = box.remaining === box.perBox;
+  const boxAgeData = calculateAge(box.dateOfBox);
+  const isFullBox = box.remaining === box.perBox;
+  
+  // Separate regular boxes and loose cigars for the selector
+  const regularBoxes = boxes.filter(b => !b.boxNum.startsWith('c.'));
+  const looseCigarsEntries = boxes.filter(b => b.boxNum.startsWith('c.'));
   
   return (
     <>
@@ -1721,175 +1720,211 @@ const isFullBox = box.remaining === box.perBox;
           <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(245,222,179,0.1)', color: '#F5DEB3', fontSize: '1.25rem' }}>×</button>
         </div>
         
-{/* Box Selector Buttons */}
-<div className="px-4 pt-3 pb-2 flex gap-2 overflow-x-auto items-center" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-  {[...boxes].sort((a, b) => {
-    const dateA = a.datePurchased ? new Date(a.datePurchased).getTime() : 0;
-    const dateB = b.datePurchased ? new Date(b.datePurchased).getTime() : 0;
-    if (dateA !== dateB) return dateA - dateB;
-    const aIsOpen = a.remaining > 0 && a.remaining < a.perBox;
-    const bIsOpen = b.remaining > 0 && b.remaining < b.perBox;
-    if (aIsOpen && !bIsOpen) return 1;
-    if (!aIsOpen && bIsOpen) return -1;
-    return 0;
-  }).map((b) => (
-    <div key={b.id} className="flex flex-col items-center gap-1.5">
-      <button 
-        onClick={() => setSelectedIdx(boxes.findIndex(box => box.id === b.id))} 
-        className="flex items-center justify-center"
-        style={{
-          width: '72px',
-          height: '32px',
-          background: '#6B1E1E',
-          color: '#F5DEB3',
-          borderRadius: '4px',
-          fontFamily: 'tt-ricordi-allegria, Georgia, serif',
-          fontSize: '14px',
-          border: b.remaining > 0 && b.remaining < b.perBox ? '3px solid #F5DEB3' : '3px solid transparent',
-          boxSizing: 'border-box'
-        }}
-      >
-        Box {b.boxNum}
-      </button>
-      <div 
-        className="w-2 h-2 rounded-full"
-        style={{ 
-          background: boxes.findIndex(box => box.id === b.id) === selectedIdx ? '#1a120b' : 'transparent'
-        }}
-      />
-    </div>
-  ))}
-</div>
+        {/* Box Selector Buttons */}
+        <div className="px-4 pt-3 pb-2 flex gap-2 overflow-x-auto items-center" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          {/* Regular boxes first */}
+          {[...regularBoxes].sort((a, b) => {
+            const dateA = a.datePurchased ? new Date(a.datePurchased).getTime() : 0;
+            const dateB = b.datePurchased ? new Date(b.datePurchased).getTime() : 0;
+            if (dateA !== dateB) return dateA - dateB;
+            const aIsOpen = a.remaining > 0 && a.remaining < a.perBox;
+            const bIsOpen = b.remaining > 0 && b.remaining < b.perBox;
+            if (aIsOpen && !bIsOpen) return 1;
+            if (!aIsOpen && bIsOpen) return -1;
+            return 0;
+          }).map((b) => (
+            <div key={b.id} className="flex flex-col items-center gap-1.5">
+              <button 
+                onClick={() => setSelectedIdx(boxes.findIndex(box => box.id === b.id))} 
+                className="flex items-center justify-center"
+                style={{
+                  width: '72px',
+                  height: '32px',
+                  background: '#6B1E1E',
+                  color: '#F5DEB3',
+                  borderRadius: '4px',
+                  fontFamily: 'tt-ricordi-allegria, Georgia, serif',
+                  fontSize: '14px',
+                  border: b.remaining > 0 && b.remaining < b.perBox ? '3px solid #F5DEB3' : '3px solid transparent',
+                  boxSizing: 'border-box'
+                }}
+              >
+                Box {b.boxNum}
+              </button>
+              <div 
+                className="w-2 h-2 rounded-full"
+                style={{ 
+                  background: boxes.findIndex(box => box.id === b.id) === selectedIdx ? '#1a120b' : 'transparent'
+                }}
+              />
+            </div>
+          ))}
+          {/* Loose cigars */}
+          {looseCigarsEntries.map((b) => (
+            <div key={b.id} className="flex flex-col items-center gap-1.5">
+              <button 
+                onClick={() => setSelectedIdx(boxes.findIndex(box => box.id === b.id))} 
+                className="flex items-center justify-center gap-1"
+                style={{
+                  width: '72px',
+                  height: '32px',
+                  background: '#8B4513',
+                  color: '#F5DEB3',
+                  borderRadius: '4px',
+                  fontFamily: 'tt-ricordi-allegria, Georgia, serif',
+                  fontSize: '14px',
+                  border: '3px solid transparent',
+                  boxSizing: 'border-box'
+                }}
+              >
+                <svg width="20" height="10" viewBox="0 0 25 10">
+                  <rect x="0" y="3" width="22" height="4" rx="2" fill="#8B4513"/>
+                  <rect x="2" y="3" width="4" height="4" fill="#6B1E1E"/>
+                  <rect x="22" y="3" width="3" height="4" rx="1" fill="#F5DEB3"/>
+                </svg>
+                {b.boxNum.replace('c.', '')}
+              </button>
+              <div 
+                className="w-2 h-2 rounded-full"
+                style={{ 
+                  background: boxes.findIndex(box => box.id === b.id) === selectedIdx ? '#1a120b' : 'transparent'
+                }}
+              />
+            </div>
+          ))}
+        </div>
         
         <div className="p-4 pb-6">
           
           {/* Box Status Row */}
-<div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-  <div className="flex justify-around">
-    <div className="text-center">
-      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Box of</div>
-      <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.perBox}</div>
-    </div>
-    <div className="text-center">
-      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Remaining</div>
-      <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.remaining}</div>
-    </div>
-    <div className="text-center">
-      <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Age</div>
-      <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
-        {boxAgeData ? (
-          <>
-            {boxAgeData.years > 0 && <><span>{boxAgeData.years}</span><span className="text-lg">{boxAgeData.years === 1 ? ' yr' : ' yrs'}</span></>}
-            {boxAgeData.months > 0 && <><span>{boxAgeData.years > 0 ? ' ' : ''}{boxAgeData.months}</span><span className="text-lg"> mo</span></>}
-            {boxAgeData.years === 0 && boxAgeData.months === 0 && <span className="text-lg">New</span>}
-          </>
-        ) : '–'}
-      </div>
-    </div>
-  </div>
-</div>
+          <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
+            <div className="flex justify-around">
+              <div className="text-center">
+                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>{isLooseCigars ? 'Cigars' : 'Box of'}</div>
+                <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.perBox}</div>
+              </div>
+              <div className="text-center">
+                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Remaining</div>
+                <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{box.remaining}</div>
+              </div>
+              <div className="text-center">
+                <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>Age</div>
+                <div className="text-4xl font-medium" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
+                  {boxAgeData ? (
+                    <>
+                      {boxAgeData.years > 0 && <><span>{boxAgeData.years}</span><span className="text-lg">{boxAgeData.years === 1 ? ' yr' : ' yrs'}</span></>}
+                      {boxAgeData.months > 0 && <><span>{boxAgeData.years > 0 ? ' ' : ''}{boxAgeData.months}</span><span className="text-lg"> mo</span></>}
+                      {boxAgeData.years === 0 && boxAgeData.months === 0 && <span className="text-lg">New</span>}
+                    </>
+                  ) : '–'}
+                </div>
+              </div>
+            </div>
+          </div>
 
-{/* Status */}
-<div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-  <div className="flex justify-between items-start">
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Status</span>
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{getStatusDisplay(box.status)}</span>
-  </div>
-  {!box.received && (
-    <div className="text-right">
-      <span className="text-sm font-medium" style={{ color: '#6B1E1E' }}>(Yet to be received)</span>
-    </div>
-  )}
-</div>
+          {/* Status */}
+          <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
+            <div className="flex justify-between items-start">
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Status</span>
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{getStatusDisplay(box.status)}</span>
+            </div>
+            {!box.received && (
+              <div className="text-right">
+                <span className="text-sm font-medium" style={{ color: '#6B1E1E' }}>(Yet to be received)</span>
+              </div>
+            )}
+          </div>
 
           {/* Pricing Row */}
-<div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-  <div className="flex justify-between items-center mb-3">
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Date of Purchase</span>
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmt.date(box.datePurchased)}</span>
-  </div>
-  <div className="flex justify-between items-center mb-3">
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Your Cost</span>
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtCurrencyWithOriginal(box.price, box.currency)}</span>
-  </div>
-  <div className="flex justify-between items-center mb-3">
-  <span className="text-lg font-medium" style={{ color: '#1a120b' }}>UK Market</span>
-  <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{marketGBP ? fmtFromGBP(marketGBP) : 'No Data'}</span>
-  </div>
-  {savingsInBase > 0 && (
-    <div className="flex justify-between items-center">
-      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Savings</span>
-      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtFromGBP(savingsInBase)} ({Math.round(savingsInBase/marketInBase*100)}%)</span>
-    </div>
-  )}
-</div>
+          <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Date of Purchase</span>
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmt.date(box.datePurchased)}</span>
+            </div>
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Your Cost</span>
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtCurrencyWithOriginal(box.price, box.currency)}</span>
+            </div>
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>UK Market</span>
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{marketGBP ? fmtFromGBP(marketGBP) : 'No Data'}</span>
+            </div>
+            {savingsInBase > 0 && (
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Savings</span>
+                <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{fmtFromGBP(savingsInBase)} ({Math.round(savingsInBase/marketInBase*100)}%)</span>
+              </div>
+            )}
+          </div>
 
           {/* Details Section */}
-<div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-  {box.ringGauge && (
-    <div className="flex justify-between items-center mb-3">
-      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Ring Gauge</span>
-      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.ringGauge}</span>
-    </div>
-  )}
-  {box.length && (
-    <div className="flex justify-between items-center mb-3">
-      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Length</span>
-      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.length}"</span>
-    </div>
-  )}
-  {box.vitola && (
-    <div className="flex justify-between items-start mb-3">
-      <span className="text-lg font-medium flex-shrink-0" style={{ color: '#1a120b' }}>Vitola</span>
-      <span className="text-lg font-medium text-right" style={{ color: '#1a120b', maxWidth: '50%' }}>{box.vitola}</span>
-    </div>
-  )}
-  <div className="flex justify-between items-center mb-3">
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Release Date</span>
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.dateOfBox ? fmt.monthYear(box.dateOfBox) : 'Unknown'}</span>
-  </div>
-  {box.code && (
-    <div className="flex justify-between items-center mb-3">
-      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Factory Code</span>
-      <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.code}</span>
-    </div>
-  )}
-  <div className="flex justify-between items-center mb-3">
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Box ID</span>
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.boxNum}</span>
-  </div>
-  <div className="flex justify-between items-center">
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Location</span>
-    <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.location}</span>
-  </div>
-</div>
+          <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
+            {box.ringGauge && (
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Ring Gauge</span>
+                <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.ringGauge}</span>
+              </div>
+            )}
+            {box.length && (
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Length</span>
+                <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.length}"</span>
+              </div>
+            )}
+            {box.vitola && (
+              <div className="flex justify-between items-start mb-3">
+                <span className="text-lg font-medium flex-shrink-0" style={{ color: '#1a120b' }}>Vitola</span>
+                <span className="text-lg font-medium text-right" style={{ color: '#1a120b', maxWidth: '50%' }}>{box.vitola}</span>
+              </div>
+            )}
+            {!isLooseCigars && (
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Release Date</span>
+                <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.dateOfBox ? fmt.monthYear(box.dateOfBox) : 'Unknown'}</span>
+              </div>
+            )}
+            {!isLooseCigars && box.code && (
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Factory Code</span>
+                <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.code}</span>
+              </div>
+            )}
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{isLooseCigars ? 'Cigar ID' : 'Box ID'}</span>
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.boxNum}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Location</span>
+              <span className="text-lg font-medium" style={{ color: '#1a120b' }}>{box.location}</span>
+            </div>
+          </div>
 
-{/* Notes Section */}
-<div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
-  {box.boxNotes ? (
-    <div>
-      <div className="flex justify-between items-start">
-        <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Notes</span>
-        <button 
-          onClick={() => { setNoteText(box.boxNotes || ''); setShowNotesModal(true); }}
-          className="text-lg font-medium"
-          style={{ color: '#1a120b', background: 'none', border: 'none', textDecoration: 'underline', cursor: 'pointer' }}
-        >
-          Edit
-        </button>
-      </div>
-      <p className="text-lg font-medium mt-2" style={{ color: '#1a120b' }}>{box.boxNotes}</p>
-    </div>
-  ) : (
-    <button 
-      onClick={() => { setNoteText(''); setShowNotesModal(true); }}
-      className="text-lg font-medium w-full text-left"
-      style={{ color: '#1a120b', background: 'none', border: 'none', cursor: 'pointer' }}
-    >
-      Add Note
-    </button>
-  )}
-</div>
+          {/* Notes Section */}
+          <div className="py-4 border-b-2" style={{ borderColor: '#6B1E1E' }}>
+            {box.boxNotes ? (
+              <div>
+                <div className="flex justify-between items-start">
+                  <span className="text-lg font-medium" style={{ color: '#1a120b' }}>Notes</span>
+                  <button 
+                    onClick={() => { setNoteText(box.boxNotes || ''); setShowNotesModal(true); }}
+                    className="text-lg font-medium"
+                    style={{ color: '#1a120b', background: 'none', border: 'none', textDecoration: 'underline', cursor: 'pointer' }}
+                  >
+                    Edit
+                  </button>
+                </div>
+                <p className="text-lg font-medium mt-2" style={{ color: '#1a120b' }}>{box.boxNotes}</p>
+              </div>
+            ) : (
+              <button 
+                onClick={() => { setNoteText(''); setShowNotesModal(true); }}
+                className="text-lg font-medium w-full text-left"
+                style={{ color: '#1a120b', background: 'none', border: 'none', cursor: 'pointer' }}
+              >
+                Add Note
+              </button>
+            )}
+          </div>
 
           {/* Action Buttons */}
           {isSignedIn && !showDeleteConfirm && (
@@ -1912,7 +1947,7 @@ const isFullBox = box.remaining === box.perBox;
           )}
           {showDeleteConfirm && (
             <div className="pt-4">
-              <p className="text-lg font-bold mb-3" style={{ color: '#6B1E1E', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Delete this box?</p>
+              <p className="text-lg font-bold mb-3" style={{ color: '#6B1E1E', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Delete this {isLooseCigars ? 'cigar entry' : 'box'}?</p>
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowDeleteConfirm(false)}
@@ -1933,38 +1968,39 @@ const isFullBox = box.remaining === box.perBox;
           )}
         </div>
       </div>
+      
       {/* Notes Modal */}
-{showNotesModal && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setShowNotesModal(false)} style={{ background: 'rgba(0,0,0,0.9)' }}>
-    <div className="w-full max-w-sm mx-4 rounded-xl p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }} onClick={e => e.stopPropagation()}>
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
-          {box.boxNotes ? 'Edit Note' : 'Add Note'}
-        </h3>
-        <button onClick={() => setShowNotesModal(false)} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(26,18,11,0.1)', color: '#1a120b', fontSize: '1.25rem' }}>×</button>
-      </div>
-      <textarea
-        value={noteText}
-        onChange={(e) => setNoteText(e.target.value)}
-        className="w-full p-3 rounded-lg text-lg"
-        style={{ background: 'rgba(26,18,11,0.1)', border: '1px solid rgba(26,18,11,0.2)', color: '#1a120b', minHeight: '150px', resize: 'vertical' }}
-        placeholder="Enter your note..."
-      />
-     <button
-  onClick={async () => {
-    const success = await onEdit(box, { ...box, boxNotes: noteText });
-    if (success) {
-      setShowNotesModal(false);
-    }
-  }}
-        className="w-full py-3 mt-4 text-lg font-bold rounded-lg"
-        style={{ background: '#1a120b', color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}
-      >
-        Save
-      </button>
-    </div>
-  </div>
-)}
+      {showNotesModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={() => setShowNotesModal(false)} style={{ background: 'rgba(0,0,0,0.9)' }}>
+          <div className="w-full max-w-sm mx-4 rounded-xl p-4" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }} onClick={e => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold" style={{ color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
+                {box.boxNotes ? 'Edit Note' : 'Add Note'}
+              </h3>
+              <button onClick={() => setShowNotesModal(false)} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'rgba(26,18,11,0.1)', color: '#1a120b', fontSize: '1.25rem' }}>×</button>
+            </div>
+            <textarea
+              value={noteText}
+              onChange={(e) => setNoteText(e.target.value)}
+              className="w-full p-3 rounded-lg text-lg"
+              style={{ background: 'rgba(26,18,11,0.1)', border: '1px solid rgba(26,18,11,0.2)', color: '#1a120b', minHeight: '150px', resize: 'vertical' }}
+              placeholder="Enter your note..."
+            />
+            <button
+              onClick={async () => {
+                const success = await onEdit(box, { ...box, boxNotes: noteText });
+                if (success) {
+                  setShowNotesModal(false);
+                }
+              }}
+              className="w-full py-3 mt-4 text-lg font-bold rounded-lg"
+              style={{ background: '#1a120b', color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      )}
       
       {/* Edit Modal */}
       {showEditModal && (
@@ -2796,26 +2832,27 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
       const newId = Math.max(...boxes.map(b => b.id), 0) + 1;
       
       const newCigars = {
-        id: newId,
-        boxNum: boxNum, // c.XX format
-        brand: finalBrand,
-        name: finalName,
-        datePurchased,
-        received,
-        perBox: parseInt(cigarCount),
-        price: parseFloat(price),
-        currency: priceCurrency,
-        status,
-        dateOfBox: '',
-        code: '',
-        location,
-        consumed: 0,
-        remaining: parseInt(cigarCount),
-        ringGauge: ringGauge,
-        length: length,
-        vitola: notes,
-        boxNotes: '',
-      };
+  id: newId,
+  boxNum: boxNum, // c.XX format
+  brand: finalBrand,
+  name: finalName,
+  datePurchased,
+  received,
+  perBox: parseInt(cigarCount),
+  qty: 0, // No boxes for loose cigars
+  price: parseFloat(price),
+  currency: priceCurrency,
+  status,
+  dateOfBox: '',
+  code: '',
+  location,
+  consumed: 0,
+  remaining: parseInt(cigarCount),
+  ringGauge: ringGauge,
+  length: length,
+  vitola: notes,
+  boxNotes: '',
+};
       
       onAdd([newCigars]);
     }
