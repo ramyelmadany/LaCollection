@@ -1198,17 +1198,24 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
                     </div>
                   ))}
                   {/* Loose cigars indicator */}
-{totalLooseCigars > 0 && (
-  <div className="h-5 flex gap-0.5 p-1 items-end">
-    <div className="flex-1 rounded-sm" style={{ height: '100%', background: '#8B4513' }}>
-      <svg width="100%" height="100%" viewBox="0 0 25 12" preserveAspectRatio="xMidYMid meet">
-        <rect x="1" y="4" width="20" height="4" rx="2" fill="#8B4513"/>
-        <rect x="2" y="4" width="4" height="4" fill="#6B1E1E"/>
-        <rect x="21" y="4" width="3" height="4" rx="1" fill="#F5DEB3"/>
-      </svg>
+{looseCigars.map((cig, idx) => {
+  const isOpen = cig.remaining > 0 && cig.remaining < cig.perBox;
+  return (
+    <div key={cig.id} className="h-5 flex gap-0.5 p-1 items-end">
+      <div 
+        className="flex-1 rounded-full flex items-center justify-center text-xs font-bold"
+        style={{ 
+          height: '100%', 
+          background: 'linear-gradient(to right, #6B1E1E 15%, #8B4513 15%, #8B4513 85%, #F5DEB3 85%)',
+          color: '#fff',
+          border: isOpen && !isFinishedView ? '2px solid #F5DEB3' : 'none'
+        }}
+      >
+        {cig.boxNum.replace('c.', '')}
+      </div>
     </div>
-  </div>
-)}
+  );
+})}
                 </>
               );
             })()}
@@ -1748,26 +1755,18 @@ const BoxDetailModal = ({ boxes, initialBoxIndex = 0, onClose, fmtCurrency, fmtC
           style={{
             width: '72px',
             height: '32px',
-            background: isLoose ? '#8B4513' : '#6B1E1E',
+            background: isLoose 
+              ? 'linear-gradient(to right, #6B1E1E 15%, #8B4513 15%, #8B4513 85%, #F5DEB3 85%)'
+              : '#6B1E1E',
             color: '#F5DEB3',
-            borderRadius: '4px',
+            borderRadius: isLoose ? '16px' : '4px',
             fontFamily: 'tt-ricordi-allegria, Georgia, serif',
             fontSize: '14px',
-            border: isOpen && !isLoose ? '3px solid #F5DEB3' : '3px solid transparent',
+            border: isOpen ? '3px solid #F5DEB3' : '3px solid transparent',
             boxSizing: 'border-box'
           }}
         >
-          {isLoose ? (
-            <>
-              <svg width="24" height="12" viewBox="0 0 25 12" style={{ marginRight: '4px' }}>
-                <rect x="0" y="4" width="22" height="4" rx="2" fill="#6B1E1E"/>
-                <rect x="22" y="4" width="3" height="4" rx="1" fill="#F5DEB3"/>
-              </svg>
-              {b.boxNum.replace('c.', '')}
-            </>
-          ) : (
-            `Box ${b.boxNum}`
-          )}
+          {isLoose ? b.boxNum.replace('c.', '') : `Box ${b.boxNum}`}
         </button>
         <div 
           className="w-2 h-2 rounded-full"
