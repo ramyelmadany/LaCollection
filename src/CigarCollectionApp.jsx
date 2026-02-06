@@ -1132,8 +1132,13 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
   const totalRemaining = boxes.reduce((sum, b) => sum + b.remaining, 0);
   const totalOriginal = boxes.reduce((sum, b) => sum + b.perBox, 0);
   const totalBoxes = boxes.length;
-  const nonEmptyBoxes = boxes.filter(b => b.remaining > 0).length;
   const isFinished = totalRemaining === 0;
+  
+  // Separate boxes and loose cigars
+  const regularBoxes = boxes.filter(b => !b.boxNum.startsWith('c.'));
+  const looseCigars = boxes.filter(b => b.boxNum.startsWith('c.'));
+  const nonEmptyBoxes = regularBoxes.filter(b => b.remaining > 0).length;
+  const totalLooseCigars = looseCigars.reduce((sum, b) => sum + b.remaining, 0);
   
   // Calculate font sizes based on max lengths
   const brandSize = maxLengths?.maxBrand > 18 ? '1.1rem' : maxLengths?.maxBrand > 12 ? '1.3rem' : '1.5rem';
@@ -1156,10 +1161,10 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
           <div className="text-center mb-3">
             <div className="font-medium" style={{ color: s.text, opacity: 0.9, fontSize: nameSize }}>{name}</div>
           </div>
-         <div className="rounded overflow-hidden mb-2" style={{ background: 'rgba(184,132,76,0.8)' }}>
+          <div className="rounded overflow-hidden mb-2" style={{ background: 'rgba(184,132,76,0.8)' }}>
             {(() => {
-              // Sort boxes chronologically by purchase date, then open boxes last if same date
-              const sortedBoxes = [...boxes].sort((a, b) => {
+              // Sort regular boxes chronologically by purchase date, then open boxes last if same date
+              const sortedBoxes = [...regularBoxes].sort((a, b) => {
                 const dateA = a.datePurchased ? new Date(a.datePurchased).getTime() : 0;
                 const dateB = b.datePurchased ? new Date(b.datePurchased).getTime() : 0;
                 if (dateA !== dateB) return dateA - dateB;
@@ -1170,39 +1175,61 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
                 if (!aIsOpen && bIsOpen) return -1;
                 return 0;
               });
-              return [...Array(Math.ceil(sortedBoxes.length / 6) || 1)].map((_, rowIdx) => (
-                <div key={rowIdx} className="h-5 flex gap-0.5 p-1 items-end">
-                  {[...Array(6)].map((_, i) => {
-                    const boxIndex = rowIdx * 6 + i;
-                    const box = sortedBoxes[boxIndex];
-                    const isEmpty = !box;
-                    const isFull = box && box.remaining === box.perBox;
-                    const isOpen = box && box.remaining > 0 && box.remaining < box.perBox;
-                    const isEmptyBox = box && box.remaining === 0;
-                    return <div key={i} className="flex-1 rounded-sm" style={{ 
-                      height: isEmpty ? '0%' : (isFull || isOpen || isFinishedView) ? '100%' : '20%', 
-                      background: isFinishedView ? '#1a1a1a' : (isFull ? '#6B1E1E' : isOpen ? '#6B1E1E' : 'rgba(0,0,0,0.3)'),
-                      border: isOpen && !isFinishedView ? '2px solid #F5DEB3' : 'none',
-                      visibility: isEmpty ? 'hidden' : 'visible'
-                    }} />;
-                  })}
-                </div>
-              ));
+              
+              return (
+                <>
+                  {/* Box indicators */}
+                  {(sortedBoxes.length > 0 || looseCigars.length === 0) && [...Array(Math.ceil(sortedBoxes.length / 6) || 1)].map((_, rowIdx) => (
+                    <div key={rowIdx} className="h-5 flex gap-0.5 p-1 items-end">
+                      {[...Array(6)].map((_, i) => {
+                        const boxIndex = rowIdx * 6 + i;
+                        const box = sortedBoxes[boxIndex];
+                        const isEmpty = !box;
+                        const isFull = box && box.remaining === box.perBox;
+                        const isOpen = box && box.remaining > 0 && box.remaining < box.perBox;
+                        const isEmptyBox = box && box.remaining === 0;
+                        return <div key={i} className="flex-1 rounded-sm" style={{ 
+                          height: isEmpty ? '0%' : (isFull || isOpen || isFinishedView) ? '100%' : '20%', 
+                          background: isFinishedView ? '#1a1a1a' : (isFull ? '#6B1E1E' : isOpen ? '#6B1E1E' : 'rgba(0,0,0,0.3)'),
+                          border: isOpen && !isFinishedView ? '2px solid #F5DEB3' : 'none',
+                          visibility: isEmpty ? 'hidden' : 'visible'
+                        }} />;
+                      })}
+                    </div>
+                  ))}
+                  {/* Loose cigars indicator */}
+                  {totalLooseCigars > 0 && (
+                    <div className="h-5 flex gap-1 p-1 items-center justify-start">
+                      <svg width="20" height="8" viewBox="0 0 25 10">
+                        <rect x="0" y="3" width="22" height="4" rx="2" fill="#8B4513"/>
+                        <rect x="2" y="3" width="4" height="4" fill="#6B1E1E"/>
+                        <rect x="22" y="3" width="3" height="4" rx="1" fill="#F5DEB3"/>
+                      </svg>
+                      <span className="text-xs font-bold" style={{ color: '#1a120b' }}>×{totalLooseCigars}</span>
+                    </div>
+                  )}
+                </>
+              );
             })()}
           </div>
           {showCigarCount && (
             <div className="flex justify-between items-center text-sm">
               <span className="font-bold" style={{ color: s.text }}>{totalRemaining} total</span>
-              <span style={{ color: s.text, opacity: 0.7 }}>{nonEmptyBoxes} box{nonEmptyBoxes !== 1 ? 'es' : ''}</span>
+              <span style={{ color: s.text, opacity: 0.7 }}>
+                {nonEmptyBoxes > 0 && `${nonEmptyBoxes} box${nonEmptyBoxes !== 1 ? 'es' : ''}`}
+                {nonEmptyBoxes > 0 && totalLooseCigars > 0 && ' + '}
+                {totalLooseCigars > 0 && `${totalLooseCigars} loose`}
+              </span>
             </div>
           )}
         </div>
         {(() => {
-          const openBoxes = boxes.filter(b => b.remaining > 0 && b.remaining < b.perBox);
+          const openBoxes = regularBoxes.filter(b => b.remaining > 0 && b.remaining < b.perBox);
           const openCount = openBoxes.reduce((sum, b) => sum + b.remaining, 0);
-          return openBoxes.length > 0 ? (
+          const totalBadge = openCount + totalLooseCigars;
+          return totalBadge > 0 ? (
             <div className="absolute -top-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center font-bold shadow-lg" 
-              style={{ background: '#6B1E1E', color: '#fff', fontSize: 12 }}>{openCount}</div>
+              style={{ background: '#6B1E1E', color: '#fff', fontSize: 12 }}>{totalBadge}</div>
           ) : null;
         })()}
         {isFinished && !isFinishedView && (
@@ -2649,10 +2676,12 @@ const habanosCatalog = {
 
 // Add Box Modal
 const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
+  const [addType, setAddType] = useState(null); // 'box' or 'cigars'
   const [brand, setBrand] = useState('');
   const [name, setName] = useState('');
   const [boxNum, setBoxNum] = useState('');
   const [perBox, setPerBox] = useState('');
+  const [cigarCount, setCigarCount] = useState('');
   const [price, setPrice] = useState('');
   const [priceCurrency, setPriceCurrency] = useState('USD');
   const [datePurchased, setDatePurchased] = useState(new Date().toISOString().split('T')[0]);
@@ -2668,20 +2697,25 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
   const [length, setLength] = useState('');
   const [notes, setNotes] = useState('');
   
-  // Calculate suggested box number from Settings
-  const suggestedBoxNum = useMemo(() => {
+  // Calculate suggested box/cigar number from Settings
+  const suggestedNum = useMemo(() => {
     const nums = boxes.map(b => {
-      const match = b.boxNum.match(/^(\d+)/);
+      // Match both regular numbers and c.XX format
+      const match = b.boxNum.match(/^(?:c\.)?(\d+)/);
       return match ? parseInt(match[1]) : 0;
     });
     const maxInSheet = Math.max(...nums, 0);
-    return String(Math.max(maxInSheet, highestBoxNum || 0) + 1);
+    return Math.max(maxInSheet, highestBoxNum || 0) + 1;
   }, [boxes, highestBoxNum]);
   
-  // Set initial box number
+  // Set initial box number based on type
   useEffect(() => {
-    setBoxNum(suggestedBoxNum);
-  }, [suggestedBoxNum]);
+    if (addType === 'box') {
+      setBoxNum(String(suggestedNum));
+    } else if (addType === 'cigars') {
+      setBoxNum(`c.${suggestedNum}`);
+    }
+  }, [suggestedNum, addType]);
   
   // Get all Habanos brands (sorted alphabetically)
   const allBrands = useMemo(() => {
@@ -2707,13 +2741,11 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
         setLength(catalogData.length || '');
         setNotes(catalogData.notes || '');
       } else {
-        // Cigar not in catalog (maybe from collection), clear fields
         setRingGauge('');
         setLength('');
         setNotes('');
       }
     } else {
-      // Custom brand/name, clear fields
       setRingGauge('');
       setLength('');
       setNotes('');
@@ -2724,39 +2756,70 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
     const finalBrand = brand === '__custom__' ? customBrand : brand;
     const finalName = (brand === '__custom__' || name === '__custom__') ? customName : name;
     
-    if (!finalBrand || !finalName || !perBox || !price) return;
-    
-    const newBoxes = [];
-    const baseNum = boxNum;
-    
-    for (let i = 0; i < quantity; i++) {
-      const newId = Math.max(...boxes.map(b => b.id), 0) + 1 + i;
-      const newBoxNum = quantity > 1 ? `${baseNum}.${i + 1}` : baseNum;
+    if (addType === 'box') {
+      if (!finalBrand || !finalName || !perBox || !price) return;
       
-      newBoxes.push({
-  id: newId,
-  boxNum: newBoxNum,
-  brand: finalBrand,
-  name: finalName,
-  datePurchased,
-  received,
-  perBox: parseInt(perBox),
-  price: parseFloat(price),
-  currency: priceCurrency,
-  status,
-  dateOfBox: dateOfBox || '',
-  code: code || '',
-  location,
-  consumed: 0,
-  remaining: parseInt(perBox),
-  ringGauge: ringGauge,
-  length: length,
-  vitola: notes,
-  boxNotes: '',
-});
+      const newBoxes = [];
+      const baseNum = boxNum;
+      
+      for (let i = 0; i < quantity; i++) {
+        const newId = Math.max(...boxes.map(b => b.id), 0) + 1 + i;
+        const newBoxNum = quantity > 1 ? `${baseNum}.${i + 1}` : baseNum;
+        
+        newBoxes.push({
+          id: newId,
+          boxNum: newBoxNum,
+          brand: finalBrand,
+          name: finalName,
+          datePurchased,
+          received,
+          perBox: parseInt(perBox),
+          price: parseFloat(price),
+          currency: priceCurrency,
+          status,
+          dateOfBox: dateOfBox || '',
+          code: code || '',
+          location,
+          consumed: 0,
+          remaining: parseInt(perBox),
+          ringGauge: ringGauge,
+          length: length,
+          vitola: notes,
+          boxNotes: '',
+        });
+      }
+      
+      onAdd(newBoxes);
+    } else if (addType === 'cigars') {
+      if (!finalBrand || !finalName || !cigarCount || !price) return;
+      
+      const newId = Math.max(...boxes.map(b => b.id), 0) + 1;
+      
+      const newCigars = {
+        id: newId,
+        boxNum: boxNum, // c.XX format
+        brand: finalBrand,
+        name: finalName,
+        datePurchased,
+        received,
+        perBox: parseInt(cigarCount),
+        price: parseFloat(price),
+        currency: priceCurrency,
+        status,
+        dateOfBox: '',
+        code: '',
+        location,
+        consumed: 0,
+        remaining: parseInt(cigarCount),
+        ringGauge: ringGauge,
+        length: length,
+        vitola: notes,
+        boxNotes: '',
+      };
+      
+      onAdd([newCigars]);
     }
     
-    onAdd(newBoxes);
     onClose();
   };
   
@@ -2764,202 +2827,265 @@ const AddBoxModal = ({ boxes, onClose, onAdd, highestBoxNum }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
       <div className="w-full max-w-md rounded-2xl max-h-[90vh] min-h-[85vh] overflow-y-auto" style={{ background: '#1a1a1a', border: '1px solid #333', scrollbarWidth: 'none', msOverflowStyle: 'none' }} onClick={e => e.stopPropagation()}>
         <div className="sticky top-0 z-10 p-4 flex justify-between items-center" style={{ background: '#1a1a1a', borderBottom: '1px solid #333' }}>
-          <h3 className="text-lg font-semibold" style={{ color: '#F5DEB3' }}>Add New Box</h3>
+          <h3 className="text-lg font-semibold" style={{ color: '#F5DEB3' }}>
+            {!addType ? 'Add to Collection' : addType === 'box' ? 'Add Box' : 'Add Cigars'}
+          </h3>
           <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#333', color: '#888' }}>×</button>
         </div>
         
         <div className="p-4 space-y-4">
-          {/* Date Purchased and Price */}
-          <div className="grid grid-cols-2 gap-3">
-            <div style={{ overflow: 'hidden' }}>
-              <label className="text-xs text-gray-500 block mb-2">Date Purchased</label>
-              <input type="date" value={datePurchased} onChange={e => setDatePurchased(e.target.value)} className="w-full px-2 py-2 rounded-lg" style={{ background: '#252525', border: '1px solid #333', color: '#fff', fontSize: '14px', WebkitAppearance: 'none', minHeight: '42px' }} />
+          {/* Type Selection */}
+          {!addType && (
+            <div className="space-y-3">
+              <label className="text-xs text-gray-500 block mb-2">What would you like to add?</label>
+              <button 
+                onClick={() => setAddType('box')} 
+                className="w-full py-4 rounded-lg text-lg font-bold"
+                style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', color: '#1a120b' }}
+              >
+                Box
+              </button>
+              <button 
+                onClick={() => setAddType('cigars')} 
+                className="w-full py-4 rounded-lg text-lg font-semibold"
+                style={{ background: 'rgba(245,222,179,0.08)', border: '1px solid rgba(245,222,179,0.2)', color: 'rgba(245,222,179,0.6)' }}
+              >
+                Cigars
+              </button>
             </div>
-            <div className="min-w-0">
-              <label className="text-xs text-gray-500 block mb-2">Price *</label>
-              <div className="flex gap-1">
-                <select 
-                  value={priceCurrency} 
-                  onChange={e => setPriceCurrency(e.target.value)}
-                  className="px-2 py-2 rounded-lg text-sm flex-shrink-0"
-                  style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '70px' }}
-                >
-                  {CURRENCIES.map(c => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-                <input type="number" value={price} onChange={e => setPrice(e.target.value)} placeholder="e.g. 2500" className="flex-1 min-w-0 px-2 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+          )}
+          
+          {/* Box or Cigars Form */}
+          {addType && (
+            <>
+              <button onClick={() => setAddType(null)} className="text-sm" style={{ color: 'rgba(245,222,179,0.5)' }}>← Back</button>
+              
+              {/* Date Purchased and Price */}
+              <div className="grid grid-cols-2 gap-3">
+                <div style={{ overflow: 'hidden' }}>
+                  <label className="text-xs text-gray-500 block mb-2">Date Purchased</label>
+                  <input type="date" value={datePurchased} onChange={e => setDatePurchased(e.target.value)} className="w-full px-2 py-2 rounded-lg" style={{ background: '#252525', border: '1px solid #333', color: '#fff', fontSize: '14px', WebkitAppearance: 'none', minHeight: '42px' }} />
+                </div>
+                <div className="min-w-0">
+                  <label className="text-xs text-gray-500 block mb-2">Price *</label>
+                  <div className="flex gap-1">
+                    <select 
+                      value={priceCurrency} 
+                      onChange={e => setPriceCurrency(e.target.value)}
+                      className="px-2 py-2 rounded-lg text-sm flex-shrink-0"
+                      style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '70px' }}
+                    >
+                      {CURRENCIES.map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                    <input type="number" value={price} onChange={e => setPrice(e.target.value)} placeholder="e.g. 2500" className="flex-1 min-w-0 px-2 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          
-          {/* Brand */}
-          <div>
-            <label className="text-xs text-gray-500 block mb-2">Brand *</label>
-            <select value={brand} onChange={e => { setBrand(e.target.value); setName(''); setCustomBrand(''); setCustomName(''); }} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
-              <option value="">Select brand...</option>
-              {allBrands.map(b => <option key={b} value={b}>{b}</option>)}
-              <option value="__custom__">— Custom Brand —</option>
-            </select>
-            {brand === '__custom__' && (
-              <input 
-                type="text" 
-                value={customBrand} 
-                onChange={e => setCustomBrand(e.target.value)} 
-                placeholder="Enter custom brand name..." 
-                className="w-full px-3 py-2 rounded-lg text-base mt-2" 
-                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
-              />
-            )}
-          </div>
-          
-          {/* Cigar Name */}
-          <div>
-            <label className="text-xs text-gray-500 block mb-2">Cigar Name *</label>
-            {brand === '__custom__' ? (
-              <input 
-                type="text" 
-                value={customName} 
-                onChange={e => setCustomName(e.target.value)} 
-                placeholder="Enter cigar name..." 
-                className="w-full px-3 py-2 rounded-lg text-base" 
-                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
-              />
-            ) : (
-              <>
-                <select value={name} onChange={e => { setName(e.target.value); setCustomName(''); }} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} disabled={!brand}>
-                  <option value="">{brand ? 'Select cigar...' : 'Select brand first'}</option>
-                  {availableNames.map(n => <option key={n} value={n}>{n}</option>)}
-                  {brand && <option value="__custom__">— Custom Cigar —</option>}
+              
+              {/* Brand */}
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Brand *</label>
+                <select value={brand} onChange={e => { setBrand(e.target.value); setName(''); setCustomBrand(''); setCustomName(''); }} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
+                  <option value="">Select brand...</option>
+                  {allBrands.map(b => <option key={b} value={b}>{b}</option>)}
+                  <option value="__custom__">— Custom Brand —</option>
                 </select>
-                {name === '__custom__' && (
+                {brand === '__custom__' && (
                   <input 
                     type="text" 
-                    value={customName} 
-                    onChange={e => setCustomName(e.target.value)} 
-                    placeholder="Enter custom cigar name..." 
+                    value={customBrand} 
+                    onChange={e => setCustomBrand(e.target.value)} 
+                    placeholder="Enter custom brand name..." 
                     className="w-full px-3 py-2 rounded-lg text-base mt-2" 
                     style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
                   />
                 )}
-              </>
-            )}
-          </div>
-          
-          {/* Received */}
-          <div>
-            <label className="text-xs text-gray-500 block mb-2">Received</label>
-            <button onClick={() => setReceived(!received)} className="w-full px-3 py-2 rounded-lg text-base text-left" style={{ background: received ? '#1c3a1c' : '#252525', border: '1px solid #333', color: received ? '#99ff99' : '#888' }}>
-              {received ? 'Yes' : 'No'}
-            </button>
-          </div>
-          
-          {/* Ring Gauge and Length - Auto-populated but editable */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-gray-500 block mb-2">Ring Gauge</label>
-              <input 
-                type="text" 
-                value={ringGauge} 
-                onChange={e => setRingGauge(e.target.value)} 
-                placeholder="e.g. 52" 
-                className="w-full px-3 py-2 rounded-lg text-base" 
-                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
-              />
-            </div>
-            <div>
-              <label className="text-xs text-gray-500 block mb-2">Length (inches)</label>
-              <input 
-                type="text" 
-                value={length} 
-                onChange={e => setLength(e.target.value)} 
-                placeholder="e.g. 6 1/8" 
-                className="w-full px-3 py-2 rounded-lg text-base" 
-                style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
-              />
-            </div>
-          </div>
-          
-          {/* Vitola Notes - Auto-populated but editable */}
-          <div>
-            <label className="text-xs text-gray-500 block mb-2">Vitola Notes</label>
-            <input 
-              type="text" 
-              value={notes} 
-              onChange={e => setNotes(e.target.value)} 
-              placeholder="e.g. Robusto, LCDH exclusive" 
-              className="w-full px-3 py-2 rounded-lg text-base" 
-              style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
-            />
-          </div>
-          
-          {/* Box Number and Quantity */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-gray-500 block mb-2">Box Number *</label>
-              <input type="text" value={boxNum} onChange={e => setBoxNum(e.target.value)} placeholder={suggestedBoxNum} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
-            </div>
-            <div>
-              <label className="text-xs text-gray-500 block mb-2">Quantity</label>
-              <select value={quantity} onChange={e => setQuantity(parseInt(e.target.value))} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
-                {[1,2,3,4,5,6,7,8,9,10].map(n => <option key={n} value={n}>{n} box{n > 1 ? 'es' : ''}</option>)}
-              </select>
-            </div>
-          </div>
-          
-          {/* Cigars Per Box */}
-          <div>
-            <label className="text-xs text-gray-500 block mb-2">Cigars Per Box *</label>
-            <input type="number" value={perBox} onChange={e => setPerBox(e.target.value)} placeholder="e.g. 25" className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
-          </div>
-          
-          {/* Factory Code and Release Date */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-gray-500 block mb-2">Factory Code</label>
-              <input type="text" value={code} onChange={e => setCode(e.target.value.toUpperCase())} placeholder="e.g. GES MAR 24" autoCapitalize="characters" className="w-full px-3 py-2 rounded-lg text-base font-mono" style={{ background: '#252525', border: '1px solid #333', color: '#fff', textTransform: 'uppercase' }} />
-            </div>
-            <div style={{ overflow: 'hidden' }}>
-              <label className="text-xs text-gray-500 block mb-2">Release Date</label>
-              <input type="month" value={dateOfBox} onChange={e => setDateOfBox(e.target.value)} className="w-full px-2 py-2 rounded-lg" style={{ background: '#252525', border: '1px solid #333', color: '#fff', fontSize: '14px', WebkitAppearance: 'none', minHeight: '42px' }} />
-            </div>
-          </div>
-          
-          {/* Location and Status */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-gray-500 block mb-2">Location</label>
-              <select value={location} onChange={e => setLocation(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
-                <option value="London">London</option>
-                <option value="Cayman">Cayman</option>
-              </select>
-            </div>
-            <div>
-              <label className="text-xs text-gray-500 block mb-2">Status</label>
-              <select value={status} onChange={e => setStatus(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
-                <option value="Ageing">Ageing</option>
-                <option value="Immediate">On Rotation</option>
-                <option value="Combination">Assortment</option>
-              </select>
-            </div>
-          </div>
-          
-          {/* Submit Button */}
-{(() => {
-  const finalBrand = brand === '__custom__' ? customBrand : brand;
-  const finalName = (brand === '__custom__' || name === '__custom__') ? customName : name;
-  const isValid = finalBrand && finalName && perBox && price;
-  return (
-    <button onClick={handleSubmit} disabled={!isValid} className="w-full py-3 rounded-lg font-semibold mt-4" style={{ background: !isValid ? '#333' : '#d4af37', color: !isValid ? '#666' : '#000' }}>
-      Add {quantity} Box{quantity > 1 ? 'es' : ''}
-    </button>
-  );
-})()}
+              </div>
+              
+              {/* Cigar Name */}
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Cigar Name *</label>
+                {brand === '__custom__' ? (
+                  <input 
+                    type="text" 
+                    value={customName} 
+                    onChange={e => setCustomName(e.target.value)} 
+                    placeholder="Enter cigar name..." 
+                    className="w-full px-3 py-2 rounded-lg text-base" 
+                    style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+                  />
+                ) : (
+                  <>
+                    <select value={name} onChange={e => { setName(e.target.value); setCustomName(''); }} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} disabled={!brand}>
+                      <option value="">{brand ? 'Select cigar...' : 'Select brand first'}</option>
+                      {availableNames.map(n => <option key={n} value={n}>{n}</option>)}
+                      {brand && <option value="__custom__">— Custom Cigar —</option>}
+                    </select>
+                    {name === '__custom__' && (
+                      <input 
+                        type="text" 
+                        value={customName} 
+                        onChange={e => setCustomName(e.target.value)} 
+                        placeholder="Enter custom cigar name..." 
+                        className="w-full px-3 py-2 rounded-lg text-base mt-2" 
+                        style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+                      />
+                    )}
+                  </>
+                )}
+              </div>
+              
+              {/* Received */}
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Received</label>
+                <button onClick={() => setReceived(!received)} className="w-full px-3 py-2 rounded-lg text-base text-left" style={{ background: received ? '#1c3a1c' : '#252525', border: '1px solid #333', color: received ? '#99ff99' : '#888' }}>
+                  {received ? 'Yes' : 'No'}
+                </button>
+              </div>
+              
+              {/* Ring Gauge and Length */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-gray-500 block mb-2">Ring Gauge</label>
+                  <input 
+                    type="text" 
+                    value={ringGauge} 
+                    onChange={e => setRingGauge(e.target.value)} 
+                    placeholder="e.g. 52" 
+                    className="w-full px-3 py-2 rounded-lg text-base" 
+                    style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 block mb-2">Length (inches)</label>
+                  <input 
+                    type="text" 
+                    value={length} 
+                    onChange={e => setLength(e.target.value)} 
+                    placeholder="e.g. 6 1/8" 
+                    className="w-full px-3 py-2 rounded-lg text-base" 
+                    style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+                  />
+                </div>
+              </div>
+              
+              {/* Vitola Notes */}
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Vitola Notes</label>
+                <input 
+                  type="text" 
+                  value={notes} 
+                  onChange={e => setNotes(e.target.value)} 
+                  placeholder="e.g. Robusto, LCDH exclusive" 
+                  className="w-full px-3 py-2 rounded-lg text-base" 
+                  style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+                />
+              </div>
+              
+              {/* Box-specific fields */}
+              {addType === 'box' && (
+                <>
+                  {/* Box Number and Quantity */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs text-gray-500 block mb-2">Box Number *</label>
+                      <input type="text" value={boxNum} onChange={e => setBoxNum(e.target.value)} placeholder={String(suggestedNum)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-500 block mb-2">Quantity</label>
+                      <select value={quantity} onChange={e => setQuantity(parseInt(e.target.value))} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
+                        {[1,2,3,4,5,6,7,8,9,10].map(n => <option key={n} value={n}>{n} box{n > 1 ? 'es' : ''}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  
+                  {/* Cigars Per Box */}
+                  <div>
+                    <label className="text-xs text-gray-500 block mb-2">Cigars Per Box *</label>
+                    <input type="number" value={perBox} onChange={e => setPerBox(e.target.value)} placeholder="e.g. 25" className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+                  </div>
+                  
+                  {/* Factory Code and Release Date */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs text-gray-500 block mb-2">Factory Code</label>
+                      <input type="text" value={code} onChange={e => setCode(e.target.value.toUpperCase())} placeholder="e.g. GES MAR 24" autoCapitalize="characters" className="w-full px-3 py-2 rounded-lg text-base font-mono" style={{ background: '#252525', border: '1px solid #333', color: '#fff', textTransform: 'uppercase' }} />
+                    </div>
+                    <div style={{ overflow: 'hidden' }}>
+                      <label className="text-xs text-gray-500 block mb-2">Release Date</label>
+                      <input type="month" value={dateOfBox} onChange={e => setDateOfBox(e.target.value)} className="w-full px-2 py-2 rounded-lg" style={{ background: '#252525', border: '1px solid #333', color: '#fff', fontSize: '14px', WebkitAppearance: 'none', minHeight: '42px' }} />
+                    </div>
+                  </div>
+                </>
+              )}
+              
+              {/* Cigars-specific fields */}
+              {addType === 'cigars' && (
+                <>
+                  {/* Cigar ID and Count */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-xs text-gray-500 block mb-2">Cigar ID</label>
+                      <input type="text" value={boxNum} onChange={e => setBoxNum(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-500 block mb-2">Number of Cigars *</label>
+                      <input type="number" value={cigarCount} onChange={e => setCigarCount(e.target.value)} placeholder="e.g. 5" className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} />
+                    </div>
+                  </div>
+                </>
+              )}
+              
+              {/* Location and Status */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-gray-500 block mb-2">Location</label>
+                  <select value={location} onChange={e => setLocation(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
+                    <option value="London">London</option>
+                    <option value="Cayman">Cayman</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 block mb-2">Status</label>
+                  <select value={status} onChange={e => setStatus(e.target.value)} className="w-full px-3 py-2 rounded-lg text-base" style={{ background: '#252525', border: '1px solid #333', color: '#fff' }}>
+                    <option value="Ageing">Ageing</option>
+                    <option value="Immediate">On Rotation</option>
+                    <option value="Combination">Assortment</option>
+                  </select>
+                </div>
+              </div>
+              
+              {/* Submit Button */}
+              {(() => {
+                const finalBrand = brand === '__custom__' ? customBrand : brand;
+                const finalName = (brand === '__custom__' || name === '__custom__') ? customName : name;
+                const isValid = addType === 'box' 
+                  ? finalBrand && finalName && perBox && price
+                  : finalBrand && finalName && cigarCount && price;
+                return (
+                  <button onClick={handleSubmit} disabled={!isValid} className="w-full py-3 rounded-lg font-semibold mt-4" style={{ background: !isValid ? '#333' : '#d4af37', color: !isValid ? '#666' : '#000' }}>
+                    {addType === 'box' ? `Add ${quantity} Box${quantity > 1 ? 'es' : ''}` : `Add ${cigarCount || ''} Cigar${parseInt(cigarCount) !== 1 ? 's' : ''}`}
+                  </button>
+                );
+              })()}
+            </>
+          )}
         </div>
       </div>
     </div>
   );
 };
+
+// Horizontal Cigar Icon (no smoke) for loose cigars
+const LooseCigarIcon = ({ size = 16 }) => (
+  <svg width={size * 2.5} height={size} viewBox="0 0 25 10">
+    <rect x="0" y="3" width="22" height="4" rx="2" fill="#8B4513"/>
+    <rect x="2" y="3" width="4" height="4" fill="#6B1E1E"/>
+    <rect x="22" y="3" width="3" height="4" rx="1" fill="#F5DEB3"/>
+  </svg>
+);
 
 // History View
 const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
@@ -2996,11 +3122,11 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
       {history.slice().reverse().map((h, i) => {
         const actualIndex = history.length - 1 - i;
         const group = findGroupForBox(h.boxNum, h.brand, h.name);
-        const cigarCount = Math.min(h.qty, 10); // Cap at 10 icons to avoid overflow
-        // Find the actual box to check if it's open
+        const cigarCount = Math.min(h.qty, 10);
         const actualBox = boxes.find(b => b.boxNum === h.boxNum);
         const isBoxOpen = actualBox && actualBox.remaining > 0 && actualBox.remaining < actualBox.perBox;
-        const isBoxFull = actualBox && actualBox.remaining === actualBox.perBox;
+        const isLooseCigar = h.boxNum && h.boxNum.startsWith('c.');
+        
         return (
           <div key={i} className="p-4 rounded-lg" style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' }}>
             {/* Date Header with Cigar Icons */}
@@ -3022,10 +3148,25 @@ const HistoryView = ({ history, boxes, onDelete, onEdit, onBoxClick }) => {
             {/* Cigar Name */}
             <div className="text-base font-medium" style={{ color: '#1a120b' }}>{h.name}</div>
             
-            {/* Box Indicator */}
+            {/* Box/Cigar Indicator */}
             <div className="flex justify-between items-center mt-2">
               {h.boxNum === 'EXT' ? (
                 <div className="text-sm font-medium" style={{ color: 'rgba(26,18,11,0.5)' }}>External</div>
+              ) : isLooseCigar ? (
+                <button
+                  onClick={() => group && onBoxClick && onBoxClick(group, h.boxNum)}
+                  className="px-3 py-1.5 text-sm font-medium flex items-center gap-2"
+                  style={{ 
+                    background: '#8B4513', 
+                    color: '#F5DEB3', 
+                    borderRadius: '4px', 
+                    fontFamily: 'tt-ricordi-allegria, Georgia, serif',
+                    cursor: group ? 'pointer' : 'default' 
+                  }}
+                >
+                  <LooseCigarIcon size={12} />
+                  {h.boxNum}
+                </button>
               ) : (
                 <button
                   onClick={() => group && onBoxClick && onBoxClick(group, h.boxNum)}
