@@ -1198,24 +1198,17 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
                     </div>
                   ))}
                   {/* Loose cigars indicator */}
-{looseCigars.map((cig, idx) => {
-  const isOpen = cig.remaining > 0 && cig.remaining < cig.perBox;
-  return (
-    <div key={cig.id} className="h-5 flex gap-0.5 p-1 items-end">
-      <div 
-        className="flex-1 rounded-full flex items-center justify-center text-xs font-bold"
-        style={{ 
-          height: '100%', 
-          background: 'linear-gradient(to right, #6B1E1E 15%, #8B4513 15%, #8B4513 85%, #F5DEB3 85%)',
-          color: '#fff',
-          border: isOpen && !isFinishedView ? '2px solid #F5DEB3' : 'none'
-        }}
-      >
-        {cig.boxNum.replace('c.', '')}
-      </div>
+{looseCigars.filter(c => c.remaining > 0).map((cig) => (
+  <div key={cig.id} className="h-5 flex gap-0.5 p-1 items-end">
+    <div className="flex-1 rounded-sm" style={{ height: '100%' }}>
+      <svg width="100%" height="100%" viewBox="0 0 30 14" preserveAspectRatio="xMidYMid meet">
+        <rect x="0" y="5" width="26" height="4" rx="2" fill="#8B4513"/>
+        <rect x="2" y="5" width="5" height="4" fill="#6B1E1E"/>
+        <rect x="26" y="5" width="4" height="4" rx="1" fill="#F5DEB3"/>
+      </svg>
     </div>
-  );
-})}
+  </div>
+))}
                 </>
               );
             })()}
@@ -1749,25 +1742,44 @@ const BoxDetailModal = ({ boxes, initialBoxIndex = 0, onClose, fmtCurrency, fmtC
     const isOpen = b.remaining > 0 && b.remaining < b.perBox;
     return (
       <div key={b.id} className="flex flex-col items-center gap-1.5">
-        <button 
-          onClick={() => setSelectedIdx(boxes.findIndex(box => box.id === b.id))} 
-          className="flex items-center justify-center"
-          style={{
-            width: '72px',
-            height: '32px',
-            background: isLoose 
-              ? 'linear-gradient(to right, #6B1E1E 15%, #8B4513 15%, #8B4513 85%, #F5DEB3 85%)'
-              : '#6B1E1E',
-            color: '#F5DEB3',
-            borderRadius: isLoose ? '16px' : '4px',
-            fontFamily: 'tt-ricordi-allegria, Georgia, serif',
-            fontSize: '14px',
-            border: isOpen ? '3px solid #F5DEB3' : '3px solid transparent',
-            boxSizing: 'border-box'
-          }}
-        >
-          {isLoose ? b.boxNum.replace('c.', '') : `Box ${b.boxNum}`}
-        </button>
+        {isLoose ? (
+          <button 
+            onClick={() => setSelectedIdx(boxes.findIndex(box => box.id === b.id))} 
+            className="flex items-center justify-center relative"
+            style={{
+              width: '72px',
+              height: '32px',
+              background: 'transparent',
+              border: 'none',
+              boxSizing: 'border-box'
+            }}
+          >
+            <svg width="72" height="32" viewBox="0 0 72 32">
+              <rect x="4" y="10" width="56" height="12" rx="6" fill="#8B4513"/>
+              <rect x="8" y="10" width="12" height="12" rx="2" fill="#6B1E1E"/>
+              <rect x="60" y="10" width="8" height="12" rx="4" fill="#F5DEB3"/>
+              <text x="36" y="20" textAnchor="middle" fill="#F5DEB3" fontSize="12" fontFamily="tt-ricordi-allegria, Georgia, serif" fontWeight="bold">{b.boxNum.replace('c.', '')}</text>
+            </svg>
+          </button>
+        ) : (
+          <button 
+            onClick={() => setSelectedIdx(boxes.findIndex(box => box.id === b.id))} 
+            className="flex items-center justify-center"
+            style={{
+              width: '72px',
+              height: '32px',
+              background: '#6B1E1E',
+              color: '#F5DEB3',
+              borderRadius: '4px',
+              fontFamily: 'tt-ricordi-allegria, Georgia, serif',
+              fontSize: '14px',
+              border: isOpen ? '3px solid #F5DEB3' : '3px solid transparent',
+              boxSizing: 'border-box'
+            }}
+          >
+            Box {b.boxNum}
+          </button>
+        )}
         <div 
           className="w-2 h-2 rounded-full"
           style={{ 
