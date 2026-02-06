@@ -1721,78 +1721,64 @@ const BoxDetailModal = ({ boxes, initialBoxIndex = 0, onClose, fmtCurrency, fmtC
         </div>
         
         {/* Box Selector Buttons */}
-        <div className="px-4 pt-3 pb-2 flex gap-2 overflow-x-auto items-center" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          {/* Regular boxes first */}
-          {[...regularBoxes].sort((a, b) => {
-            const dateA = a.datePurchased ? new Date(a.datePurchased).getTime() : 0;
-            const dateB = b.datePurchased ? new Date(b.datePurchased).getTime() : 0;
-            if (dateA !== dateB) return dateA - dateB;
-            const aIsOpen = a.remaining > 0 && a.remaining < a.perBox;
-            const bIsOpen = b.remaining > 0 && b.remaining < b.perBox;
-            if (aIsOpen && !bIsOpen) return 1;
-            if (!aIsOpen && bIsOpen) return -1;
-            return 0;
-          }).map((b) => (
-            <div key={b.id} className="flex flex-col items-center gap-1.5">
-              <button 
-                onClick={() => setSelectedIdx(boxes.findIndex(box => box.id === b.id))} 
-                className="flex items-center justify-center"
-                style={{
-                  width: '72px',
-                  height: '32px',
-                  background: '#6B1E1E',
-                  color: '#F5DEB3',
-                  borderRadius: '4px',
-                  fontFamily: 'tt-ricordi-allegria, Georgia, serif',
-                  fontSize: '14px',
-                  border: b.remaining > 0 && b.remaining < b.perBox ? '3px solid #F5DEB3' : '3px solid transparent',
-                  boxSizing: 'border-box'
-                }}
-              >
-                Box {b.boxNum}
-              </button>
-              <div 
-                className="w-2 h-2 rounded-full"
-                style={{ 
-                  background: boxes.findIndex(box => box.id === b.id) === selectedIdx ? '#1a120b' : 'transparent'
-                }}
-              />
-            </div>
-          ))}
-          {/* Loose cigars */}
-          {looseCigarsEntries.map((b) => (
-            <div key={b.id} className="flex flex-col items-center gap-1.5">
-              <button 
-                onClick={() => setSelectedIdx(boxes.findIndex(box => box.id === b.id))} 
-                className="flex items-center justify-center gap-1"
-                style={{
-                  width: '72px',
-                  height: '32px',
-                  background: '#8B4513',
-                  color: '#F5DEB3',
-                  borderRadius: '4px',
-                  fontFamily: 'tt-ricordi-allegria, Georgia, serif',
-                  fontSize: '14px',
-                  border: '3px solid transparent',
-                  boxSizing: 'border-box'
-                }}
-              >
-                <svg width="20" height="10" viewBox="0 0 25 10">
-                  <rect x="0" y="3" width="22" height="4" rx="2" fill="#8B4513"/>
-                  <rect x="2" y="3" width="4" height="4" fill="#6B1E1E"/>
-                  <rect x="22" y="3" width="3" height="4" rx="1" fill="#F5DEB3"/>
-                </svg>
-                {b.boxNum.replace('c.', '')}
-              </button>
-              <div 
-                className="w-2 h-2 rounded-full"
-                style={{ 
-                  background: boxes.findIndex(box => box.id === b.id) === selectedIdx ? '#1a120b' : 'transparent'
-                }}
-              />
-            </div>
-          ))}
-        </div>
+<div className="px-4 pt-3 pb-2 flex gap-2 overflow-x-auto items-center" style={{ background: 'rgba(184,132,76,0.8)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+  {[...boxes].sort((a, b) => {
+    // Sort loose cigars to the end
+    const aIsLoose = a.boxNum.startsWith('c.');
+    const bIsLoose = b.boxNum.startsWith('c.');
+    if (aIsLoose && !bIsLoose) return 1;
+    if (!aIsLoose && bIsLoose) return -1;
+    // Then sort by date
+    const dateA = a.datePurchased ? new Date(a.datePurchased).getTime() : 0;
+    const dateB = b.datePurchased ? new Date(b.datePurchased).getTime() : 0;
+    if (dateA !== dateB) return dateA - dateB;
+    const aIsOpen = a.remaining > 0 && a.remaining < a.perBox;
+    const bIsOpen = b.remaining > 0 && b.remaining < b.perBox;
+    if (aIsOpen && !bIsOpen) return 1;
+    if (!aIsOpen && bIsOpen) return -1;
+    return 0;
+  }).map((b) => {
+    const isLoose = b.boxNum.startsWith('c.');
+    const isOpen = b.remaining > 0 && b.remaining < b.perBox;
+    return (
+      <div key={b.id} className="flex flex-col items-center gap-1.5">
+        <button 
+          onClick={() => setSelectedIdx(boxes.findIndex(box => box.id === b.id))} 
+          className="flex items-center justify-center"
+          style={{
+            width: '72px',
+            height: '32px',
+            background: isLoose ? '#8B4513' : '#6B1E1E',
+            color: '#F5DEB3',
+            borderRadius: '4px',
+            fontFamily: 'tt-ricordi-allegria, Georgia, serif',
+            fontSize: '14px',
+            border: isOpen && !isLoose ? '3px solid #F5DEB3' : '3px solid transparent',
+            boxSizing: 'border-box'
+          }}
+        >
+          {isLoose ? (
+            <>
+              <svg width="24" height="12" viewBox="0 0 25 12" style={{ marginRight: '4px' }}>
+                <rect x="0" y="4" width="22" height="4" rx="2" fill="#6B1E1E"/>
+                <rect x="22" y="4" width="3" height="4" rx="1" fill="#F5DEB3"/>
+              </svg>
+              {b.boxNum.replace('c.', '')}
+            </>
+          ) : (
+            `Box ${b.boxNum}`
+          )}
+        </button>
+        <div 
+          className="w-2 h-2 rounded-full"
+          style={{ 
+            background: boxes.findIndex(box => box.id === b.id) === selectedIdx ? '#1a120b' : 'transparent'
+          }}
+        />
+      </div>
+    );
+  })}
+</div>
         
         <div className="p-4 pb-6">
           
