@@ -1194,7 +1194,7 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
   })()}
 </div>
 {totalLooseCigars > 0 && (
-  <div className="text-center text-xs font-medium mb-2" style={{ color: s.text, opacity: 0.7 }}>
+  <div className="text-center text-sm font-medium mb-2" style={{ color: s.text, opacity: 0.7 }}>
     + {totalLooseCigars} individual cigar{totalLooseCigars !== 1 ? 's' : ''}
   </div>
 )}
