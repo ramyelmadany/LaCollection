@@ -2133,7 +2133,7 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
   const [notes, setNotes] = useState('');
   const [externalBrand, setExternalBrand] = useState('');
   const [externalName, setExternalName] = useState('');
-  const [showOpenOnly, setShowOpenOnly] = useState(false);
+  const [filter, setFilter] = useState('all'); // 'all', 'open', 'cigars'
   
   const available = boxes.filter(b => b.remaining > 0).sort((a, b) => {
   if (a.brand !== b.brand) return a.brand.localeCompare(b.brand);
@@ -2193,25 +2193,40 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
               
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <label className="text-xs" style={{ color: 'rgba(245,222,179,0.5)' }}>Select Cigar</label>
-                  <button 
-                    onClick={() => setShowOpenOnly(!showOpenOnly)}
-                    className="text-xs px-2 py-1 rounded"
-                    style={{ 
-                      background: showOpenOnly ? '#6B1E1E' : 'transparent',
-                      border: '1px solid #6B1E1E',
-                      color: showOpenOnly ? '#F5DEB3' : 'rgba(245,222,179,0.5)'
-                    }}
-                  >
-                    Open boxes
-                  </button>
-                </div>
+  <label className="text-xs" style={{ color: 'rgba(245,222,179,0.5)' }}>Select Cigar</label>
+  <div className="flex gap-1">
+    <button 
+      onClick={() => setFilter(filter === 'open' ? 'all' : 'open')}
+      className="text-xs px-2 py-1 rounded"
+      style={{ 
+        background: filter === 'open' ? '#6B1E1E' : 'transparent',
+        border: '1px solid #6B1E1E',
+        color: filter === 'open' ? '#F5DEB3' : 'rgba(245,222,179,0.5)'
+      }}
+    >
+      Open
+    </button>
+    <button 
+      onClick={() => setFilter(filter === 'cigars' ? 'all' : 'cigars')}
+      className="text-xs px-2 py-1 rounded"
+      style={{ 
+        background: filter === 'cigars' ? '#6B1E1E' : 'transparent',
+        border: '1px solid #6B1E1E',
+        color: filter === 'cigars' ? '#F5DEB3' : 'rgba(245,222,179,0.5)'
+      }}
+    >
+      Cigars
+    </button>
+  </div>
+</div>
                 <div className="max-h-60 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
                   {(() => {
-                    // Filter for open boxes if toggle is on
-                    const filtered = showOpenOnly 
-                      ? available.filter(b => b.remaining > 0 && b.remaining < b.perBox)
-                      : available;
+                    // Filter based on selected filter
+const filtered = filter === 'open' 
+  ? available.filter(b => !b.boxNum.startsWith('c.') && b.remaining > 0 && b.remaining < b.perBox)
+  : filter === 'cigars'
+  ? available.filter(b => b.boxNum.startsWith('c.'))
+  : available;
                     
                     // Group by brand
                     const brands = {};
@@ -2236,8 +2251,9 @@ const SmokeLogModal = ({ boxes, onClose, onLog }) => {
                                 border: isOpen && !isSelected ? '2px solid #F5DEB3' : isSelected ? '2px solid #6B1E1E' : '2px solid transparent'
                               }}>
                                 <div className="text-sm font-medium" style={{ color: isSelected ? '#1a120b' : '#F5DEB3' }}>{b.name}</div>
-                                <div className="text-xs" style={{ color: isSelected ? 'rgba(26,18,11,0.5)' : 'rgba(245,222,179,0.6)' }}>Box {b.boxNum} • Box of {b.perBox} • {b.location}</div>
-                                {isOpen && (
+<div className="text-xs" style={{ color: isSelected ? 'rgba(26,18,11,0.5)' : 'rgba(245,222,179,0.6)' }}>
+  {b.boxNum.startsWith('c.') ? `${b.boxNum} • ${b.perBox} cigars` : `Box ${b.boxNum} • Box of ${b.perBox}`} • {b.location}
+</div>                                {isOpen && (
                                   <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center font-bold shadow-lg" 
                                     style={{ background: '#F5DEB3', color: '#6B1E1E', fontSize: 10 }}>{b.remaining}</div>
                                 )}
