@@ -4155,6 +4155,27 @@ if (onwardsRows) {
               <button onClick={() => setFilterOpen(false)} className="text-2xl text-gray-500">×</button>
             </div>
             
+            {/* Brand Filter */}
+            <div className="mb-6">
+              <div className="text-sm text-gray-500 mb-3">Brand</div>
+              <div className="flex gap-2 flex-wrap">
+                {availableBrands.map(brand => (
+                  <button 
+                    key={brand} 
+                    onClick={() => setSelectedBrand(brand)} 
+                    className="px-3 py-2 rounded-lg text-sm"
+                    style={{
+                      background: selectedBrand === brand ? '#F5DEB3' : '#252525',
+                      color: selectedBrand === brand ? '#000' : '#888',
+                      border: selectedBrand === brand ? 'none' : '1px solid #444'
+                    }}
+                  >
+                    {brand}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
             {/* Location Filter */}
             <div className="mb-6">
               <div className="text-sm text-gray-500 mb-3">Location</div>
@@ -4182,92 +4203,79 @@ if (onwardsRows) {
               </div>
             </div>
             
-            {/* Brand Filter */}
+            {/* Status Filter */}
             <div className="mb-6">
-              <div className="text-sm text-gray-500 mb-3">Brand</div>
+              <div className="text-sm text-gray-500 mb-3">Status</div>
               <div className="flex gap-2 flex-wrap">
-                {availableBrands.map(brand => (
+                {['Ageing', 'Immediate', 'Combination'].map(s => (
                   <button 
-                    key={brand} 
-                    onClick={() => setSelectedBrand(brand)} 
-                    className="px-3 py-2 rounded-lg text-sm"
+                    key={s}
+                    onClick={() => {
+                      if (selectedStatus.includes(s)) {
+                        setSelectedStatus(selectedStatus.filter(st => st !== s));
+                      } else {
+                        setSelectedStatus([...selectedStatus, s]);
+                      }
+                    }} 
+                    className="px-4 py-2 rounded-lg text-sm"
                     style={{
-                      background: selectedBrand === brand ? '#F5DEB3' : '#252525',
-                      color: selectedBrand === brand ? '#000' : '#888',
-                      border: selectedBrand === brand ? 'none' : '1px solid #444'
+                      background: selectedStatus.includes(s) ? '#F5DEB3' : '#252525',
+                      color: selectedStatus.includes(s) ? '#000' : '#888',
+                      border: selectedStatus.includes(s) ? 'none' : '1px solid #444'
                     }}
                   >
-                    {brand}
+                    {s === 'Immediate' ? 'On Rotation' : s === 'Combination' ? 'Assortment' : s}
                   </button>
                 ))}
               </div>
             </div>
-            
-            {/* Status Filter */}
-<div className="mb-6">
-  <div className="text-sm text-gray-500 mb-3">Status</div>
-  <div className="flex gap-2 flex-wrap">
-    {['Ageing', 'Immediate', 'Combination'].map(s => (
-      <button 
-        key={s}
-        onClick={() => {
-          if (selectedStatus.includes(s)) {
-            setSelectedStatus(selectedStatus.filter(st => st !== s));
-          } else {
-            setSelectedStatus([...selectedStatus, s]);
-          }
-        }} 
-        className="px-4 py-2 rounded-lg text-sm"
-        style={{
-          background: selectedStatus.includes(s) ? '#F5DEB3' : '#252525',
-          color: selectedStatus.includes(s) ? '#000' : '#888',
-          border: selectedStatus.includes(s) ? 'none' : '1px solid #444'
-        }}
-      >
-        {s === 'Immediate' ? 'On Rotation' : s === 'Combination' ? 'Assortment' : s}
-      </button>
-    ))}
-  </div>
-</div>
 
-{/* Box Type Filter */}
-<div className="mb-6">
-  <div className="text-sm text-gray-500 mb-3">Box Type</div>
-  <div className="flex gap-2 flex-wrap">
-    <button 
-      onClick={() => setShowOpenOnly(!showOpenOnly)}
-      className="px-4 py-2 rounded-lg text-sm"
-      style={{
-        background: showOpenOnly ? '#F5DEB3' : '#252525',
-        color: showOpenOnly ? '#000' : '#888',
-        border: showOpenOnly ? 'none' : '1px solid #444'
-      }}
-    >
-      Open Boxes
-    </button>
-    <button 
-      onClick={() => setShowCigarsOnly(!showCigarsOnly)}
-      className="px-4 py-2 rounded-lg text-sm"
-      style={{
-        background: showCigarsOnly ? '#F5DEB3' : '#252525',
-        color: showCigarsOnly ? '#000' : '#888',
-        border: showCigarsOnly ? 'none' : '1px solid #444'
-      }}
-    >
-      Individual Cigars
-    </button>
-  </div>
-</div>
+            {/* Box Type Filter */}
+            <div className="mb-6">
+              <div className="text-sm text-gray-500 mb-3">Box Type</div>
+              <div className="flex gap-2 flex-wrap">
+                <button 
+                  onClick={() => setShowOpenOnly(!showOpenOnly)}
+                  className="px-4 py-2 rounded-lg text-sm"
+                  style={{
+                    background: showOpenOnly ? '#F5DEB3' : '#252525',
+                    color: showOpenOnly ? '#000' : '#888',
+                    border: showOpenOnly ? 'none' : '1px solid #444'
+                  }}
+                >
+                  Open Boxes
+                </button>
+                <button 
+                  onClick={() => setShowCigarsOnly(!showCigarsOnly)}
+                  className="px-4 py-2 rounded-lg text-sm"
+                  style={{
+                    background: showCigarsOnly ? '#F5DEB3' : '#252525',
+                    color: showCigarsOnly ? '#000' : '#888',
+                    border: showCigarsOnly ? 'none' : '1px solid #444'
+                  }}
+                >
+                  Individual Cigars
+                </button>
+              </div>
+            </div>
             
-            
-            {/* Clear Filters */}
-            <button 
-  onClick={() => { setLocation([]); setSelectedBrand('All'); setSelectedStatus([]); setShowOpenOnly(false); setShowCigarsOnly(false); }}
-  className="w-full py-3 rounded-lg text-sm"
-  style={{ background: '#252525', color: '#888', border: '1px solid #444' }}
->
-  Clear All Filters
-</button>
+            {/* Action Buttons */}
+            <div className="flex gap-3">
+              <button 
+                onClick={() => { setLocation([]); setSelectedBrand('All'); setSelectedStatus([]); setShowOpenOnly(false); setShowCigarsOnly(false); }}
+                className="flex-1 py-3 rounded-lg text-sm"
+                style={{ background: '#252525', color: '#888', border: '1px solid #444' }}
+              >
+                Clear All
+              </button>
+              <button 
+                onClick={() => setFilterOpen(false)}
+                className="flex-1 py-3 rounded-lg text-sm font-bold"
+                style={{ background: '#F5DEB3', color: '#1a120b' }}
+              >
+                Apply Filters
+              </button>
+            </div>
           </div>
         </div>
       )}
