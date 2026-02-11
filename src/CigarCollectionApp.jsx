@@ -3332,6 +3332,8 @@ export default function CigarCollectionApp() {
   const [onwards, setOnwards] = useState([]);
   const [location, setLocation] = useState([]);
   const [selectedBrand, setSelectedBrand] = useState('All');
+  const [showOpenOnly, setShowOpenOnly] = useState(false);
+  const [showCigarsOnly, setShowCigarsOnly] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [view, setView] = useState('collection');
   const [statsMode, setStatsMode] = useState('total');
@@ -3834,9 +3836,10 @@ if (onwardsRows) {
     if (location.length > 0) result = result.filter(b => location.includes(b.location));
     if (selectedBrand !== 'All') result = result.filter(b => b.brand === selectedBrand);
     if (selectedStatus.length > 0) result = result.filter(b => selectedStatus.includes(b.status));
+    if (showOpenOnly) result = result.filter(b => !b.boxNum.startsWith('c.') && b.remaining > 0 && b.remaining < b.perBox);
+    if (showCigarsOnly) result = result.filter(b => b.boxNum.startsWith('c.'));
     return result;
-  }, [boxes, location, selectedBrand, selectedStatus]);
-
+  }, [boxes, location, selectedBrand, selectedStatus, showOpenOnly, showCigarsOnly]);
   // Finished boxes for Collection History
   const finishedBoxes = useMemo(() => {
     return boxes.filter(b => b.remaining === 0);
@@ -4226,10 +4229,40 @@ if (onwardsRows) {
     ))}
   </div>
 </div>
+
+{/* Box Type Filter */}
+<div className="mb-6">
+  <div className="text-sm text-gray-500 mb-3">Box Type</div>
+  <div className="flex gap-2 flex-wrap">
+    <button 
+      onClick={() => setShowOpenOnly(!showOpenOnly)}
+      className="px-4 py-2 rounded-lg text-sm"
+      style={{
+        background: showOpenOnly ? '#F5DEB3' : '#252525',
+        color: showOpenOnly ? '#000' : '#888',
+        border: showOpenOnly ? 'none' : '1px solid #444'
+      }}
+    >
+      Open Boxes
+    </button>
+    <button 
+      onClick={() => setShowCigarsOnly(!showCigarsOnly)}
+      className="px-4 py-2 rounded-lg text-sm"
+      style={{
+        background: showCigarsOnly ? '#F5DEB3' : '#252525',
+        color: showCigarsOnly ? '#000' : '#888',
+        border: showCigarsOnly ? 'none' : '1px solid #444'
+      }}
+    >
+      Individual Cigars
+    </button>
+  </div>
+</div>
+            
             
             {/* Clear Filters */}
             <button 
-  onClick={() => { setLocation([]); setSelectedBrand('All'); setSelectedStatus([]); }}
+  onClick={() => { setLocation([]); setSelectedBrand('All'); setSelectedStatus([]); setShowOpenOnly(false); setShowCigarsOnly(false); }}
   className="w-full py-3 rounded-lg text-sm"
   style={{ background: '#252525', color: '#888', border: '1px solid #444' }}
 >
