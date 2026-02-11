@@ -1161,61 +1161,43 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
           <div className="text-center mb-3">
             <div className="font-medium" style={{ color: s.text, opacity: 0.9, fontSize: nameSize }}>{name}</div>
           </div>
-         <div className="rounded overflow-hidden mb-2">
-  {/* Box indicators */}
-  <div style={{ background: 'rgba(184,132,76,0.8)' }}>
-    {(() => {
-      const sortedBoxes = [...regularBoxes].sort((a, b) => {
-        const dateA = a.datePurchased ? new Date(a.datePurchased).getTime() : 0;
-        const dateB = b.datePurchased ? new Date(b.datePurchased).getTime() : 0;
-        if (dateA !== dateB) return dateA - dateB;
-        const aIsOpen = a.remaining > 0 && a.remaining < a.perBox;
-        const bIsOpen = b.remaining > 0 && b.remaining < b.perBox;
-        if (aIsOpen && !bIsOpen) return 1;
-        if (!aIsOpen && bIsOpen) return -1;
-        return 0;
-      });
-      
-      return [...Array(Math.ceil(sortedBoxes.length / 6) || 1)].map((_, rowIdx) => (
-        <div key={rowIdx} className="h-5 flex gap-0.5 p-1 items-end">
-          {[...Array(6)].map((_, i) => {
-            const boxIndex = rowIdx * 6 + i;
-            const box = sortedBoxes[boxIndex];
-            const isEmpty = !box;
-            const isFull = box && box.remaining === box.perBox;
-            const isOpen = box && box.remaining > 0 && box.remaining < box.perBox;
-            return <div key={i} className="flex-1 rounded-sm" style={{ 
-              height: isEmpty ? '0%' : (isFull || isOpen || isFinishedView) ? '100%' : '20%', 
-              background: isFinishedView ? '#1a1a1a' : (isFull ? '#6B1E1E' : isOpen ? '#6B1E1E' : 'rgba(0,0,0,0.3)'),
-              border: isOpen && !isFinishedView ? '2px solid #F5DEB3' : 'none',
-              visibility: isEmpty ? 'hidden' : 'visible'
-            }} />;
-          })}
-        </div>
-      ));
-    })()}
-  </div>
-  
-  {/* Loose cigars indicators */}
-  {totalLooseCigars > 0 && (
-    <div className="border-t" style={{ background: 'rgba(139,69,19,0.6)', borderColor: 'rgba(107,30,30,0.5)' }}>
-      <div className="h-5 flex gap-0.5 p-1 items-end justify-start">
-        {looseCigars.filter(c => c.remaining > 0 || isFinishedView).map((cig) => (
-          <div 
-            key={cig.id} 
-            className="rounded-sm" 
-            style={{ 
-              width: 'calc((100% - 2.5rem) / 30)',
-              minWidth: '6px',
-              height: '100%', 
-              background: isFinishedView ? '#1a1a1a' : '#6B1E1E'
-            }} 
-          />
-        ))}
+         <div className="rounded overflow-hidden mb-2" style={{ background: 'rgba(184,132,76,0.8)' }}>
+  {(() => {
+    const sortedBoxes = [...regularBoxes].sort((a, b) => {
+      const dateA = a.datePurchased ? new Date(a.datePurchased).getTime() : 0;
+      const dateB = b.datePurchased ? new Date(b.datePurchased).getTime() : 0;
+      if (dateA !== dateB) return dateA - dateB;
+      const aIsOpen = a.remaining > 0 && a.remaining < a.perBox;
+      const bIsOpen = b.remaining > 0 && b.remaining < b.perBox;
+      if (aIsOpen && !bIsOpen) return 1;
+      if (!aIsOpen && bIsOpen) return -1;
+      return 0;
+    });
+    
+    return [...Array(Math.ceil(sortedBoxes.length / 6) || 1)].map((_, rowIdx) => (
+      <div key={rowIdx} className="h-5 flex gap-0.5 p-1 items-end">
+        {[...Array(6)].map((_, i) => {
+          const boxIndex = rowIdx * 6 + i;
+          const box = sortedBoxes[boxIndex];
+          const isEmpty = !box;
+          const isFull = box && box.remaining === box.perBox;
+          const isOpen = box && box.remaining > 0 && box.remaining < box.perBox;
+          return <div key={i} className="flex-1 rounded-sm" style={{ 
+            height: isEmpty ? '0%' : (isFull || isOpen || isFinishedView) ? '100%' : '20%', 
+            background: isFinishedView ? '#1a1a1a' : (isFull ? '#6B1E1E' : isOpen ? '#6B1E1E' : 'rgba(0,0,0,0.3)'),
+            border: isOpen && !isFinishedView ? '2px solid #F5DEB3' : 'none',
+            visibility: isEmpty ? 'hidden' : 'visible'
+          }} />;
+        })}
       </div>
-    </div>
-  )}
+    ));
+  })()}
 </div>
+{totalLooseCigars > 0 && (
+  <div className="text-center text-xs font-medium mb-2" style={{ color: s.text, opacity: 0.7 }}>
+    + {totalLooseCigars} individual cigar{totalLooseCigars !== 1 ? 's' : ''}
+  </div>
+)}
           {showCigarCount && (
             <div className="flex justify-between items-center text-sm">
               <span className="font-bold" style={{ color: s.text }}>{totalRemaining} total</span>
