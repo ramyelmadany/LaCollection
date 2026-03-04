@@ -1229,9 +1229,7 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
 };
 
 // Onwards Card
-const OnwardsCard = ({ item, fmtCurrency, onRemove, isSignedIn }) => {
-  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
-  const [isRemoving, setIsRemoving] = useState(false);
+const OnwardsCard = ({ item, fmtCurrency, onEdit, isSignedIn }) => {
   const isSold = item.type === 'sold';
   const isSoldAtCost = item.type === 'sold-at-cost';
   const isSoldAtLoss = item.type === 'sold-at-loss';
@@ -1249,12 +1247,6 @@ const OnwardsCard = ({ item, fmtCurrency, onRemove, isSignedIn }) => {
     if (isSoldAtLoss) return fmtCurrency(item.profitUSD);
     if (isSoldAtCost) return 'At cost';
     return 'Pending';
-  };
-
-  const handleRemove = async () => {
-    setIsRemoving(true);
-    await onRemove(item);
-    setIsRemoving(false);
   };
   
   return (
@@ -1295,39 +1287,16 @@ const OnwardsCard = ({ item, fmtCurrency, onRemove, isSignedIn }) => {
         )}
       </div>
 
-      {/* Remove Button */}
-      {isSignedIn && onRemove && (
+      {/* Edit Button */}
+      {isSignedIn && onEdit && (
         <div className="mt-3 pt-3 border-t" style={{ borderColor: '#6B1E1E' }}>
-          {!showRemoveConfirm ? (
-            <button
-              onClick={() => setShowRemoveConfirm(true)}
-              className="w-full py-2 text-sm font-medium rounded-lg"
-              style={{ background: '#1a120b', color: '#F5DEB3' }}
-            >
-              Remove from Onwards
-            </button>
-          ) : (
-            <div>
-              <p className="text-sm font-bold mb-2" style={{ color: '#6B1E1E' }}>Remove this entry?</p>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setShowRemoveConfirm(false)}
-                  className="flex-1 py-2 text-sm font-medium rounded-lg"
-                  style={{ background: 'rgba(26,18,11,0.2)', color: '#1a120b' }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleRemove}
-                  disabled={isRemoving}
-                  className="flex-1 py-2 text-sm font-medium rounded-lg"
-                  style={{ background: '#6B1E1E', color: '#F5DEB3' }}
-                >
-                  {isRemoving ? 'Removing...' : 'Confirm'}
-                </button>
-              </div>
-            </div>
-          )}
+          <button
+            onClick={() => onEdit(item)}
+            className="w-full py-2 text-sm font-medium rounded-lg"
+            style={{ background: '#1a120b', color: '#F5DEB3' }}
+          >
+            Edit
+          </button>
         </div>
       )}
     </div>
@@ -1665,6 +1634,7 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
 
 // Add to Onwards Modal
 const AddToOnwardsModal = ({ boxes, onClose, onAdd }) => {
+  const [source, setSource] = useState(null); // 'collection' or 'manual'
   const [selectedBox, setSelectedBox] = useState(null);
   const [salePrice, setSalePrice] = useState('');
   const [saleCurrency, setSaleCurrency] = useState('USD');
@@ -1672,6 +1642,15 @@ const AddToOnwardsModal = ({ boxes, onClose, onAdd }) => {
   const [soldTo, setSoldTo] = useState('');
   const [isPending, setIsPending] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
+  
+  // Manual entry fields
+  const [manualBrand, setManualBrand] = useState('');
+  const [manualName, setManualName] = useState('');
+  const [manualPerBox, setManualPerBox] = useState('');
+  const [manualPrice, setManualPrice] = useState('');
+  const [manualCurrency, setManualCurrency] = useState('USD');
+  const [manualDatePurchased, setManualDatePurchased] = useState(new Date().toISOString().split('T')[0]);
+  const [manualReceived, setManualReceived] = useState(true);
 
   // Filter to only show full boxes (not partially smoked or loose cigars)
   const availableBoxes = boxes.filter(b => b.remaining === b.perBox && !b.boxNum.startsWith('c.'));
@@ -1685,12 +1664,13 @@ const AddToOnwardsModal = ({ boxes, onClose, onAdd }) => {
   const brandOrder = Object.keys(brands).sort((a, b) => a.localeCompare(b));
 
   const handleSubmit = async () => {
-    if (!selectedBox) return;
+    if (source === 'collection' && !selectedBox) return;
+    if (source === 'manual' && (!manualBrand || !manualName || !manualPerBox || !manualPrice)) return;
     if (!isPending && !salePrice) return;
     
     setIsAdding(true);
     
-    const onwardsData = {
+    const onwardsData = source === 'collection' ? {
       datePurchased: selectedBox.datePurchased,
       received: selectedBox.received,
       brand: selectedBox.brand,
@@ -1699,6 +1679,19 @@ const AddToOnwardsModal = ({ boxes, onClose, onAdd }) => {
       perBox: selectedBox.perBox,
       price: selectedBox.price,
       currency: selectedBox.currency || 'USD',
+      saleDate: isPending ? '' : saleDate,
+      salePrice: isPending ? '' : parseFloat(salePrice),
+      saleCurrency: saleCurrency,
+      soldTo: soldTo,
+    } : {
+      datePurchased: manualDatePurchased,
+      received: manualReceived,
+      brand: manualBrand,
+      name: manualName,
+      qty: 1,
+      perBox: parseInt(manualPerBox),
+      price: parseFloat(manualPrice),
+      currency: manualCurrency,
       saleDate: isPending ? '' : saleDate,
       salePrice: isPending ? '' : parseFloat(salePrice),
       saleCurrency: saleCurrency,
@@ -1719,44 +1712,255 @@ const AddToOnwardsModal = ({ boxes, onClose, onAdd }) => {
         </div>
         
         <div className="p-4 space-y-4">
-          {/* Select Box */}
-          <div>
-            <label className="text-xs text-gray-500 block mb-2">Select Box to Sell</label>
-            <div className="max-h-48 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
-              {brandOrder.length === 0 ? (
-                <div className="text-center py-4 text-gray-500">No full boxes available</div>
-              ) : (
-                brandOrder.map(brand => (
-                  <div key={brand} className="mb-3">
-                    <div className="text-xs font-bold tracking-wide mb-1.5 pb-1" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif', borderBottom: '1px solid rgba(245,222,179,0.15)' }}>{brand}</div>
-                    <div className="space-y-1.5">
-                      {brands[brand].map(b => {
-                        const isSelected = selectedBox?.id === b.id;
-                        return (
-                          <div 
-                            key={b.id} 
-                            onClick={() => setSelectedBox(b)} 
-                            className="p-2.5 rounded-sm cursor-pointer" 
-                            style={{ 
-                              background: isSelected ? 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' : '#6B1E1E',
-                              border: isSelected ? '2px solid #6B1E1E' : '2px solid transparent'
-                            }}
-                          >
-                            <div className="text-sm font-medium" style={{ color: isSelected ? '#1a120b' : '#F5DEB3' }}>{b.name}</div>
-                            <div className="text-xs" style={{ color: isSelected ? 'rgba(26,18,11,0.5)' : 'rgba(245,222,179,0.6)' }}>Box {b.boxNum} • Box of {b.perBox} • {b.location}</div>
-                          </div>
-                        );
-                      })}
+          {/* Source Selection */}
+          {!source && (
+            <div className="space-y-3">
+              <label className="text-xs text-gray-500 block mb-2">Where is this box from?</label>
+              <button 
+                onClick={() => setSource('collection')} 
+                className="w-full py-4 rounded-lg text-lg font-bold"
+                style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', color: '#1a120b' }}
+              >
+                From Collection
+              </button>
+              <button 
+                onClick={() => setSource('manual')} 
+                className="w-full py-4 rounded-lg text-lg font-semibold"
+                style={{ background: 'rgba(245,222,179,0.08)', border: '1px solid rgba(245,222,179,0.2)', color: 'rgba(245,222,179,0.6)' }}
+              >
+                Manual Entry
+              </button>
+            </div>
+          )}
+
+          {/* Collection Flow */}
+          {source === 'collection' && (
+            <>
+              <button onClick={() => setSource(null)} className="text-sm" style={{ color: 'rgba(245,222,179,0.5)' }}>← Back</button>
+              
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Select Box to Sell</label>
+                <div className="max-h-48 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+                  {brandOrder.length === 0 ? (
+                    <div className="text-center py-4 text-gray-500">No full boxes available</div>
+                  ) : (
+                    brandOrder.map(brand => (
+                      <div key={brand} className="mb-3">
+                        <div className="text-xs font-bold tracking-wide mb-1.5 pb-1" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif', borderBottom: '1px solid rgba(245,222,179,0.15)' }}>{brand}</div>
+                        <div className="space-y-1.5">
+                          {brands[brand].map(b => {
+                            const isSelected = selectedBox?.id === b.id;
+                            return (
+                              <div 
+                                key={b.id} 
+                                onClick={() => setSelectedBox(b)} 
+                                className="p-2.5 rounded-sm cursor-pointer" 
+                                style={{ 
+                                  background: isSelected ? 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' : '#6B1E1E',
+                                  border: isSelected ? '2px solid #6B1E1E' : '2px solid transparent'
+                                }}
+                              >
+                                <div className="text-sm font-medium" style={{ color: isSelected ? '#1a120b' : '#F5DEB3' }}>{b.name}</div>
+                                <div className="text-xs" style={{ color: isSelected ? 'rgba(26,18,11,0.5)' : 'rgba(245,222,179,0.6)' }}>Box {b.boxNum} • Box of {b.perBox} • {b.location}</div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {selectedBox && (
+                <>
+                  {/* Sale Status */}
+                  <div>
+                    <label className="text-xs text-gray-500 block mb-2">Sale Status</label>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => setIsPending(false)}
+                        className="flex-1 py-2 rounded-lg text-sm"
+                        style={{ 
+                          background: !isPending ? '#F5DEB3' : '#252525',
+                          color: !isPending ? '#1a120b' : '#888',
+                          border: !isPending ? 'none' : '1px solid #444'
+                        }}
+                      >
+                        Sold
+                      </button>
+                      <button 
+                        onClick={() => setIsPending(true)}
+                        className="flex-1 py-2 rounded-lg text-sm"
+                        style={{ 
+                          background: isPending ? '#F5DEB3' : '#252525',
+                          color: isPending ? '#1a120b' : '#888',
+                          border: isPending ? 'none' : '1px solid #444'
+                        }}
+                      >
+                        Pending
+                      </button>
                     </div>
                   </div>
-                ))
-              )}
-            </div>
-          </div>
 
-          {selectedBox && (
+                  {!isPending && (
+                    <>
+                      <div>
+                        <label className="text-xs text-gray-500 block mb-2">Sale Date</label>
+                        <input 
+                          type="date" 
+                          value={saleDate} 
+                          onChange={e => setSaleDate(e.target.value)} 
+                          className="w-full px-3 py-2 rounded-lg text-sm" 
+                          style={{ background: '#252525', border: '1px solid #333', color: '#fff', WebkitAppearance: 'none', minHeight: '42px' }} 
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs text-gray-500 block mb-2">Sale Price</label>
+                        <div className="flex gap-2">
+                          <select 
+                            value={saleCurrency} 
+                            onChange={e => setSaleCurrency(e.target.value)}
+                            className="px-2 py-2 rounded-lg text-sm"
+                            style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '80px' }}
+                          >
+                            {CURRENCIES.map(c => (
+                              <option key={c} value={c}>{c}</option>
+                            ))}
+                          </select>
+                          <input 
+                            type="number" 
+                            value={salePrice} 
+                            onChange={e => setSalePrice(e.target.value)} 
+                            placeholder="e.g. 500" 
+                            className="flex-1 px-3 py-2 rounded-lg text-sm" 
+                            style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  <div>
+                    <label className="text-xs text-gray-500 block mb-2">Sold To (optional)</label>
+                    <input 
+                      type="text" 
+                      value={soldTo} 
+                      onChange={e => setSoldTo(e.target.value)} 
+                      placeholder="e.g. John Smith" 
+                      className="w-full px-3 py-2 rounded-lg text-sm" 
+                      style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+                    />
+                  </div>
+
+                  <button 
+                    onClick={handleSubmit} 
+                    disabled={isAdding || (!isPending && !salePrice)}
+                    className="w-full py-3 rounded-lg font-semibold mt-4" 
+                    style={{ 
+                      background: (isAdding || (!isPending && !salePrice)) ? '#333' : '#F5DEB3', 
+                      color: (isAdding || (!isPending && !salePrice)) ? '#666' : '#1a120b' 
+                    }}
+                  >
+                    {isAdding ? 'Adding...' : 'Add to Onwards'}
+                  </button>
+                </>
+              )}
+            </>
+          )}
+
+          {/* Manual Entry Flow */}
+          {source === 'manual' && (
             <>
-              {/* Pending Toggle */}
+              <button onClick={() => setSource(null)} className="text-sm" style={{ color: 'rgba(245,222,179,0.5)' }}>← Back</button>
+              
+              {/* Purchase Details */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-gray-500 block mb-2">Date Purchased</label>
+                  <input 
+                    type="date" 
+                    value={manualDatePurchased} 
+                    onChange={e => setManualDatePurchased(e.target.value)} 
+                    className="w-full px-2 py-2 rounded-lg text-sm" 
+                    style={{ background: '#252525', border: '1px solid #333', color: '#fff', WebkitAppearance: 'none', minHeight: '42px' }} 
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 block mb-2">Received</label>
+                  <button 
+                    onClick={() => setManualReceived(!manualReceived)} 
+                    className="w-full px-3 py-2 rounded-lg text-sm text-left" 
+                    style={{ background: manualReceived ? '#1c3a1c' : '#252525', border: '1px solid #333', color: manualReceived ? '#99ff99' : '#888', minHeight: '42px' }}
+                  >
+                    {manualReceived ? 'Yes' : 'No'}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Brand *</label>
+                <input 
+                  type="text" 
+                  value={manualBrand} 
+                  onChange={e => setManualBrand(e.target.value)} 
+                  placeholder="e.g. Cohiba" 
+                  className="w-full px-3 py-2 rounded-lg text-sm" 
+                  style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+                />
+              </div>
+
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Cigar Name *</label>
+                <input 
+                  type="text" 
+                  value={manualName} 
+                  onChange={e => setManualName(e.target.value)} 
+                  placeholder="e.g. Siglo VI" 
+                  className="w-full px-3 py-2 rounded-lg text-sm" 
+                  style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-gray-500 block mb-2">Per Box *</label>
+                  <input 
+                    type="number" 
+                    value={manualPerBox} 
+                    onChange={e => setManualPerBox(e.target.value)} 
+                    placeholder="e.g. 25" 
+                    className="w-full px-3 py-2 rounded-lg text-sm" 
+                    style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 block mb-2">Cost *</label>
+                  <div className="flex gap-1">
+                    <select 
+                      value={manualCurrency} 
+                      onChange={e => setManualCurrency(e.target.value)}
+                      className="px-2 py-2 rounded-lg text-sm"
+                      style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '65px' }}
+                    >
+                      {CURRENCIES.map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                    <input 
+                      type="number" 
+                      value={manualPrice} 
+                      onChange={e => setManualPrice(e.target.value)} 
+                      placeholder="e.g. 500" 
+                      className="flex-1 px-2 py-2 rounded-lg text-sm" 
+                      style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Sale Status */}
               <div>
                 <label className="text-xs text-gray-500 block mb-2">Sale Status</label>
                 <div className="flex gap-2">
@@ -1787,7 +1991,6 @@ const AddToOnwardsModal = ({ boxes, onClose, onAdd }) => {
 
               {!isPending && (
                 <>
-                  {/* Sale Date */}
                   <div>
                     <label className="text-xs text-gray-500 block mb-2">Sale Date</label>
                     <input 
@@ -1799,9 +2002,8 @@ const AddToOnwardsModal = ({ boxes, onClose, onAdd }) => {
                     />
                   </div>
 
-                  {/* Sale Price */}
                   <div>
-                    <label className="text-xs text-gray-500 block mb-2">Sale Price</label>
+                    <label className="text-xs text-gray-500 block mb-2">Sale Price *</label>
                     <div className="flex gap-2">
                       <select 
                         value={saleCurrency} 
@@ -1817,7 +2019,7 @@ const AddToOnwardsModal = ({ boxes, onClose, onAdd }) => {
                         type="number" 
                         value={salePrice} 
                         onChange={e => setSalePrice(e.target.value)} 
-                        placeholder="e.g. 500" 
+                        placeholder="e.g. 600" 
                         className="flex-1 px-3 py-2 rounded-lg text-sm" 
                         style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
                       />
@@ -1826,7 +2028,6 @@ const AddToOnwardsModal = ({ boxes, onClose, onAdd }) => {
                 </>
               )}
 
-              {/* Sold To */}
               <div>
                 <label className="text-xs text-gray-500 block mb-2">Sold To (optional)</label>
                 <input 
@@ -1839,20 +2040,204 @@ const AddToOnwardsModal = ({ boxes, onClose, onAdd }) => {
                 />
               </div>
 
-              {/* Submit Button */}
-              <button 
-                onClick={handleSubmit} 
-                disabled={isAdding || (!isPending && !salePrice)}
-                className="w-full py-3 rounded-lg font-semibold mt-4" 
-                style={{ 
-                  background: (isAdding || (!isPending && !salePrice)) ? '#333' : '#F5DEB3', 
-                  color: (isAdding || (!isPending && !salePrice)) ? '#666' : '#1a120b' 
-                }}
-              >
-                {isAdding ? 'Adding...' : 'Add to Onwards'}
-              </button>
+              {(() => {
+                const isValid = manualBrand && manualName && manualPerBox && manualPrice && (isPending || salePrice);
+                return (
+                  <button 
+                    onClick={handleSubmit} 
+                    disabled={isAdding || !isValid}
+                    className="w-full py-3 rounded-lg font-semibold mt-4" 
+                    style={{ 
+                      background: (isAdding || !isValid) ? '#333' : '#F5DEB3', 
+                      color: (isAdding || !isValid) ? '#666' : '#1a120b' 
+                    }}
+                  >
+                    {isAdding ? 'Adding...' : 'Add to Onwards'}
+                  </button>
+                );
+              })()}
             </>
           )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Edit Onwards Modal
+const EditOnwardsModal = ({ item, onClose, onSave, onTransferToCollection }) => {
+  const [salePrice, setSalePrice] = useState(item.salePriceUSD || '');
+  const [saleCurrency, setSaleCurrency] = useState('USD');
+  const [saleDate, setSaleDate] = useState(item.saleDate || '');
+  const [soldTo, setSoldTo] = useState(item.soldTo || '');
+  const [isPending, setIsPending] = useState(item.type === 'pending');
+  const [isSaving, setIsSaving] = useState(false);
+  const [showTransferConfirm, setShowTransferConfirm] = useState(false);
+  const [isTransferring, setIsTransferring] = useState(false);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    const updatedData = {
+      ...item,
+      saleDate: isPending ? '' : saleDate,
+      salePrice: isPending ? '' : parseFloat(salePrice),
+      saleCurrency: saleCurrency,
+      soldTo: soldTo,
+    };
+    const success = await onSave(item, updatedData);
+    setIsSaving(false);
+    if (success) onClose();
+  };
+
+  const handleTransfer = async () => {
+    setIsTransferring(true);
+    const success = await onTransferToCollection(item);
+    setIsTransferring(false);
+    if (success) onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
+      <div className="w-full max-w-md rounded-2xl max-h-[90vh] overflow-y-auto" style={{ background: '#1a1a1a', border: '1px solid #333', scrollbarWidth: 'none', msOverflowStyle: 'none' }} onClick={e => e.stopPropagation()}>
+        <div className="sticky top-0 z-10 p-4 flex justify-between items-center" style={{ background: '#1a1a1a', borderBottom: '1px solid #333' }}>
+          <h3 className="text-lg font-semibold" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Edit Onwards Entry</h3>
+          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#333', color: '#888' }}>×</button>
+        </div>
+        
+        <div className="p-4 space-y-4">
+          {/* Box Info (read-only) */}
+          <div className="p-3 rounded-lg" style={{ background: '#252525', border: '1px solid #333' }}>
+            <div className="text-lg font-bold" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>{item.brand}</div>
+            <div className="text-base font-medium" style={{ color: 'rgba(245,222,179,0.8)' }}>{item.name}</div>
+            <div className="text-sm mt-1" style={{ color: 'rgba(245,222,179,0.5)' }}>Box of {item.perBox} • Cost: ${item.costUSD}</div>
+          </div>
+
+          {/* Sale Status */}
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Sale Status</label>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setIsPending(false)}
+                className="flex-1 py-2 rounded-lg text-sm"
+                style={{ 
+                  background: !isPending ? '#F5DEB3' : '#252525',
+                  color: !isPending ? '#1a120b' : '#888',
+                  border: !isPending ? 'none' : '1px solid #444'
+                }}
+              >
+                Sold
+              </button>
+              <button 
+                onClick={() => setIsPending(true)}
+                className="flex-1 py-2 rounded-lg text-sm"
+                style={{ 
+                  background: isPending ? '#F5DEB3' : '#252525',
+                  color: isPending ? '#1a120b' : '#888',
+                  border: isPending ? 'none' : '1px solid #444'
+                }}
+              >
+                Pending
+              </button>
+            </div>
+          </div>
+
+          {!isPending && (
+            <>
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Sale Date</label>
+                <input 
+                  type="date" 
+                  value={saleDate} 
+                  onChange={e => setSaleDate(e.target.value)} 
+                  className="w-full px-3 py-2 rounded-lg text-sm" 
+                  style={{ background: '#252525', border: '1px solid #333', color: '#fff', WebkitAppearance: 'none', minHeight: '42px' }} 
+                />
+              </div>
+
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Sale Price</label>
+                <div className="flex gap-2">
+                  <select 
+                    value={saleCurrency} 
+                    onChange={e => setSaleCurrency(e.target.value)}
+                    className="px-2 py-2 rounded-lg text-sm"
+                    style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '80px' }}
+                  >
+                    {CURRENCIES.map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <input 
+                    type="number" 
+                    value={salePrice} 
+                    onChange={e => setSalePrice(e.target.value)} 
+                    placeholder="e.g. 500" 
+                    className="flex-1 px-3 py-2 rounded-lg text-sm" 
+                    style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Sold To (optional)</label>
+            <input 
+              type="text" 
+              value={soldTo} 
+              onChange={e => setSoldTo(e.target.value)} 
+              placeholder="e.g. John Smith" 
+              className="w-full px-3 py-2 rounded-lg text-sm" 
+              style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+            />
+          </div>
+
+          {/* Save Button */}
+          <button 
+            onClick={handleSave} 
+            disabled={isSaving || (!isPending && !salePrice)}
+            className="w-full py-3 rounded-lg font-semibold" 
+            style={{ 
+              background: (isSaving || (!isPending && !salePrice)) ? '#333' : '#F5DEB3', 
+              color: (isSaving || (!isPending && !salePrice)) ? '#666' : '#1a120b' 
+            }}
+          >
+            {isSaving ? 'Saving...' : 'Save Changes'}
+          </button>
+
+          {/* Transfer to Collection */}
+          <div className="pt-4 border-t" style={{ borderColor: '#333' }}>
+            {!showTransferConfirm ? (
+              <button 
+                onClick={() => setShowTransferConfirm(true)}
+                className="w-full py-3 rounded-lg font-semibold" 
+                style={{ background: '#252525', color: '#F5DEB3', border: '1px solid #444' }}
+              >
+                Transfer to Collection
+              </button>
+            ) : (
+              <div>
+                <p className="text-sm font-bold mb-3" style={{ color: '#F5DEB3' }}>Transfer this box back to your collection?</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setShowTransferConfirm(false)}
+                    className="flex-1 py-2 text-sm font-medium rounded-lg"
+                    style={{ background: '#252525', color: '#888', border: '1px solid #444' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleTransfer}
+                    disabled={isTransferring}
+                    className="flex-1 py-2 text-sm font-medium rounded-lg"
+                    style={{ background: '#F5DEB3', color: '#1a120b' }}
+                  >
+                    {isTransferring ? 'Transferring...' : 'Confirm'}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -3575,6 +3960,7 @@ export default function CigarCollectionApp() {
   const [showOpenOnly, setShowOpenOnly] = useState(false);
   const [showCigarsOnly, setShowCigarsOnly] = useState(false);
   const [showAddToOnwardsModal, setShowAddToOnwardsModal] = useState(false);
+  const [editingOnwardsItem, setEditingOnwardsItem] = useState(null);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [view, setView] = useState('collection');
   const [statsMode, setStatsMode] = useState('total');
@@ -3940,6 +4326,155 @@ if (onwardsRows) {
       return false;
     }
   }, [accessToken]);
+
+  // Edit Onwards entry
+  const handleEditOnwards = useCallback(async (oldItem, updatedData) => {
+    if (!accessToken) return false;
+    
+    setSyncStatus('writing');
+    
+    try {
+      const { sheetId } = GOOGLE_SHEETS_CONFIG;
+      
+      // First find the row
+      const onwardsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Onwards!A:M`;
+      const onwardsResponse = await fetch(onwardsUrl, {
+        headers: { 'Authorization': `Bearer ${accessToken}` },
+      });
+      const onwardsData = await onwardsResponse.json();
+      const rows = onwardsData.values || [];
+      
+      // Find the row index (skip header rows - starts at row 3)
+      let rowIndex = -1;
+      for (let i = 2; i < rows.length; i++) {
+        const row = rows[i];
+        if (row[2] === oldItem.brand && row[3] === oldItem.name && parseInt(row[5]) === oldItem.perBox) {
+          rowIndex = i + 1; // +1 for 1-indexed sheets
+          break;
+        }
+      }
+      
+      if (rowIndex === -1) {
+        console.error('Could not find row to update');
+        setSyncStatus('error');
+        return false;
+      }
+      
+      // Format date for sheet
+      const formatDate = (dateStr) => {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      };
+      
+      // Calculate profit
+      const salePriceUSD = updatedData.salePrice ? convertCurrency(updatedData.salePrice, updatedData.saleCurrency || 'USD', 'USD', fxRates) : '';
+      const profit = salePriceUSD ? salePriceUSD - oldItem.costUSD : '';
+      
+      // Update columns I through M (Sale Date, Sale Price, Sale Price Base, Profit, Sold To)
+      const updateRange = `Onwards!I${rowIndex}:M${rowIndex}`;
+      const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${updateRange}?valueInputOption=USER_ENTERED`;
+      
+      const updateResponse = await fetch(updateUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          values: [[
+            updatedData.saleDate ? formatDate(updatedData.saleDate) : '',
+            updatedData.salePrice || '',
+            salePriceUSD || '',
+            profit,
+            updatedData.soldTo || ''
+          ]]
+        }),
+      });
+      
+      if (!updateResponse.ok) throw new Error('Failed to update Onwards');
+      
+      await refreshData();
+      setSyncStatus('success');
+      return true;
+    } catch (error) {
+      console.error('Error updating onwards:', error);
+      setSyncStatus('error');
+      return false;
+    }
+  }, [accessToken, fxRates]);
+
+  // Transfer from Onwards to Collection
+  const handleTransferToCollection = useCallback(async (item) => {
+    if (!accessToken) return false;
+    
+    setSyncStatus('writing');
+    
+    try {
+      const { sheetId } = GOOGLE_SHEETS_CONFIG;
+      
+      // First, add to Collection sheet
+      const formatDate = (dateStr) => {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      };
+      
+      // Get next box number
+      const nextBoxNum = Math.max(...boxes.map(b => {
+        const match = b.boxNum.match(/^(\d+)/);
+        return match ? parseInt(match[1]) : 0;
+      }), highestBoxNum || 0) + 1;
+      
+      // Create collection row
+      const collectionRow = [
+        formatDate(item.datePurchased),
+        String(nextBoxNum),
+        item.received ? 'TRUE' : 'FALSE',
+        item.brand,
+        item.name,
+        1, // qty
+        item.perBox,
+        'USD',
+        item.costUSD,
+        (item.costUSD / item.perBox).toFixed(2),
+        'Ageing', // status
+        '', // dateOfBox
+        '', // code
+        'Cayman', // location
+        0, // consumed
+        item.perBox, // remaining
+        '', // ringGauge
+        '', // length
+        '', // vitola
+        '' // boxNotes
+      ];
+      
+      // Append to Collection
+      const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Collection!A:T:append?valueInputOption=USER_ENTERED`;
+      const appendResponse = await fetch(appendUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ values: [collectionRow] }),
+      });
+      
+      if (!appendResponse.ok) throw new Error('Failed to add to Collection');
+      
+      // Now remove from Onwards
+      const removeSuccess = await handleRemoveFromOnwards(item);
+      if (!removeSuccess) throw new Error('Failed to remove from Onwards');
+      
+      setSyncStatus('success');
+      return true;
+    } catch (error) {
+      console.error('Error transferring to collection:', error);
+      setSyncStatus('error');
+      return false;
+    }
+  }, [accessToken, boxes, highestBoxNum, handleRemoveFromOnwards]);
           
   // Show splash screen, but don't load data until signed in
   useEffect(() => {
@@ -4777,7 +5312,7 @@ if (onwardsRows) {
                 item={o} 
                 fmtCurrency={fmtCurrency} 
                 isSignedIn={isSignedIn}
-                onRemove={handleRemoveFromOnwards}
+                onEdit={setEditingOnwardsItem}
               />
             ))}
           </div>
@@ -5250,6 +5785,7 @@ if (onwardsRows) {
       {showLogModal && <SmokeLogModal boxes={boxes} onClose={() => setShowLogModal(false)} onLog={handleLog} />}
       {showAddModal && <AddBoxModal boxes={boxes} onClose={() => setShowAddModal(false)} onAdd={handleAddBoxes} highestBoxNum={highestBoxNum} />}
       {showAddToOnwardsModal && <AddToOnwardsModal boxes={boxes} onClose={() => setShowAddToOnwardsModal(false)} onAdd={handleAddToOnwards} />}
+      {editingOnwardsItem && <EditOnwardsModal item={editingOnwardsItem} onClose={() => setEditingOnwardsItem(null)} onSave={handleEditOnwards} onTransferToCollection={handleTransferToCollection} />}
       {showSignInPrompt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.9)' }}>
           <div className="w-full max-w-sm rounded-xl p-6 text-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
@@ -5315,14 +5851,16 @@ if (onwardsRows) {
 />}
       
       {/* Bottom buttons */}
-      <div className="fixed bottom-4 left-4 right-4 z-30 flex gap-3">
-        <button onClick={() => isSignedIn ? setShowAddModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#F5DEB3', border: '1px solid #F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
-          Add Box
-        </button>
-        <button onClick={() => isSignedIn ? setShowLogModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#F5DEB3', border: '1px solid #F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
-          Log Smoke
-        </button>
-      </div>
+      {view !== 'onwards' && (
+        <div className="fixed bottom-4 left-4 right-4 z-30 flex gap-3">
+          <button onClick={() => isSignedIn ? setShowAddModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#F5DEB3', border: '1px solid #F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
+            Add Box
+          </button>
+          <button onClick={() => isSignedIn ? setShowLogModal(true) : setShowSignInPrompt(true)} className="flex-1 py-4 rounded-xl font-semibold shadow-lg text-lg" style={{ background: '#1a120b', color: '#F5DEB3', border: '1px solid #F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>
+            Log Smoke
+          </button>
+        </div>
+      )}
     </div>
   );
 }
