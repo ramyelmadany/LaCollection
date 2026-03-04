@@ -1229,7 +1229,9 @@ const CigarGroupCard = ({ group, onClick, maxLengths, showCigarCount = true, isF
 };
 
 // Onwards Card
-const OnwardsCard = ({ item, fmtCurrency }) => {
+const OnwardsCard = ({ item, fmtCurrency, onRemove, isSignedIn }) => {
+  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
   const isSold = item.type === 'sold';
   const isSoldAtCost = item.type === 'sold-at-cost';
   const isSoldAtLoss = item.type === 'sold-at-loss';
@@ -1247,6 +1249,12 @@ const OnwardsCard = ({ item, fmtCurrency }) => {
     if (isSoldAtLoss) return fmtCurrency(item.profitUSD);
     if (isSoldAtCost) return 'At cost';
     return 'Pending';
+  };
+
+  const handleRemove = async () => {
+    setIsRemoving(true);
+    await onRemove(item);
+    setIsRemoving(false);
   };
   
   return (
@@ -1286,6 +1294,42 @@ const OnwardsCard = ({ item, fmtCurrency }) => {
           <div className="text-sm italic pt-1" style={{ color: 'rgba(26,18,11,0.6)' }}>{item.soldTo}</div>
         )}
       </div>
+
+      {/* Remove Button */}
+      {isSignedIn && onRemove && (
+        <div className="mt-3 pt-3 border-t" style={{ borderColor: '#6B1E1E' }}>
+          {!showRemoveConfirm ? (
+            <button
+              onClick={() => setShowRemoveConfirm(true)}
+              className="w-full py-2 text-sm font-medium rounded-lg"
+              style={{ background: '#1a120b', color: '#F5DEB3' }}
+            >
+              Remove from Onwards
+            </button>
+          ) : (
+            <div>
+              <p className="text-sm font-bold mb-2" style={{ color: '#6B1E1E' }}>Remove this entry?</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowRemoveConfirm(false)}
+                  className="flex-1 py-2 text-sm font-medium rounded-lg"
+                  style={{ background: 'rgba(26,18,11,0.2)', color: '#1a120b' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleRemove}
+                  disabled={isRemoving}
+                  className="flex-1 py-2 text-sm font-medium rounded-lg"
+                  style={{ background: '#6B1E1E', color: '#F5DEB3' }}
+                >
+                  {isRemoving ? 'Removing...' : 'Confirm'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
@@ -1613,6 +1657,202 @@ const EditBoxModal = ({ box, onClose, onSave, availableLocations = [] }) => {
               {isSaving ? 'Saving...' : 'Save'}
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Add to Onwards Modal
+const AddToOnwardsModal = ({ boxes, onClose, onAdd }) => {
+  const [selectedBox, setSelectedBox] = useState(null);
+  const [salePrice, setSalePrice] = useState('');
+  const [saleCurrency, setSaleCurrency] = useState('USD');
+  const [saleDate, setSaleDate] = useState(new Date().toISOString().split('T')[0]);
+  const [soldTo, setSoldTo] = useState('');
+  const [isPending, setIsPending] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
+
+  // Filter to only show full boxes (not partially smoked or loose cigars)
+  const availableBoxes = boxes.filter(b => b.remaining === b.perBox && !b.boxNum.startsWith('c.'));
+
+  // Group by brand
+  const brands = {};
+  availableBoxes.forEach(b => {
+    if (!brands[b.brand]) brands[b.brand] = [];
+    brands[b.brand].push(b);
+  });
+  const brandOrder = Object.keys(brands).sort((a, b) => a.localeCompare(b));
+
+  const handleSubmit = async () => {
+    if (!selectedBox) return;
+    if (!isPending && !salePrice) return;
+    
+    setIsAdding(true);
+    
+    const onwardsData = {
+      datePurchased: selectedBox.datePurchased,
+      received: selectedBox.received,
+      brand: selectedBox.brand,
+      name: selectedBox.name,
+      qty: 1,
+      perBox: selectedBox.perBox,
+      price: selectedBox.price,
+      currency: selectedBox.currency || 'USD',
+      saleDate: isPending ? '' : saleDate,
+      salePrice: isPending ? '' : parseFloat(salePrice),
+      saleCurrency: saleCurrency,
+      soldTo: soldTo,
+    };
+    
+    const success = await onAdd(onwardsData);
+    setIsAdding(false);
+    if (success) onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-8" onClick={onClose} style={{ background: 'rgba(0,0,0,0.9)' }}>
+      <div className="w-full max-w-md rounded-2xl max-h-[90vh] overflow-y-auto" style={{ background: '#1a1a1a', border: '1px solid #333', scrollbarWidth: 'none', msOverflowStyle: 'none' }} onClick={e => e.stopPropagation()}>
+        <div className="sticky top-0 z-10 p-4 flex justify-between items-center" style={{ background: '#1a1a1a', borderBottom: '1px solid #333' }}>
+          <h3 className="text-lg font-semibold" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}>Add to Onwards</h3>
+          <button onClick={onClose} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#333', color: '#888' }}>×</button>
+        </div>
+        
+        <div className="p-4 space-y-4">
+          {/* Select Box */}
+          <div>
+            <label className="text-xs text-gray-500 block mb-2">Select Box to Sell</label>
+            <div className="max-h-48 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+              {brandOrder.length === 0 ? (
+                <div className="text-center py-4 text-gray-500">No full boxes available</div>
+              ) : (
+                brandOrder.map(brand => (
+                  <div key={brand} className="mb-3">
+                    <div className="text-xs font-bold tracking-wide mb-1.5 pb-1" style={{ color: '#F5DEB3', fontFamily: 'tt-ricordi-allegria, Georgia, serif', borderBottom: '1px solid rgba(245,222,179,0.15)' }}>{brand}</div>
+                    <div className="space-y-1.5">
+                      {brands[brand].map(b => {
+                        const isSelected = selectedBox?.id === b.id;
+                        return (
+                          <div 
+                            key={b.id} 
+                            onClick={() => setSelectedBox(b)} 
+                            className="p-2.5 rounded-sm cursor-pointer" 
+                            style={{ 
+                              background: isSelected ? 'linear-gradient(145deg, #F5DEB3, #E8D4A0)' : '#6B1E1E',
+                              border: isSelected ? '2px solid #6B1E1E' : '2px solid transparent'
+                            }}
+                          >
+                            <div className="text-sm font-medium" style={{ color: isSelected ? '#1a120b' : '#F5DEB3' }}>{b.name}</div>
+                            <div className="text-xs" style={{ color: isSelected ? 'rgba(26,18,11,0.5)' : 'rgba(245,222,179,0.6)' }}>Box {b.boxNum} • Box of {b.perBox} • {b.location}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {selectedBox && (
+            <>
+              {/* Pending Toggle */}
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Sale Status</label>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => setIsPending(false)}
+                    className="flex-1 py-2 rounded-lg text-sm"
+                    style={{ 
+                      background: !isPending ? '#F5DEB3' : '#252525',
+                      color: !isPending ? '#1a120b' : '#888',
+                      border: !isPending ? 'none' : '1px solid #444'
+                    }}
+                  >
+                    Sold
+                  </button>
+                  <button 
+                    onClick={() => setIsPending(true)}
+                    className="flex-1 py-2 rounded-lg text-sm"
+                    style={{ 
+                      background: isPending ? '#F5DEB3' : '#252525',
+                      color: isPending ? '#1a120b' : '#888',
+                      border: isPending ? 'none' : '1px solid #444'
+                    }}
+                  >
+                    Pending
+                  </button>
+                </div>
+              </div>
+
+              {!isPending && (
+                <>
+                  {/* Sale Date */}
+                  <div>
+                    <label className="text-xs text-gray-500 block mb-2">Sale Date</label>
+                    <input 
+                      type="date" 
+                      value={saleDate} 
+                      onChange={e => setSaleDate(e.target.value)} 
+                      className="w-full px-3 py-2 rounded-lg text-sm" 
+                      style={{ background: '#252525', border: '1px solid #333', color: '#fff', WebkitAppearance: 'none', minHeight: '42px' }} 
+                    />
+                  </div>
+
+                  {/* Sale Price */}
+                  <div>
+                    <label className="text-xs text-gray-500 block mb-2">Sale Price</label>
+                    <div className="flex gap-2">
+                      <select 
+                        value={saleCurrency} 
+                        onChange={e => setSaleCurrency(e.target.value)}
+                        className="px-2 py-2 rounded-lg text-sm"
+                        style={{ background: '#252525', border: '1px solid #333', color: '#fff', width: '80px' }}
+                      >
+                        {CURRENCIES.map(c => (
+                          <option key={c} value={c}>{c}</option>
+                        ))}
+                      </select>
+                      <input 
+                        type="number" 
+                        value={salePrice} 
+                        onChange={e => setSalePrice(e.target.value)} 
+                        placeholder="e.g. 500" 
+                        className="flex-1 px-3 py-2 rounded-lg text-sm" 
+                        style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Sold To */}
+              <div>
+                <label className="text-xs text-gray-500 block mb-2">Sold To (optional)</label>
+                <input 
+                  type="text" 
+                  value={soldTo} 
+                  onChange={e => setSoldTo(e.target.value)} 
+                  placeholder="e.g. John Smith" 
+                  className="w-full px-3 py-2 rounded-lg text-sm" 
+                  style={{ background: '#252525', border: '1px solid #333', color: '#fff' }} 
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button 
+                onClick={handleSubmit} 
+                disabled={isAdding || (!isPending && !salePrice)}
+                className="w-full py-3 rounded-lg font-semibold mt-4" 
+                style={{ 
+                  background: (isAdding || (!isPending && !salePrice)) ? '#333' : '#F5DEB3', 
+                  color: (isAdding || (!isPending && !salePrice)) ? '#666' : '#1a120b' 
+                }}
+              >
+                {isAdding ? 'Adding...' : 'Add to Onwards'}
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -3334,6 +3574,7 @@ export default function CigarCollectionApp() {
   const [selectedBrand, setSelectedBrand] = useState('All');
   const [showOpenOnly, setShowOpenOnly] = useState(false);
   const [showCigarsOnly, setShowCigarsOnly] = useState(false);
+  const [showAddToOnwardsModal, setShowAddToOnwardsModal] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [view, setView] = useState('collection');
   const [statsMode, setStatsMode] = useState('total');
@@ -3557,7 +3798,149 @@ if (onwardsRows) {
       return false;
     }
   }, [accessToken]);
-  
+
+// Add to Onwards sheet
+  const handleAddToOnwards = useCallback(async (onwardsData) => {
+    if (!accessToken) return false;
+    
+    setSyncStatus('writing');
+    
+    try {
+      const { sheetId } = GOOGLE_SHEETS_CONFIG;
+      
+      // Format date for sheet
+      const formatDate = (dateStr) => {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      };
+      
+      // Convert prices to USD for calculations
+      const costUSD = convertCurrency(onwardsData.price, onwardsData.currency, 'USD', fxRates);
+      const salePriceUSD = onwardsData.salePrice ? convertCurrency(onwardsData.salePrice, onwardsData.saleCurrency, 'USD', fxRates) : '';
+      const profit = salePriceUSD ? salePriceUSD - costUSD : '';
+      
+      // Build row: Date of Purchase | Received | Brand | Name | Qty | Per Box | Price/Box | Price/Cigar | Sale Date | Sale Price | Sale Price Base | Profit | Sold To
+      const newRow = [
+        formatDate(onwardsData.datePurchased),
+        onwardsData.received ? 'TRUE' : 'FALSE',
+        onwardsData.brand,
+        onwardsData.name,
+        onwardsData.qty,
+        onwardsData.perBox,
+        costUSD,
+        (costUSD / onwardsData.perBox).toFixed(2),
+        onwardsData.saleDate ? formatDate(onwardsData.saleDate) : '',
+        onwardsData.salePrice || '',
+        salePriceUSD || '',
+        profit,
+        onwardsData.soldTo || ''
+      ];
+      
+      // Append to Onwards sheet
+      const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Onwards!A:M:append?valueInputOption=USER_ENTERED`;
+      const appendResponse = await fetch(appendUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ values: [newRow] }),
+      });
+      
+      if (!appendResponse.ok) throw new Error('Failed to add to Onwards');
+      
+      // Refresh data
+      await refreshData();
+      
+      setSyncStatus('success');
+      return true;
+    } catch (error) {
+      console.error('Error adding to onwards:', error);
+      setSyncStatus('error');
+      return false;
+    }
+  }, [accessToken, fxRates]);
+
+  // Remove from Onwards sheet
+  const handleRemoveFromOnwards = useCallback(async (item) => {
+    if (!accessToken) return false;
+    
+    setSyncStatus('writing');
+    
+    try {
+      const { sheetId } = GOOGLE_SHEETS_CONFIG;
+      
+      // First get the sheet ID for Onwards
+      const metaUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}`;
+      const metaResponse = await fetch(metaUrl, {
+        headers: { 'Authorization': `Bearer ${accessToken}` },
+      });
+      const metaData = await metaResponse.json();
+      const onwardsSheet = metaData.sheets.find(s => s.properties.title === 'Onwards');
+      if (!onwardsSheet) throw new Error('Onwards sheet not found');
+      const onwardsSheetId = onwardsSheet.properties.sheetId;
+      
+      // Fetch all onwards data to find the row
+      const onwardsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Onwards!A:M`;
+      const onwardsResponse = await fetch(onwardsUrl, {
+        headers: { 'Authorization': `Bearer ${accessToken}` },
+      });
+      const onwardsData = await onwardsResponse.json();
+      const rows = onwardsData.values || [];
+      
+      // Find the row index (skip header rows - starts at row 3)
+      let rowIndex = -1;
+      for (let i = 2; i < rows.length; i++) {
+        const row = rows[i];
+        if (row[2] === item.brand && row[3] === item.name && parseInt(row[5]) === item.perBox) {
+          rowIndex = i;
+          break;
+        }
+      }
+      
+      if (rowIndex === -1) {
+        console.error('Could not find row to delete');
+        setSyncStatus('error');
+        return false;
+      }
+      
+      // Delete the row
+      const deleteUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}:batchUpdate`;
+      const deleteResponse = await fetch(deleteUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          requests: [{
+            deleteDimension: {
+              range: {
+                sheetId: onwardsSheetId,
+                dimension: 'ROWS',
+                startIndex: rowIndex,
+                endIndex: rowIndex + 1,
+              }
+            }
+          }]
+        }),
+      });
+      
+      if (!deleteResponse.ok) throw new Error('Failed to delete from Onwards');
+      
+      // Refresh data
+      await refreshData();
+      
+      setSyncStatus('success');
+      return true;
+    } catch (error) {
+      console.error('Error removing from onwards:', error);
+      setSyncStatus('error');
+      return false;
+    }
+  }, [accessToken]);
+          
   // Show splash screen, but don't load data until signed in
   useEffect(() => {
     // Just show splash screen for minimum duration
@@ -4375,8 +4758,28 @@ if (onwardsRows) {
               <div className="text-xs text-gray-500">Profit</div>
             </div>
           </div>
+          
+          {/* Add to Onwards Button */}
+          {isSignedIn && (
+            <button
+              onClick={() => setShowAddToOnwardsModal(true)}
+              className="w-full py-3 mb-4 rounded-lg font-bold"
+              style={{ background: 'linear-gradient(145deg, #F5DEB3, #E8D4A0)', color: '#1a120b', fontFamily: 'tt-ricordi-allegria, Georgia, serif' }}
+            >
+              + Add to Onwards
+            </button>
+          )}
+          
           <div className="space-y-3">
-            {onwards.map(o => <OnwardsCard key={o.id} item={o} fmtCurrency={fmtCurrency} />)}
+            {onwards.map(o => (
+              <OnwardsCard 
+                key={o.id} 
+                item={o} 
+                fmtCurrency={fmtCurrency} 
+                isSignedIn={isSignedIn}
+                onRemove={handleRemoveFromOnwards}
+              />
+            ))}
           </div>
         </div>
       )}
@@ -4846,6 +5249,7 @@ if (onwardsRows) {
       {selectedGroup && <BoxDetailModal boxes={selectedGroup.boxes} initialBoxIndex={selectedGroup.initialBoxIndex || 0} onClose={() => setSelectedGroup(null)} fmtCurrency={fmtCurrency} fmtCurrencyWithOriginal={fmtCurrencyWithOriginal} fmtFromGBP={fmtFromGBP} baseCurrency={baseCurrency} fxRates={fxRates} isSignedIn={!!googleAccessToken} onDelete={async (box) => { if (!googleAccessToken) return false; const success = await deleteSheetRow(box.boxNum, googleAccessToken); if (success) { await refreshData(); const remainingBoxes = selectedGroup.boxes.filter(b => b.boxNum !== box.boxNum); if (remainingBoxes.length > 0) { setSelectedGroup({ ...selectedGroup, boxes: remainingBoxes }); } else { setSelectedGroup(null); } } return success; }} onEdit={async (box, updatedData) => { if (!googleAccessToken) return false; const success = await updateBoxInSheet(box.boxNum, updatedData, googleAccessToken); if (success) { const updatedGroupBoxes = selectedGroup.boxes.map(b => b.boxNum === box.boxNum ? { ...b, ...updatedData } : b); setSelectedGroup({ ...selectedGroup, boxes: updatedGroupBoxes }); refreshData(); } return success; }} availableLocations={availableLocations} />}
       {showLogModal && <SmokeLogModal boxes={boxes} onClose={() => setShowLogModal(false)} onLog={handleLog} />}
       {showAddModal && <AddBoxModal boxes={boxes} onClose={() => setShowAddModal(false)} onAdd={handleAddBoxes} highestBoxNum={highestBoxNum} />}
+      {showAddToOnwardsModal && <AddToOnwardsModal boxes={boxes} onClose={() => setShowAddToOnwardsModal(false)} onAdd={handleAddToOnwards} />}
       {showSignInPrompt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.9)' }}>
           <div className="w-full max-w-sm rounded-xl p-6 text-center" style={{ background: '#1a1a1a', border: '1px solid #333' }}>
