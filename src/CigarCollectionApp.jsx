@@ -891,7 +891,29 @@ const getStatusDisplay = (status) => {
 const fmt = {
   usd: (v) => `$${v.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`,
   gbp: (v) => `£${v.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`,
-  date: (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '-',
+  date: (d) => {
+    if (!d) return '-';
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    // Handle YYYY-MM-DD format
+    if (typeof d === 'string' && d.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      const [year, month, day] = d.split('-');
+      return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
+    }
+    
+    // Handle "DD Mon YYYY" format (already formatted)
+    if (typeof d === 'string' && d.match(/^\d{1,2}\s+[A-Za-z]{3}\s+\d{4}$/)) {
+      return d;
+    }
+    
+    // Fallback using UTC to avoid timezone shift
+    const date = new Date(d);
+    if (!isNaN(date.getTime())) {
+      return `${date.getUTCDate()} ${months[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
+    }
+    
+    return '-';
+  },
   monthYear: (d) => {
     if (!d) return '-';
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
