@@ -1671,19 +1671,20 @@ const AddToOnwardsModal = ({ boxes, onClose, onAdd }) => {
     setIsAdding(true);
     
     const onwardsData = source === 'collection' ? {
-      datePurchased: selectedBox.datePurchased,
-      received: selectedBox.received,
-      brand: selectedBox.brand,
-      name: selectedBox.name,
-      qty: 1,
-      perBox: selectedBox.perBox,
-      price: selectedBox.price,
-      currency: selectedBox.currency || 'USD',
-      saleDate: isPending ? '' : saleDate,
-      salePrice: isPending ? '' : parseFloat(salePrice),
-      saleCurrency: saleCurrency,
-      soldTo: soldTo,
-    } : {
+  datePurchased: selectedBox.datePurchased,
+  received: selectedBox.received,
+  brand: selectedBox.brand,
+  name: selectedBox.name,
+  qty: 1,
+  perBox: selectedBox.perBox,
+  price: selectedBox.price,
+  currency: selectedBox.currency || 'USD',
+  saleDate: isPending ? '' : saleDate,
+  salePrice: isPending ? '' : parseFloat(salePrice),
+  saleCurrency: saleCurrency,
+  soldTo: soldTo,
+  boxNum: selectedBox.boxNum, // Include boxNum to delete from collection
+} : {
       datePurchased: manualDatePurchased,
       received: manualReceived,
       brand: manualBrand,
@@ -4186,7 +4187,7 @@ if (onwardsRows) {
   }, [accessToken]);
 
 // Add to Onwards sheet
-  const handleAddToOnwards = useCallback(async (onwardsData) => {
+  const handleAddToOnwards = useCallback(async (onwardsData, sourceBox = null) => {
     if (!accessToken) return false;
     
     setSyncStatus('writing');
@@ -4236,6 +4237,11 @@ if (onwardsRows) {
       
       if (!appendResponse.ok) throw new Error('Failed to add to Onwards');
       
+      // If this came from collection, delete it from Collection sheet
+      if (onwardsData.boxNum) {
+        await deleteSheetRow(onwardsData.boxNum, accessToken);
+      }
+      
       // Refresh data
       await refreshData();
       
@@ -4247,7 +4253,7 @@ if (onwardsRows) {
       return false;
     }
   }, [accessToken, fxRates]);
-
+  
   // Remove from Onwards sheet
   const handleRemoveFromOnwards = useCallback(async (item) => {
     if (!accessToken) return false;
