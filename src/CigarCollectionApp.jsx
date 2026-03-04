@@ -4198,6 +4198,12 @@ if (onwardsRows) {
       // Format date for sheet
       const formatDate = (dateStr) => {
         if (!dateStr) return '';
+        // Handle YYYY-MM-DD format without timezone conversion
+        if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+          const [year, month, day] = dateStr.split('-');
+          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
+        }
         const d = new Date(dateStr);
         return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
       };
@@ -4369,6 +4375,12 @@ if (onwardsRows) {
       // Format date for sheet
       const formatDate = (dateStr) => {
         if (!dateStr) return '';
+        // Handle YYYY-MM-DD format without timezone conversion
+        if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+          const [year, month, day] = dateStr.split('-');
+          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
+        }
         const d = new Date(dateStr);
         return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
       };
