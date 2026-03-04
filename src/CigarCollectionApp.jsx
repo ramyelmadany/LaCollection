@@ -4198,14 +4198,40 @@ if (onwardsRows) {
       // Format date for sheet
       const formatDate = (dateStr) => {
         if (!dateStr) return '';
-        // Handle YYYY-MM-DD format without timezone conversion
-        if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        
+        // Handle YYYY-MM-DD format (from date input)
+        if (typeof dateStr === 'string' && dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
           const [year, month, day] = dateStr.split('-');
-          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
           return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
         }
+        
+        // Handle "DD Mon YYYY" format (already formatted)
+        if (typeof dateStr === 'string' && dateStr.match(/^\d{1,2}\s+[A-Za-z]{3}\s+\d{4}$/)) {
+          return dateStr;
+        }
+        
+        // Handle other string formats - parse carefully
+        if (typeof dateStr === 'string') {
+          // Try to extract date parts without timezone issues
+          const parts = dateStr.split(/[-\/T]/);
+          if (parts.length >= 3) {
+            const year = parseInt(parts[0]);
+            const month = parseInt(parts[1]);
+            const day = parseInt(parts[2]);
+            if (year > 1900 && month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+              return `${day} ${months[month - 1]} ${year}`;
+            }
+          }
+        }
+        
+        // Fallback - but use UTC to avoid timezone shift
         const d = new Date(dateStr);
-        return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        if (!isNaN(d.getTime())) {
+          return `${d.getUTCDate()} ${months[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+        }
+        
+        return '';
       };
       
       // Convert prices to USD for calculations
@@ -4375,14 +4401,40 @@ if (onwardsRows) {
       // Format date for sheet
       const formatDate = (dateStr) => {
         if (!dateStr) return '';
-        // Handle YYYY-MM-DD format without timezone conversion
-        if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        
+        // Handle YYYY-MM-DD format (from date input)
+        if (typeof dateStr === 'string' && dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
           const [year, month, day] = dateStr.split('-');
-          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
           return `${parseInt(day)} ${months[parseInt(month) - 1]} ${year}`;
         }
+        
+        // Handle "DD Mon YYYY" format (already formatted)
+        if (typeof dateStr === 'string' && dateStr.match(/^\d{1,2}\s+[A-Za-z]{3}\s+\d{4}$/)) {
+          return dateStr;
+        }
+        
+        // Handle other string formats - parse carefully
+        if (typeof dateStr === 'string') {
+          // Try to extract date parts without timezone issues
+          const parts = dateStr.split(/[-\/T]/);
+          if (parts.length >= 3) {
+            const year = parseInt(parts[0]);
+            const month = parseInt(parts[1]);
+            const day = parseInt(parts[2]);
+            if (year > 1900 && month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+              return `${day} ${months[month - 1]} ${year}`;
+            }
+          }
+        }
+        
+        // Fallback - but use UTC to avoid timezone shift
         const d = new Date(dateStr);
-        return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        if (!isNaN(d.getTime())) {
+          return `${d.getUTCDate()} ${months[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+        }
+        
+        return '';
       };
       
       // Calculate profit
